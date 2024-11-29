@@ -9,9 +9,84 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Ubisoft API">
+      <UniqueIdentifier>{6eb94aa9-b467-493a-b5f0-32e30135a1f9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="miniaudio">
+      <UniqueIdentifier>{65d69467-747f-4e82-b8eb-a1c86adb0cdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="stb_image">
+      <UniqueIdentifier>{e23d9021-a146-4230-906e-513d585f4802}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="app\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\app.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\DirectSound.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\main.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\SimpleController.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\SimpleSound.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\App\SimpleSprite.cpp">
+      <Filter>Ubisoft API</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\miniaudio\miniaudio.cpp">
+      <Filter>miniaudio</Filter>
+    </ClCompile>
+    <ClCompile Include="extern\stb_image\stb_image.cpp">
+      <Filter>stb_image</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="app\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\app.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\AppSettings.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\DirectSound.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\main.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\mydirectsound.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\SimpleController.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\SimpleSound.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\App\SimpleSprite.h">
+      <Filter>Ubisoft API</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\miniaudio\miniaudio.h">
+      <Filter>miniaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="extern\stb_image\stb_image.h">
+      <Filter>stb_image</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
