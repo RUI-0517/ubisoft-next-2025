@@ -1,22 +1,30 @@
-# Overview
+# Project Folder Structure
 
-Each subfolder in this directory functions as an independent package, similar to a subdirectory in CMake.
+This document provides an overview of the project structure, design philosophy, and guidelines for organizing packages within this repository.
 
-# Design Philosophy
+## Overview
 
-The packages are designed to be modular and maintainable, capable of functioning independently while being easy to integrate and scale. The only dependency among them is the `math` folder, which provides common calculation functions used across the packages.
+The project is designed with modularity and scalability in mind. Each subfolder is treated as an independent package, similar to a subdirectory in a CMake project.
 
-# Package Structure
+### Key Files
 
-Below is the minimum folder structure for each package:
+- **`game.cpp`**: Contains the main logic and application flow.
+- **`stdafx.h`**: Precompiled header file. Associated files include `stdafx.cpp` and `targetver.h`.
 
-- Package Name
-  - include
-  - src
-  - README.md
+### Submodule Dependency
 
-Details:
+- The **`math`** folder serves as the only common dependency among packages. It provides shared calculation functions used across the repository.
 
-- The `include` folder contains all header files.
-- The `src` folder contains all source files.
-- The `README.md` describes the package's purpose and provides examples of API usage.
+## Package Structure
+
+Each package follows a standard folder layout to maintain consistency and ease of use:
+
+`Package Name/ │ ├── include/       # Contains all header files for the package. ├── src/           # Contains all source files for the package. └── README.md      # Describes the package's purpose and provides API usage examples.`
+
+### `README.md` Guidelines
+
+Each package must include a `README.md` file that:
+
+- Explains the package's purpose.
+- Describes its functionality.
+- Provides usage examples for the API.

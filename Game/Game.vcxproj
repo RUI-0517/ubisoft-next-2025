@@ -20,12 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="app\game.cpp" />
-    <ClCompile Include="app\src\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="app\stdafx.cpp" />
     <ClCompile Include="extern\App\app.cpp" />
     <ClCompile Include="extern\App\DirectSound.cpp" />
     <ClCompile Include="extern\App\main.cpp" />
