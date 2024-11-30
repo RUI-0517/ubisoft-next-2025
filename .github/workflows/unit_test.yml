@@ -1,0 +1,47 @@
+name: Windows Unit Test
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.30.x"
+
+      - name: Use cmake
+        run: cmake --version
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+
+      - name: Install Make
+        run: |
+          pacman -S --noconfirm make
+
+      - name: Build and run tests
+        run: |
+          cd Game\app
+          make build
+
+      - name: Allow PR if tests succeed
+        if: success()
+        run: echo "√ Tests passed, PR is ready for review."
+
+      - name: Fail the PR if tests fail
+        if: failure()
+        run: echo "x Tests failed, please fix them before proceeding with the PR."

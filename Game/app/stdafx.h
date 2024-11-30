@@ -7,9 +7,11 @@
 
 #include "targetver.h"
 
+#include <algorithm>
+#include <cmath>
+#include <iostream>
 #include <cstdio>
 #include <tchar.h>
-
 
 
 // TODO: reference additional headers your program requires here
