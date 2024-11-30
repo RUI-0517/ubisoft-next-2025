@@ -24,12 +24,10 @@ jobs:
       - name: Use cmake
         run: cmake --version
 
-      - name: Set up MSYS2
+      - name: Install Make
         uses: msys2/setup-msys2@v2
         with:
           update: true
-
-      - name: Install Make
         run: |
           pacman -S --noconfirm make
 
