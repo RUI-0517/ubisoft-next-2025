@@ -27,9 +27,11 @@ jobs:
       - name: Install Make
         uses: msys2/setup-msys2@v2
         with:
+          msystem: UCRT64
           update: true
+      - shell: msys2 {0}
         run: |
-          pacman -S --noconfirm make
+          pacman -Syu --noconfirm make
 
       - name: Build and run tests
         run: |
