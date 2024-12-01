@@ -1,6 +1,8 @@
 #include <stdafx.h>
+#include <cassert>
 #include "../include/Vector3.h"
 
+// ~3.5ns
 Vector3 Vector3::operator+(const Vector3& other) const
 {
 	Vector3 result;
@@ -9,6 +11,7 @@ Vector3 Vector3::operator+(const Vector3& other) const
 	return result;
 }
 
+// ~ 4.2ns
 Vector3& Vector3::operator+=(const Vector3& other)
 {
 	for (int i = 0; i < 3; ++i)
@@ -48,7 +51,7 @@ Vector3& Vector3::operator*=(const float scalar)
 
 Vector3 Vector3::operator/(const float scalar) const
 {
-	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/.");
+	assert(scalar == 0.0f && "Division by zero error in Vector3::operator/.");
 
 	Vector3 result;
 	for (int i = 0; i < 3; ++i)
@@ -58,7 +61,8 @@ Vector3 Vector3::operator/(const float scalar) const
 
 Vector3& Vector3::operator/=(const float scalar)
 {
-	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/=.");
+	assert(scalar == 0.0f && "Division by zero error in Vector3::operator/.");
+
 	for (float& i : m_data)
 		i /= scalar;
 	return *this;
@@ -144,8 +148,7 @@ const float& Vector3::operator[](const size_t index) const
 
 std::ostream& operator<<(std::ostream& os, const Vector3& vector)
 {
-	for (const auto& element : vector.m_data)
-		os << element << ' ';
+	os << vector.m_data[0] << ' ' << vector.m_data[1] << ' ' << vector.m_data[2];
 	return os;
 }
 
