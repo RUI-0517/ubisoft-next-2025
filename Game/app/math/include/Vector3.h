@@ -18,7 +18,15 @@ public:
 
 	[[nodiscard]] float dot(const Vector3& other) const;
 	[[nodiscard]] Vector3 cross(const Vector3& other) const;
-	
+	[[nodiscard]] float magnitude() const;
+	[[nodiscard]] float magnitudeSquared() const;
+	[[nodiscard]] Vector3 normalize() const;
+	[[nodiscard]] float distance(const Vector3& other) const;
+	[[nodiscard]] float distanceSquared(const Vector3& other) const;
+	[[nodiscard]] Vector3 lerp(const Vector3& other, float t) const;
+	[[nodiscard]] Vector3 hadamard(const Vector3& other) const;
+	[[nodiscard]] Vector3 clamp(float minLength, float maxLength) const;
+
 	float& operator[](size_t index);
 	const float& operator[](size_t index) const;
 

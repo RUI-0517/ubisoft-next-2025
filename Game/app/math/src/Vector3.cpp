@@ -66,14 +66,7 @@ Vector3& Vector3::operator/=(const float scalar)
 
 bool Vector3::operator==(const Vector3& other) const
 {
-	bool equal = true;
-
-	for (size_t i = 0; i < 3; ++i)
-	{
-		equal = equal && std::fabs(m_data[i] - other[i]) < 1e-5;
-		if (!equal) return false;
-	}
-	return equal;
+	return distanceSquared(other) == 0.0f;
 }
 
 bool Vector3::operator!=(const Vector3& other) const
@@ -93,6 +86,50 @@ Vector3 Vector3::cross(const Vector3& other) const
 		m_data[2] * other[0] - m_data[0] * other[2],
 		m_data[0] * other[1] - m_data[1] * other[0]
 	};
+}
+
+float Vector3::magnitude() const
+{
+	return std::sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]);
+}
+
+float Vector3::magnitudeSquared() const
+{
+	return m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2];
+}
+
+Vector3 Vector3::normalize() const
+{
+	const float mag = magnitude();
+	return (mag > 0) ? *this / mag : Vector3(0, 0, 0);
+}
+
+float Vector3::distance(const Vector3& other) const
+{
+	return (*this - other).magnitude();
+}
+
+float Vector3::distanceSquared(const Vector3& other) const
+{
+	return (*this - other).magnitudeSquared();
+}
+
+Vector3 Vector3::lerp(const Vector3& other, float t) const
+{
+	return *this * (1 - t) + other * t;
+}
+
+Vector3 Vector3::hadamard(const Vector3& other) const
+{
+	return {m_data[0] * other[0], m_data[1] * other[1], m_data[2] * other[2]};
+}
+
+Vector3 Vector3::clamp(const float minLength, const float maxLength) const
+{
+	const float mag = magnitude();
+	if (mag < minLength) return normalize() * minLength;
+	if (mag > maxLength) return normalize() * maxLength;
+	return *this;
 }
 
 float& Vector3::operator[](const size_t index)
