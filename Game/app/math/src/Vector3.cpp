@@ -1,71 +1,25 @@
 #include <stdafx.h>
-#include <cassert>
 #include "../include/Vector3.h"
+#include "../include/operations.h"
 
-// ~3.5ns
-Vector3 Vector3::operator+(const Vector3& other) const
-{
-	Vector3 result;
-	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] + other[i];
-	return result;
-}
-
-// ~ 4.2ns
 Vector3& Vector3::operator+=(const Vector3& other)
 {
-	for (int i = 0; i < 3; ++i)
-		m_data[i] += other[i];
-	return *this;
-}
-
-Vector3 Vector3::operator-(const Vector3& other) const
-{
-	Vector3 result;
-	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] - other[i];
-	return result;
+	return *this = *this + other;
 }
 
 Vector3& Vector3::operator-=(const Vector3& other)
 {
-	for (int i = 0; i < 3; ++i)
-		m_data[i] -= other[i];
-	return *this;
-}
-
-Vector3 Vector3::operator*(const float scalar) const
-{
-	Vector3 result;
-	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] * scalar;
-	return result;
+	return *this = *this - other;
 }
 
 Vector3& Vector3::operator*=(const float scalar)
 {
-	for (float& i : m_data)
-		i *= scalar;
-	return *this;
-}
-
-Vector3 Vector3::operator/(const float scalar) const
-{
-	assert(scalar == 0.0f && "Division by zero error in Vector3::operator/.");
-
-	Vector3 result;
-	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] / scalar;
-	return result;
+	return *this = *this * scalar;
 }
 
 Vector3& Vector3::operator/=(const float scalar)
 {
-	assert(scalar == 0.0f && "Division by zero error in Vector3::operator/.");
-
-	for (float& i : m_data)
-		i /= scalar;
-	return *this;
+	return *this = *this / scalar;
 }
 
 bool Vector3::operator==(const Vector3& other) const
@@ -118,7 +72,7 @@ float Vector3::distanceSquared(const Vector3& other) const
 	return (*this - other).magnitudeSquared();
 }
 
-Vector3 Vector3::lerp(const Vector3& other, float t) const
+Vector3 Vector3::lerp(const Vector3& other, const float t) const
 {
 	return *this * (1 - t) + other * t;
 }
@@ -159,6 +113,11 @@ Vector3::Vector3()
 
 Vector3::Vector3(const float x, const float y, const float z): m_data{x, y, z}
 {
+}
+
+Vector3::Vector3(const float* array)
+{
+	std::copy_n(array, 3, m_data);
 }
 
 Vector3::Vector3(const std::initializer_list<float> elements)

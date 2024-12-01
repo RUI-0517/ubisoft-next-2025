@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include "../include/Vector3.h"
+#include "../include/operations.h"
 #include <iostream>
 #include <stdexcept>
 
