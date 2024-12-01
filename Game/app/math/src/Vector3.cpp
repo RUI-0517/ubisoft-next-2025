@@ -3,67 +3,77 @@
 
 Vector3 Vector3::operator+(const Vector3& other) const
 {
-	return {
-		m_data[0] + other[0], m_data[1] + other[1], m_data[2] + other[2]
-	};
+	Vector3 result;
+	for (int i = 0; i < 3; ++i)
+		result[i] = m_data[i] + other[i];
+	return result;
 }
 
 Vector3& Vector3::operator+=(const Vector3& other)
 {
-	m_data[0] += other[0];
-	m_data[1] += other[1];
-	m_data[2] += other[2];
+	for (int i = 0; i < 3; ++i)
+		m_data[i] += other[i];
 	return *this;
 }
 
 Vector3 Vector3::operator-(const Vector3& other) const
 {
-	return {
-		m_data[0] - other[0], m_data[1] - other[1], m_data[2] - other[2]
-	};
+	Vector3 result;
+	for (int i = 0; i < 3; ++i)
+		result[i] = m_data[i] - other[i];
+	return result;
 }
 
 Vector3& Vector3::operator-=(const Vector3& other)
 {
-	m_data[0] -= other[0];
-	m_data[1] -= other[1];
-	m_data[2] -= other[2];
+	for (int i = 0; i < 3; ++i)
+		m_data[i] -= other[i];
 	return *this;
 }
 
-Vector3 Vector3::operator*(float scalar) const
+Vector3 Vector3::operator*(const float scalar) const
 {
-	return {m_data[0] * scalar, m_data[1] * scalar, m_data[2] * scalar};
+	Vector3 result;
+	for (int i = 0; i < 3; ++i)
+		result[i] = m_data[i] * scalar;
+	return result;
 }
 
 Vector3& Vector3::operator*=(const float scalar)
 {
-	m_data[0] *= scalar;
-	m_data[1] *= scalar;
-	m_data[2] *= scalar;
+	for (float& i : m_data)
+		i *= scalar;
 	return *this;
 }
 
 Vector3 Vector3::operator/(const float scalar) const
 {
 	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/.");
-	return {m_data[0] / scalar, m_data[1] / scalar, m_data[2] / scalar};
+
+	Vector3 result;
+	for (int i = 0; i < 3; ++i)
+		result[i] = m_data[i] / scalar;
+	return result;
 }
 
 Vector3& Vector3::operator/=(const float scalar)
 {
 	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/=.");
-	m_data[0] /= scalar;
-	m_data[1] /= scalar;
-	m_data[2] /= scalar;
+	for (float& i : m_data)
+		i /= scalar;
 	return *this;
 }
 
 bool Vector3::operator==(const Vector3& other) const
 {
-	return std::fabs(m_data[0] - other[0]) < 1e-5
-		&& std::fabs(m_data[1] - other[1]) < 1e-5
-		&& std::fabs(m_data[2] - other[2]) < 1e-5;
+	bool equal = true;
+
+	for (size_t i = 0; i < 3; ++i)
+	{
+		equal = equal && std::fabs(m_data[i] - other[i]) < 1e-5;
+		if (!equal) return false;
+	}
+	return equal;
 }
 
 bool Vector3::operator!=(const Vector3& other) const
@@ -113,7 +123,6 @@ Vector3::Vector3(const float x, const float y, const float z): m_data{x, y, z}
 
 Vector3::Vector3(const std::initializer_list<float> elements)
 {
-	std::fill(std::begin(m_data), std::end(m_data), 0.0f);
 	std::copy_n(elements.begin(), 3, m_data);
 }
 

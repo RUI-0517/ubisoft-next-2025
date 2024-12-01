@@ -18,7 +18,7 @@ public:
 
 	[[nodiscard]] float dot(const Vector3& other) const;
 	[[nodiscard]] Vector3 cross(const Vector3& other) const;
-
+	
 	float& operator[](size_t index);
 	const float& operator[](size_t index) const;
 
