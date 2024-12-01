@@ -4,9 +4,13 @@
 class Vector3
 {
 public:
+	Vector3 operator+(const Vector3& other) const;
 	Vector3& operator+=(const Vector3& other);
+	Vector3 operator-(const Vector3& other) const;
 	Vector3& operator-=(const Vector3& other);
+	Vector3 operator*(float scalar) const;
 	Vector3& operator*=(float scalar);
+	Vector3 operator/(float scalar) const;
 	Vector3& operator/=(float scalar);
 
 	bool operator==(const Vector3& other) const;
@@ -30,7 +34,6 @@ public:
 
 	Vector3();
 	Vector3(float x, float y, float z);
-	explicit Vector3(const float* array);
 	Vector3(std::initializer_list<float> elements);
 	~Vector3();
 	Vector3(const Vector3& other);
@@ -39,5 +42,5 @@ public:
 	Vector3& operator=(Vector3&& other) noexcept;
 
 private:
-	alignas(16) float m_data[4];
+	std::unique_ptr<float[]> m_data;
 };

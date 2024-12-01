@@ -9,8 +9,9 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <cstdio>
+#include <iostream>
+#include <memory>
 #include <tchar.h>
 
 

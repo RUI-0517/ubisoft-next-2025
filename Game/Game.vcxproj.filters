@@ -56,6 +56,9 @@
     <ClCompile Include="app\math\test\Vector3_unit_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="app\math\src\Vector3p.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\stdafx.h">
@@ -95,6 +98,12 @@
       <Filter>stb_image</Filter>
     </ClInclude>
     <ClInclude Include="app\math\include\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\math\include\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\math\include\Vector3p.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

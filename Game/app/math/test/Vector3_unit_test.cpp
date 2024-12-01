@@ -1,8 +1,7 @@
 #include <stdafx.h>
-#include "../include/Vector3.h"
-#include "../include/operations.h"
 #include <iostream>
 #include <stdexcept>
+#include "../include/Vector.h"
 
 static void THROW_IF_FALSE(const bool condition, const std::string& message)
 {
@@ -205,28 +204,40 @@ static void TEST_Clamp()
 
 int main()
 {
-	std::cout << "Running Vector3 Tests...\n";
-	TEST_DefaultConstructor();
-	TEST_ParameterizedConstructor();
-	TEST_InitializeListConstructor();
-	TEST_Addition();
-	TEST_Subtraction();
-	TEST_ScalarMultiplication();
-	TestDotProduct();
-	TEST_CrossProduct();
-	TEST_PlusEquals();
-	TEST_MinusEquals();
-	TEST_TimesEquals();
-	TEST_DivideEquals();
-	TEST_EqualsOperator();
-	TEST_Magnitude();
-	TEST_MagnitudeSquared();
-	TEST_Normalize();
-	TEST_Distance();
-	TEST_DistanceSquared();
-	TEST_Lerp();
-	TEST_Hadamard();
-	TEST_Clamp();
+	try
+	{
+		std::cout << "Running Vector3 Tests...\n";
+		TEST_DefaultConstructor();
+		TEST_ParameterizedConstructor();
+		TEST_InitializeListConstructor();
+		TEST_Addition();
+		TEST_Subtraction();
+		TEST_ScalarMultiplication();
+		TestDotProduct();
+		TEST_CrossProduct();
+		TEST_PlusEquals();
+		TEST_MinusEquals();
+		TEST_TimesEquals();
+		TEST_DivideEquals();
+		TEST_EqualsOperator();
+		TEST_Magnitude();
+		TEST_MagnitudeSquared();
+		TEST_Normalize();
+		TEST_Distance();
+		TEST_DistanceSquared();
+		TEST_Lerp();
+		TEST_Hadamard();
+		TEST_Clamp();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Test failed: " << e.what() << "\n";
+		return 1;
+	} catch (...)
+	{
+		std::cerr << "An unknown error occurred during the tests.\n";
+		return 1;
+	}
 	std::cout << "All tests passed!\n";
 	return 0;
 }
