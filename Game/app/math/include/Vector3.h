@@ -42,5 +42,5 @@ public:
 	Vector3& operator=(Vector3&& other) noexcept;
 
 private:
-	float m_data[3];
+	__declspec(align(16)) float m_data[3];
 };
