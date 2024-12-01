@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <stdafx.h>
 #include "../include/Vector3.h"
 #include <iostream>
 #include <stdexcept>

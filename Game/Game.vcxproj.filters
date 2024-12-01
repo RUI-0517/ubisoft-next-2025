@@ -50,6 +50,12 @@
     <ClCompile Include="app\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="app\math\src\Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\math\test\Vector3_unit_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\stdafx.h">
@@ -87,6 +93,9 @@
     </ClInclude>
     <ClInclude Include="extern\stb_image\stb_image.h">
       <Filter>stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="app\math\include\Vector3.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

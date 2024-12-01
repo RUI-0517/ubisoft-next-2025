@@ -1,12 +1,15 @@
 //------------------------------------------------------------------------
 // GameTest.cpp
 //------------------------------------------------------------------------
-#include "stdafx.h"
+#include <stdafx.h>
 //------------------------------------------------------------------------
 #include <windows.h>
 //------------------------------------------------------------------------
 #include <App/app.h>
 //------------------------------------------------------------------------
+
+// Use ^(?!.*(extern|MSVC)).*reason\s*'\d+' as a regex pattern 
+// to locate vectorization warnings
 
 #define RESOURCE_FOLDER ".\\resources\\"
 #define RESOURCE_PATH(file) (RESOURCE_FOLDER file)
