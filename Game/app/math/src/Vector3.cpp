@@ -81,15 +81,12 @@ Vector3 Vector3::cross(const Vector3& other) const
 
 float Vector3::magnitude() const
 {
-	return std::sqrt(
-		(*this)[0] * (*this)[0] +
-		(*this)[1] * (*this)[1] +
-		(*this)[2] * (*this)[2]);
+	return std::sqrt(dot(*this));
 }
 
 float Vector3::magnitudeSquared() const
 {
-	return (*this)[0] * (*this)[0] + (*this)[1] * (*this)[1] + (*this)[2] * (*this)[2];
+	return dot(*this);
 }
 
 Vector3 Vector3::normalize() const
@@ -126,16 +123,16 @@ Vector3 Vector3::clamp(const float minLength, const float maxLength) const
 	return *this;
 }
 
-float& Vector3::operator[](const size_t index)
+float Vector3::get(const size_t index) const
 {
 	assert(index < 3 && "Index out of bounds");
 	return m_data[index];
 }
 
-const float& Vector3::operator[](const size_t index) const
+void Vector3::set(const size_t index, const float value)
 {
 	assert(index < 3 && "Index out of bounds");
-	return m_data[index];
+	m_data[index] = value;
 }
 
 std::ostream& operator<<(std::ostream& os, const Vector3& vector)
@@ -187,4 +184,16 @@ Vector3& Vector3::operator=(Vector3&& other) noexcept
 {
 	m_data = std::move(other.m_data);
 	return *this;
+}
+
+float& Vector3::operator[](const size_t index)
+{
+	assert(index < 3 && "Index out of bounds");
+	return m_data[index];
+}
+
+const float& Vector3::operator[](const size_t index) const
+{
+	assert(index < 3 && "Index out of bounds");
+	return m_data[index];
 }

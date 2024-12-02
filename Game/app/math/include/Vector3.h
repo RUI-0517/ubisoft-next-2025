@@ -27,8 +27,9 @@ public:
 	[[nodiscard]] Vector3 hadamard(const Vector3& other) const;
 	[[nodiscard]] Vector3 clamp(float minLength, float maxLength) const;
 
-	float& operator[](size_t index);
-	const float& operator[](size_t index) const;
+	
+	[[nodiscard]] float get(size_t index) const;
+	void set(size_t index, float value);
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector3& vector);
 
@@ -43,4 +44,7 @@ public:
 
 private:
 	std::unique_ptr<float[]> m_data;
+	
+	float& operator[](size_t index);
+	const float& operator[](size_t index) const;
 };
