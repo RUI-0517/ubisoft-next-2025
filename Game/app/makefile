@@ -2,6 +2,8 @@
 
 build:
 	cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+	# cmake --build build --target run_tests
+	cmake --build build
 	cmake --build build --target run_tests
 
 clean:
