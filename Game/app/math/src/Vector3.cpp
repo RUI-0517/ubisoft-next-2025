@@ -5,68 +5,60 @@ Vector3 Vector3::operator+(const Vector3& other) const
 {
 	Vector3 result;
 	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] + other[i];
+		result[i] = (*this)[i] + other[i];
 	return result;
 }
 
 Vector3& Vector3::operator+=(const Vector3& other)
 {
-	for (int i = 0; i < 3; ++i)
-		m_data[i] += other[i];
-	return *this;
+	return *this = *this + other;
 }
 
 Vector3 Vector3::operator-(const Vector3& other) const
 {
 	Vector3 result;
 	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] - other[i];
+		result[i] = (*this)[i] - other[i];
 	return result;
 }
 
 Vector3& Vector3::operator-=(const Vector3& other)
 {
-	for (int i = 0; i < 3; ++i)
-		m_data[i] -= other[i];
-	return *this;
+	return *this = *this - other;
 }
 
 Vector3 Vector3::operator*(const float scalar) const
 {
 	Vector3 result;
 	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] * scalar;
+		result[i] = (*this)[i] * scalar;
 	return result;
 }
 
 Vector3& Vector3::operator*=(const float scalar)
 {
-	for (float& i : m_data)
-		i *= scalar;
-	return *this;
+	return *this = *this * scalar;
 }
 
 Vector3 Vector3::operator/(const float scalar) const
 {
-	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/.");
-
+	assert(scalar != 0.0f && "Division by zero error in Vector3::operator/.");
 	Vector3 result;
 	for (int i = 0; i < 3; ++i)
-		result[i] = m_data[i] / scalar;
+		result[i] = (*this)[i] * (1 / scalar);
 	return result;
 }
 
 Vector3& Vector3::operator/=(const float scalar)
 {
-	if (scalar == 0.0f) throw std::runtime_error("Division by zero error in Vector3::operator/=.");
-	for (float& i : m_data)
-		i /= scalar;
-	return *this;
+	return *this = *this / scalar;
 }
 
 bool Vector3::operator==(const Vector3& other) const
 {
-	return distanceSquared(other) == 0.0f;
+	return std::abs((*this)[0] - other[0]) < 1e-5 &&
+		std::abs((*this)[1] - other[1]) < 1e-5 &&
+		std::abs((*this)[2] - other[2]) < 1e-5;
 }
 
 bool Vector3::operator!=(const Vector3& other) const
@@ -76,26 +68,26 @@ bool Vector3::operator!=(const Vector3& other) const
 
 float Vector3::dot(const Vector3& other) const
 {
-	return m_data[0] * other[0] + m_data[1] * other[1] + m_data[2] * other[2];
+	return (*this)[0] * other[0] + (*this)[1] * other[1] + (*this)[2] * other[2];
 }
 
 Vector3 Vector3::cross(const Vector3& other) const
 {
 	return {
-		m_data[1] * other[2] - m_data[2] * other[1],
-		m_data[2] * other[0] - m_data[0] * other[2],
-		m_data[0] * other[1] - m_data[1] * other[0]
+		(*this)[1] * other[2] - (*this)[2] * other[1],
+		(*this)[2] * other[0] - (*this)[0] * other[2],
+		(*this)[0] * other[1] - (*this)[1] * other[0]
 	};
 }
 
 float Vector3::magnitude() const
 {
-	return std::sqrt(m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2]);
+	return std::sqrt(dot(*this));
 }
 
 float Vector3::magnitudeSquared() const
 {
-	return m_data[0] * m_data[0] + m_data[1] * m_data[1] + m_data[2] * m_data[2];
+	return dot(*this);
 }
 
 Vector3 Vector3::normalize() const
@@ -114,14 +106,14 @@ float Vector3::distanceSquared(const Vector3& other) const
 	return (*this - other).magnitudeSquared();
 }
 
-Vector3 Vector3::lerp(const Vector3& other, float t) const
+Vector3 Vector3::lerp(const Vector3& other, const float t) const
 {
 	return *this * (1 - t) + other * t;
 }
 
 Vector3 Vector3::hadamard(const Vector3& other) const
 {
-	return {m_data[0] * other[0], m_data[1] * other[1], m_data[2] * other[2]};
+	return {(*this)[0] * other[0], (*this)[1] * other[1], (*this)[2] * other[2]};
 }
 
 Vector3 Vector3::clamp(const float minLength, const float maxLength) const
@@ -132,30 +124,22 @@ Vector3 Vector3::clamp(const float minLength, const float maxLength) const
 	return *this;
 }
 
-float& Vector3::operator[](const size_t index)
-{
-	return m_data[index];
-}
-
-const float& Vector3::operator[](const size_t index) const
-{
-	return m_data[index];
-}
-
 std::ostream& operator<<(std::ostream& os, const Vector3& vector)
 {
-	for (const auto& element : vector.m_data)
-		os << element << ' ';
+	os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << "]";
 	return os;
 }
 
 Vector3::Vector3()
 {
-	std::fill(std::begin(m_data), std::end(m_data), 0.0f);
+	std::fill_n(m_data, 3, 0.0f);
 }
 
-Vector3::Vector3(const float x, const float y, const float z): m_data{x, y, z}
+Vector3::Vector3(const float x, const float y, const float z)
 {
+	(*this)[0] = x;
+	(*this)[1] = y;
+	(*this)[2] = z;
 }
 
 Vector3::Vector3(const std::initializer_list<float> elements)
@@ -183,6 +167,18 @@ Vector3::Vector3(Vector3&& other) noexcept
 
 Vector3& Vector3::operator=(Vector3&& other) noexcept
 {
-	if (this != &other) std::copy_n(other.m_data, 3, m_data);
+	std::copy_n(other.m_data, 3, m_data);
 	return *this;
+}
+
+float& Vector3::operator[](const size_t index)
+{
+	assert(index > 0 && index < 3 && "Index out of bounds");
+	return m_data[index];
+}
+
+const float& Vector3::operator[](const size_t index) const
+{
+	assert(index > 0 && index < 3 && "Index out of bounds");
+	return m_data[index];
 }

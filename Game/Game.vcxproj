@@ -45,7 +45,8 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Qvec-report:2  /W4 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/Qvec-report:2  /W4 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
-    <ClCompile Include="app\math\test\Vector3_unit_test.cpp" />
+    <ClCompile Include="app\math\src\Vector3p.cpp" />
+    <ClCompile Include="app\math\src\Vector4p.cpp" />
     <ClCompile Include="app\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Test Debug|x64'">Create</PrecompiledHeader>
@@ -61,7 +62,10 @@
     <ClCompile Include="extern\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app\math\include\Vector.h" />
     <ClInclude Include="app\math\include\Vector3.h" />
+    <ClInclude Include="app\math\include\Vector3p.h" />
+    <ClInclude Include="app\math\include\Vector4p.h" />
     <ClInclude Include="app\stdafx.h" />
     <ClInclude Include="app\targetver.h" />
     <ClInclude Include="extern\App\app.h" />
@@ -178,6 +182,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,6 +203,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -218,6 +226,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -239,6 +249,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -258,6 +270,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -279,6 +293,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)extern\;$(SolutionDir)app\</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

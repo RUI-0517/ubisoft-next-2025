@@ -4,6 +4,8 @@
 class Vector3
 {
 public:
+#pragma region API
+
 	Vector3 operator+(const Vector3& other) const;
 	Vector3& operator+=(const Vector3& other);
 	Vector3 operator-(const Vector3& other) const;
@@ -41,6 +43,10 @@ public:
 	Vector3(Vector3&& other) noexcept;
 	Vector3& operator=(Vector3&& other) noexcept;
 
+#pragma endregion
+
 private:
+#pragma region Internal
 	float m_data[3];
+#pragma endregion
 };
