@@ -1,8 +1,18 @@
 #pragma once
 #include <xmmintrin.h>
 
+#if defined(__SSE4_1__) || defined(__AVX__) || defined(__AVX2__)
+#include <smmintrin.h>
+#elif defined(__SSE2__) || defined(_M_IX86) || defined(_M_X64)
+#include <emmintrin.h>
+#else
+    #error Unsupported platform
+#endif
+
 struct Vector4p
 {
+#pragma region API
+
 	union
 	{
 		struct
@@ -51,6 +61,24 @@ struct Vector4p
 	Vector4p(Vector4p&& other) noexcept;
 	Vector4p& operator=(Vector4p&& other) noexcept;
 
+#pragma endregion
+
 protected:
-	virtual std::ostream& ToString(std::ostream& os, const Vector4p& vector) const;
+#pragma region Internal
+	virtual std::ostream& to_string_impl(std::ostream& os, const Vector4p& vector) const;
+
+	/// <summary>
+	/// Computes the dot product and replicates it across a __m128 vector.
+	/// </summary>
+	/// <param name="other">The vector to dot with.</param>
+	/// <returns>Dot product in all four components.</returns>
+	[[nodiscard]] __m128 dot_impl(__m128 other) const;
+
+	/// <summary>
+	/// Computes the dot product and returns it as a scalar.
+	/// </summary>
+	/// <param name="other">The vector to dot with.</param>
+	/// <returns>Scalar dot product.</returns>
+	[[nodiscard]] float dot_impl_scalar(__m128 other) const;
+#pragma endregion
 };

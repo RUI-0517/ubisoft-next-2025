@@ -8,11 +8,11 @@
 #include "targetver.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <memory>
 #include <tchar.h>
-
 
 // TODO: reference additional headers your program requires here

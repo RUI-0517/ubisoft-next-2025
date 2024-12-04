@@ -1,8 +1,5 @@
 #include <stdafx.h>
-#include <intrin.h>
 #include "../include/Vector4p.h"
-
-#include <cassert>
 
 Vector4p Vector4p::operator+(const Vector4p& other) const
 {
@@ -63,10 +60,10 @@ bool Vector4p::operator!=(const Vector4p& other) const
 // to be slower than its scalar counterpart.
 float Vector4p::dot(const Vector4p& other) const
 {
-	const __m128 result = _mm_dp_ps(m_value, other.m_value, 0xff);
-	return _mm_cvtss_f32(result);
+	return dot_impl_scalar(other.m_value);
 }
 
+// TODO: Optimize
 Vector4p Vector4p::cross(const Vector4p& other) const
 {
 	// Cross product formula:
@@ -77,6 +74,7 @@ Vector4p Vector4p::cross(const Vector4p& other) const
 	// Shuffle for the first part of the formula:
 	// For vector a: {3, 0, 2, 1}, For vector b: {3, 1, 0, 2}
 	// The result of multiplying these will give the left side of the cross product.
+	// Note: In the _MM_SHUFFLE macro, the index counts from right to left.
 	const __m128 tmp0 = _mm_shuffle_ps(m_value, m_value, _MM_SHUFFLE(3, 0, 2, 1));
 	const __m128 tmp1 = _mm_shuffle_ps(other.m_value, other.m_value, _MM_SHUFFLE(3, 1, 0, 2));
 
@@ -96,17 +94,17 @@ Vector4p Vector4p::cross(const Vector4p& other) const
 
 float Vector4p::magnitude() const
 {
-	return _mm_cvtss_f32(_mm_sqrt_ps(_mm_dp_ps(m_value, m_value, 0xff)));
+	return _mm_cvtss_f32(_mm_sqrt_ps(dot_impl(m_value)));
 }
 
 float Vector4p::magnitudeSquared() const
 {
-	return _mm_cvtss_f32(_mm_dp_ps(m_value, m_value, 0xff));
+	return _mm_cvtss_f32(dot_impl(m_value));
 }
 
 Vector4p Vector4p::normalize() const
 {
-	return Vector4p(_mm_div_ps(m_value, _mm_sqrt_ps(_mm_dp_ps(m_value, m_value, 0xff))));
+	return Vector4p(_mm_div_ps(m_value, _mm_sqrt_ps(dot_impl(m_value))));
 }
 
 float Vector4p::distance(const Vector4p& other) const
@@ -149,15 +147,51 @@ const float& Vector4p::operator[](const size_t index) const
 	return (&x)[index];
 }
 
-std::ostream& Vector4p::ToString(std::ostream& os, const Vector4p& vector) const
+std::ostream& Vector4p::to_string_impl(std::ostream& os, const Vector4p& vector) const
 {
 	os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << ' ' << vector[3] << "]";
 	return os;
 }
 
+__m128 Vector4p::dot_impl(__m128 other) const
+{
+	// Dot product formula
+	// {a.x * b.x + a.y * b.y + a.z * b.z
+	// {ab.x + ab.y + ab.z}
+	// {ab.xyz}
+#if defined(__SSE4_1__) || defined(__AVX__) || defined(__AVX2__)
+	// Hardware Implementation
+    const __m128 result = _mm_dp_ps(m_value, other, 0xff);
+#elif defined(__SSE2__) || defined(_M_IX86) || defined(_M_X64)
+	// {a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w}
+	// {ab.x, ab.y, ab.z, ab.w}
+	__m128 temp0 = _mm_mul_ps(m_value, other);
+	// Note: In the _MM_SHUFFLE macro, the index counts from right to left.
+	// {ab.y, ab.x, ab.w, ab.z}
+	__m128 temp1 = _mm_shuffle_ps(temp0, temp0, _MM_SHUFFLE(2, 3, 0, 1));
+	// {ab.x + ab.y, ab.y + ab.x, ab.z + ab.w, ab.w + ab.z}
+	// {ab.xy, ab.yx, ab.zw, ab.wz}
+	// {ab.xy, ab.xy, ab.zw, ab.zw}
+	temp0 = _mm_add_ps(temp0, temp1);
+	// {ab.zw, ab.zw, ab.xy, ab.xy}
+	temp1 = _mm_shuffle_ps(temp0, temp0, _MM_SHUFFLE(0, 1, 2, 3));
+	// {ab.xy + ab.zw, ab.xy + ab.zw, ab.zw + ab.xy, ab.zw + ab.xy}
+	// {ab.xyzw, ab.xyzw, ab.xyzw, ab.xyzw}
+	const __m128 result = _mm_add_ps(temp0, temp1);
+#else
+    #error Unsupported platform
+#endif
+	return result;
+}
+
+float Vector4p::dot_impl_scalar(const __m128 other) const
+{
+	return _mm_cvtss_f32(dot_impl(other));
+}
+
 std::ostream& operator<<(std::ostream& os, const Vector4p& vector)
 {
-	return vector.ToString(os, vector);;
+	return vector.to_string_impl(os, vector);;
 }
 
 Vector4p::Vector4p(): m_value(_mm_setzero_ps())

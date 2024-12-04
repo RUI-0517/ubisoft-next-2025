@@ -4,6 +4,8 @@
 class Vector3
 {
 public:
+#pragma region API
+
 	Vector3 operator+(const Vector3& other) const;
 	Vector3& operator+=(const Vector3& other);
 	Vector3 operator-(const Vector3& other) const;
@@ -27,7 +29,6 @@ public:
 	[[nodiscard]] Vector3 hadamard(const Vector3& other) const;
 	[[nodiscard]] Vector3 clamp(float minLength, float maxLength) const;
 
-	// 0.04 ns
 	float& operator[](size_t index);
 	const float& operator[](size_t index) const;
 
@@ -42,6 +43,10 @@ public:
 	Vector3(Vector3&& other) noexcept;
 	Vector3& operator=(Vector3&& other) noexcept;
 
+#pragma endregion
+
 private:
+#pragma region Internal
 	float m_data[3];
+#pragma endregion
 };

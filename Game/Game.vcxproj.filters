@@ -18,6 +18,9 @@
     <Filter Include="stb_image">
       <UniqueIdentifier>{e23d9021-a146-4230-906e-513d585f4802}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{fb954d29-93d0-4582-bf7c-8340372e094c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="app\game.cpp">
@@ -50,14 +53,14 @@
     <ClCompile Include="app\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="app\math\src\Vector3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="app\math\src\Vector4p.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="app\math\src\Vector3.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="app\math\src\Vector3p.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,17 +100,17 @@
     <ClInclude Include="extern\stb_image\stb_image.h">
       <Filter>stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="app\math\include\Vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="app\math\include\Vector.h">
-      <Filter>Header Files</Filter>
+      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="app\math\include\Vector4p.h">
-      <Filter>Header Files</Filter>
+      <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="app\math\include\Vector3p.h">
-      <Filter>Header Files</Filter>
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="app\math\include\Vector3.h">
+      <Filter>Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

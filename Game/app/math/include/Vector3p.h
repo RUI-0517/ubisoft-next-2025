@@ -3,6 +3,8 @@
 
 struct Vector3p final : Vector4p
 {
+#pragma region API
+
 	float& operator[](size_t index) override;
 	const float& operator[](size_t index) const override;
 
@@ -17,6 +19,12 @@ struct Vector3p final : Vector4p
 	Vector3p(Vector3p&& other) noexcept;
 	Vector3p& operator=(Vector3p&& other) noexcept;
 
+#pragma endregion
+
 protected:
-	std::ostream& ToString(std::ostream& os, const Vector4p& vector) const override;
+#pragma region Internal
+
+	std::ostream& to_string_impl(std::ostream& os, const Vector4p& vector) const override;
+
+#pragma endregion
 };

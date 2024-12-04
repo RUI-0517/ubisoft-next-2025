@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "../include/Vector3.h"
-#include <cassert>
 
 Vector3 Vector3::operator+(const Vector3& other) const
 {

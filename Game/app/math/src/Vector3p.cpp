@@ -1,5 +1,4 @@
 #include <stdafx.h>
-#include <cassert>
 #include "../include/Vector3p.h"
 
 float& Vector3p::operator[](const size_t index)
@@ -51,7 +50,7 @@ Vector3p::Vector3p(Vector3p&& other) noexcept = default;
 
 Vector3p& Vector3p::operator=(Vector3p&& other) noexcept = default;
 
-std::ostream& Vector3p::ToString(std::ostream& os, const Vector4p& vector) const
+std::ostream& Vector3p::to_string_impl(std::ostream& os, const Vector4p& vector) const
 {
 	os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << "]";
 	return os;
