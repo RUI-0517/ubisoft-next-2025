@@ -30,10 +30,15 @@ jobs:
         run: |
           pacman -Syu --noconfirm make
 
-      - name: Build and run tests
+      - name: Build and run tests with default settings
         run: |
           cd Game\app
           make build
+
+      - name: Build and run tests with SSE4.1 optimization
+        run: |
+          cd Game\app
+          make build_sse4.1
 
       - name: Allow PR if tests succeed
         if: success()
