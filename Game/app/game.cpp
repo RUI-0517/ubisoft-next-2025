@@ -2,7 +2,6 @@
 // GameTest.cpp
 //------------------------------------------------------------------------
 #include <stdafx.h>
-// #define ENABLE_SIMD
 //------------------------------------------------------------------------
 #include <windows.h>
 //------------------------------------------------------------------------
@@ -11,6 +10,7 @@
 #include <ratio>
 #include <App/app.h>
 
+#define ENABLE_SIMD
 #include "math/include/Vector.h"
 
 //------------------------------------------------------------------------
@@ -41,20 +41,19 @@ std::string getCurrentTime()
 //------------------------------------------------------------------------
 void Init()
 {
-	constexpr int iterations = 1000000;
+	constexpr int iterations = 10000000;
 
-	const Vector3 a = {
-		1.0f, 1.0f, 1.0f
-	};
+	Vector3 a{1.1f, 1.12f, 1.12f};
 
-	Vector3 result;
+	Vector3 result{1.0f, 1.12f, 1.0f};
 	const auto start = std::chrono::high_resolution_clock::now();
 
-	// for (int i = 0; i < iterations; ++i)
-	// {
-	// 	result = ::operator+(result, a);
-	// 	// result.m_value = ::operator+(result, a).m_value;
-	// }
+	float k = 0.0f;
+
+	for (int i = 0; i < iterations; ++i)
+	{
+		result = result.cross(a);
+	}
 
 	const auto end = std::chrono::high_resolution_clock::now();
 	const auto duration = std::chrono::duration<double, std::nano>(end - start).count();
@@ -63,6 +62,7 @@ void Init()
 	log << "-------------------------\n";
 	log << "Current Time: " << getCurrentTime() << "\n";
 	log << "Final Result: " << result << "\n";
+	log << "Final Result: " << k << "\n";
 	log << "Performed " << iterations << " additions in " << duration << " ns\n";
 	log << "Average time per addition: " << (duration / iterations) << " ns\n";
 	log.close();

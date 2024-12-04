@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include <iostream>
 #include <stdexcept>
+#define ENABLE_SIMD
 #include "../include/Vector.h"
 
 static void THROW_IF_FALSE(const bool condition, const std::string& message)
@@ -79,7 +80,7 @@ static void TEST_CrossProduct()
 {
 	const Vector3 vector1(1.0f, 2.0f, 3.0f);
 	const Vector3 vector2(4.0f, 5.0f, 6.0f);
-	Vector3 result = vector1.cross(vector2);
+	const Vector3 result = vector1.cross(vector2);
 	THROW_IF_FALSE(EQUAL(result[0], -3.0f), "Cross product failed: x != -3");
 	THROW_IF_FALSE(EQUAL(result[1], 6.0f), "Cross product failed: y != 6");
 	THROW_IF_FALSE(EQUAL(result[2], -3.0f), "Cross product failed: z != -3");

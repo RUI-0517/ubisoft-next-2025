@@ -53,7 +53,7 @@
     <ClCompile Include="app\math\src\Vector3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="app\math\test\Vector3_unit_test.cpp">
+    <ClCompile Include="app\math\src\Vector4p.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="app\math\src\Vector3p.cpp">
@@ -101,6 +101,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="app\math\include\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\math\include\Vector4p.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="app\math\include\Vector3p.h">
