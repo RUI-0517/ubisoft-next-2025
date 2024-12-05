@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include "../include/Vector3p.h"
+#include "pch.h"
+#include "Vector3p.h"
 
 float& Vector3p::operator[](const size_t index)
 {

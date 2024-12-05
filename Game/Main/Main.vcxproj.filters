@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{7c7ebbfc-2720-43f4-b309-684da157cd62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\App">
+      <UniqueIdentifier>{5bd6d08c-258a-42cc-b2e7-0d21cb7c36b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\glut">
+      <UniqueIdentifier>{a96f1883-e998-444b-a44f-7599a59788db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\miniaudio">
+      <UniqueIdentifier>{907d65f9-3ff4-48e9-a605-74f4aa78b625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\stb_image">
+      <UniqueIdentifier>{ac83f1e9-5371-474a-9df0-8ea402e98375}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\app.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\DirectSound.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\main.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleController.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleSound.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleSprite.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\miniaudio\miniaudio.cpp">
+      <Filter>External\miniaudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\stb_image\stb_image.cpp">
+      <Filter>External\stb_image</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\app.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\AppSettings.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\DirectSound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\main.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\mydirectsound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleController.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleSound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleSprite.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut_ext.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut_std.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\glut.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\miniaudio\miniaudio.h">
+      <Filter>External\miniaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\stb_image\stb_image.h">
+      <Filter>External\stb_image</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
