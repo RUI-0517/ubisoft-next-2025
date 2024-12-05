@@ -1,5 +1,5 @@
-#include <stdafx.h>
-#include "../include/Vector4p.h"
+#include "pch.h"
+#include "Vector4p.h"
 
 Vector4p Vector4p::operator+(const Vector4p& other) const
 {
@@ -36,7 +36,7 @@ Vector4p Vector4p::operator/(const float scalar) const
 {
 	const float inverseScalar = 1.0f / scalar;
 	const __m128 packedInverseScalar = _mm_set1_ps(inverseScalar);
-	return Vector4p(_mm_mul_ps(m_value, packedInverseScalar));;
+	return Vector4p(_mm_mul_ps(m_value, packedInverseScalar));
 }
 
 Vector4p& Vector4p::operator/=(const float scalar)
@@ -191,7 +191,7 @@ float Vector4p::dot_impl_scalar(const __m128 other) const
 
 std::ostream& operator<<(std::ostream& os, const Vector4p& vector)
 {
-	return vector.to_string_impl(os, vector);;
+	return vector.to_string_impl(os, vector);
 }
 
 Vector4p::Vector4p(): m_value(_mm_setzero_ps())

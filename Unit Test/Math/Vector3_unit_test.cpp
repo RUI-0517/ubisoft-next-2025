@@ -1,11 +1,12 @@
-#include <stdafx.h>
 #include <iostream>
 #include <stdexcept>
-#include "../include/Vector.h"
+#include <cmath>
+#include "Vector3.h"
 
-static void THROW_IF_FALSE(const bool condition, const std::string& message)
+static void THROW_IF_FALSE(const bool condition, const std::string &message)
 {
-	if (condition) return;
+	if (condition)
+		return;
 	throw std::runtime_error(message);
 }
 
@@ -228,11 +229,12 @@ int main()
 		TEST_Hadamard();
 		TEST_Clamp();
 	}
-	catch (const std::exception& e)
+	catch (const std::exception &e)
 	{
 		std::cerr << "Test failed: " << e.what() << "\n";
 		return 1;
-	} catch (...)
+	}
+	catch (...)
 	{
 		std::cerr << "An unknown error occurred during the tests.\n";
 		return 1;
