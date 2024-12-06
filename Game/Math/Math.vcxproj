@@ -183,22 +183,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Scalar\SyntacticSugar_Impl.h" />
+    <ClInclude Include="Scalar\Vector.h" />
+    <ClInclude Include="Scalar\Vector2_Impl.h" />
+    <ClInclude Include="Scalar\Vector_Impl.h" />
+    <ClInclude Include="Scalar\Vector3_Impl.h" />
+    <ClInclude Include="Scalar\Vector4_Impl.h" />
+    <ClInclude Include="SSE\Common.h" />
+    <ClInclude Include="SSE\Vector.h" />
+    <ClInclude Include="SSE\Vector3_4_Impl.h" />
     <ClInclude Include="Vector.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector3p.h" />
-    <ClInclude Include="Vector4p.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vector3p.cpp" />
-    <ClCompile Include="Vector4p.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

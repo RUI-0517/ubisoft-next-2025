@@ -1,8 +1,11 @@
 #pragma once
+#include <cassert>
 
-#if defined(__SSE4_1__) || defined(__AVX__) || defined(__AVX2__)||defined(__SSE2__) || defined(_M_IX86) || defined(_M_X64)
-#include "Vector3p.h"
-using Vector3 = Vector3p;
+// Toggle to disable/enable simd manually
+#define USE_SIMD
+
+#if defined(USE_SIMD) && (defined(__AVX__) || defined(__AVX2__) || defined(_M_IX86) || defined(_M_X64))
+#include "SSE/Vector.h"
 #else
-#include "Vector3.h"
-#endif // ENABLE_SIMD
+#include "Scalar/Vector.h"
+#endif
