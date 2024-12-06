@@ -56,9 +56,9 @@ struct Vector<3, T> final : SyntacticSugar<Vector<3, T>, T>
 		return ::cross(*this, other);
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const Vector& Vector)
+	friend std::ostream& operator<<(std::ostream& os, const Vector& vector)
 	{
-		os << "[" << Vector[0] << ' ' << Vector[1] << ' ' << Vector[2] << "]";
+		os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << "]";
 		return os;
 	}
 };

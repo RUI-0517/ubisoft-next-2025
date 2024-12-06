@@ -51,7 +51,7 @@ struct Vector<2, T> final : SyntacticSugar<Vector<2, T>, T>
 
 	friend std::ostream& operator<<(std::ostream& os, const Vector& vector)
 	{
-		os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << "]";
+		os << "[" << vector[0] << ' ' << vector[1] << "]";
 		return os;
 	}
 };

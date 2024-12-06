@@ -1,4 +1,6 @@
 #pragma once
+#include <ostream>
+#include  <cmath>
 
 template <size_t N, typename T>
 struct Vector final

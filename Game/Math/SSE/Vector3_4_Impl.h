@@ -1,4 +1,5 @@
 #pragma once
+#include <ostream>
 #include "Common.h"
 
 template <size_t N, typename T>
@@ -152,7 +153,16 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return (&x)[index];
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const Vector& vector);
+	friend std::ostream& operator<<(std::ostream& os, const Vector& vector)
+	{
+		os << "[";
+		if constexpr (N == 3)
+			os << vector[0] << ' ' << vector[1] << ' ' << vector[2];
+		else if constexpr (N == 4)
+			os << vector[0] << ' ' << vector[1] << ' ' << vector[2] << ' ' << vector[3];
+		os << "]";
+		return os;
+	}
 
 	Vector() : m_value(_mm_setzero_ps())
 	{
@@ -184,17 +194,6 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 
 private:
 #pragma region Internal
-	std::ostream& to_string_impl(std::ostream& os, const Vector& vector) const
-	{
-		os << "[";
-		if constexpr (N == 3)
-			os << (*this)[0] << ' ' << (*this)[1] << ' ' << (*this)[2];
-		else if constexpr (N == 4)
-			os << (*this)[0] << ' ' << (*this)[1] << ' ' << (*this)[2] << ' ' << (*this)[3];
-		os << "]";
-		return os;
-	}
-
 	/// <summary>
 	/// Computes the dot product and replicates it across a __m128 vector.
 	/// </summary>
