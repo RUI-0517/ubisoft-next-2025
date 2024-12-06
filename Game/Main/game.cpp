@@ -38,9 +38,9 @@ void Update(const float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	const Vector3 a{APP_INIT_WINDOW_WIDTH, APP_INIT_WINDOW_HEIGHT, 0.0};
-	const Vector3 b{0.0, 0.0, 50.0};
-	const Vector3 result = (a + b) / 2.0f;
+	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
+	const Vector3f b{0.0f, 0.0f, 50.0f};
+	const Vector3f result = (a + b) / 2.0f;
 
 	App::Print(result.x, result.y, "Hello World");
 }
