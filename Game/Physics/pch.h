@@ -9,10 +9,4 @@
 
 #define WIN32_LEAN_AND_MEAN     
 
-// add headers that you want to pre-compile here
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <ostream>
-
 #endif //PCH_H
