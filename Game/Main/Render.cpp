@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Render.h"
 #include "Resources.h"
+#include <algorithm>
 
 namespace Rendering
 {
@@ -98,5 +99,60 @@ namespace Rendering
 			}
 		}
 		return -1.0; // No intersection found
+	}
+
+	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center)
+	{
+		return (hitPoint - center).normalize();
+	}
+
+	// TODO: Light Color, Material Color
+	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
+	                       const Vector3f& rayDirection, const Vector3f& lightPosition)
+	{
+		// Direction from point to light
+		Vector3f lightDir = (lightPosition - hitPoint).normalize();
+		// Direction from point to camera (origin)
+		Vector3f viewDir = -rayDirection.normalize();
+		// Halfway vector between light and view
+		Vector3f halfDir = (lightDir + viewDir).normalize();
+
+		// Diffuse component
+		float diffuse = max(normal.dot(lightDir), 0.0f);
+
+		// Specular component
+		constexpr float specularStrength = 0.5;
+		constexpr float shininess = 32.0;
+		const float spec = std::pow(max(normal.dot(halfDir), 0.0f), shininess);
+
+		// White specular highlight
+		Vector3f specular = Vector3f(1.0f) * (spec * specularStrength);
+
+		// Ambient component
+		Vector3f ambient(0.1f);
+
+		Vector3f color = ambient + diffuse + specular;
+
+		return {color.x, color.y, color.z, 1.0f};
+	}
+
+	// Apply ACES tone mapping
+	Vector4f AcesFilm(const Vector4f& color)
+	{
+		constexpr float a = 2.51f;
+		constexpr float b = 0.03f;
+		constexpr float c = 2.43f;
+		constexpr float d = 0.59f;
+		constexpr float e = 0.14f;
+
+		// TODO: SSE Version
+		Vector3f result;
+		for (int i = 0; i < 3; ++i)
+		{
+			const float numerator = color[i] * (color[i] * a + b);
+			const float denominator = color[i] * (color[i] * c + d) + e;
+			result[i] = std::clamp(numerator / denominator, 0.0f, 1.0f);
+		}
+		return {result.x, result.y, result.z, 1.0f};
 	}
 }

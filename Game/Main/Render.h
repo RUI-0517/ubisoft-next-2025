@@ -21,4 +21,10 @@ namespace Rendering
 	float SdSphere(const Vector3f& p, float s);
 	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
 	                      const Vector3f& sphereCenter, float sphereRadius);
+
+	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
+	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
+	                       const Vector3f& rayDirection, const Vector3f& lightPosition);
+
+	Vector4f AcesFilm(const Vector4f& color);
 }

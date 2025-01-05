@@ -62,13 +62,6 @@ void Render()
 	const Vector3f b{0.0f, 0.0f, 50.0f};
 	const Vector3f result = (a + b) / 2.0f;
 
-	// auto uvCoordinate = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
-	// {
-	// 	u -= 0.5f;
-	// 	v -= 0.5f;
-	// 	buffer[index] = {u, v, 0, 99};
-	// };
-
 	// TODO: using Vector2f instead individual component
 	auto rayMarching = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
 	{
@@ -90,9 +83,18 @@ void Render()
 
 		Vector4f fragColor;
 		if (hasIntersected)
-			fragColor = {1.0f, 0.0f, 0.0f, 1.0f};
-		else
-			fragColor = {0.9f, 0.9f, 0.9f, 1.0f};
+		{
+			// Calculate intersection point and normal
+			Vector3f hitPoint = rayOrigin + t * rayDirection;
+			Vector3f normal = Rendering::CalculateSphereNormal(hitPoint, sphereCenter);
+			Vector3f lightPosition = {-15, 15, 0};
+			// Apply Lighting
+			fragColor = Rendering::ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
+		}
+		else fragColor = {0.95f, 0.95f, 0.95f, 1.0f};
+
+		fragColor = Rendering::AcesFilm(fragColor);
+		fragColor = fragColor.pow(1.0f / 2.2f);
 
 		buffer[index] = fragColor;
 	};
