@@ -16,6 +16,12 @@ struct Vector final
 			elements[i] = T();
 	}
 
+	explicit Vector(const T scalar)
+	{
+		for (size_t i = 0; i < N; i++)
+			elements[i] = scalar;
+	}
+
 	/// <summary>
 	/// This allow this kind of init Vector<3, float> vec = {3.14, 6.28, 9.42};
 	/// </summary>
@@ -77,9 +83,34 @@ Vector<N, T> operator+(const Vector<N, T>& lhs, const Vector<N, T>& rhs)
 }
 
 template <size_t N, typename T>
+Vector<N, T> operator+(const Vector<N, T>& lhs, const T scalar)
+{
+	Vector<N, T> result;
+	for (size_t i = 0; i < N; ++i)
+		result[i] = lhs[i] + scalar;
+	return result;
+}
+
+template <size_t N, typename T>
 Vector<N, T>& operator+=(Vector<N, T>& lhs, const Vector<N, T>& rhs)
 {
 	return lhs = lhs + rhs;
+}
+
+template <size_t N, typename T>
+Vector<N, T>& operator+=(Vector<N, T>& lhs, const T scalar)
+{
+	return lhs = lhs + scalar;
+}
+
+// -object
+template <size_t N, typename T>
+Vector<N, T> operator -(const Vector<N, T>& self)
+{
+	Vector<N, T> temp;
+	for (size_t i = 0; i < N; i++)
+		temp[i] = -self[i];
+	return temp;
 }
 
 template <size_t N, typename T>
@@ -218,6 +249,17 @@ template <size_t N, typename T>
 
 	for (size_t i = 0; i < N; ++i)
 		result[i] = lhs[i] * rhs[i];
+
+	return result;
+}
+
+template <size_t N, typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
+[[nodiscard]] Vector<N, T> pow(const Vector<N, T>& self, const T exponent)
+{
+	Vector<N, T> result;
+
+	for (size_t i = 0; i < N; ++i)
+		result[i] = std::pow(self[i], exponent);
 
 	return result;
 }
