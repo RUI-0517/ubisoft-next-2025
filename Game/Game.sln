@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Main", "Main\Main.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "Math\Math.vcxproj", "{15595BF7-11E0-494C-8998-AA041FE2AE0F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics", "Physics\Physics.vcxproj", "{2A342E2E-D31A-4910-AA8F-89699A243008}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{15595BF7-11E0-494C-8998-AA041FE2AE0F}.Release|x64.Build.0 = Release|x64
 		{15595BF7-11E0-494C-8998-AA041FE2AE0F}.Release|x86.ActiveCfg = Release|Win32
 		{15595BF7-11E0-494C-8998-AA041FE2AE0F}.Release|x86.Build.0 = Release|Win32
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Debug|x64.ActiveCfg = Debug|x64
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Debug|x64.Build.0 = Debug|x64
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Debug|x86.ActiveCfg = Debug|Win32
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Debug|x86.Build.0 = Debug|Win32
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Release|x64.ActiveCfg = Release|x64
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Release|x64.Build.0 = Release|x64
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Release|x86.ActiveCfg = Release|Win32
+		{2A342E2E-D31A-4910-AA8F-89699A243008}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

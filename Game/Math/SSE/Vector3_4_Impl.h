@@ -143,13 +143,13 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 
 	float& operator[](const size_t index)
 	{
-		assert(index > 0 && index < 4 && "Index out of bounds");
+		assert(index < N && "Index out of bounds");
 		return (&x)[index];
 	}
 
 	const float& operator[](const size_t index) const
 	{
-		assert(index > 0 && index < 4 && "Index out of bounds");
+		assert(index < N && "Index out of bounds");
 		return (&x)[index];
 	}
 
