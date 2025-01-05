@@ -138,6 +138,12 @@ Vector<N, T> operator*(const Vector<N, T>& vec, const float scalar)
 }
 
 template <size_t N, typename T>
+Vector<N, T> operator*(const float scalar, const Vector<N, T>& self)
+{
+	return self * scalar;
+}
+
+template <size_t N, typename T>
 Vector<N, T>& operator*=(Vector<N, T>& vec, const float scalar)
 {
 	return vec = vec * scalar;

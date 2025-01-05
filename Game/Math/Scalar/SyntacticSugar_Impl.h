@@ -50,6 +50,12 @@ struct SyntacticSugar
 		return ::hadamard(static_cast<const TSelf&>(*this), other);
 	}
 
+	template <typename = std::enable_if_t<std::is_floating_point_v<TValue>>>
+	[[nodiscard]] TSelf pow(const TValue exponent) const
+	{
+		return ::pow(static_cast<const TSelf&>(*this), exponent);
+	}
+
 private:
 	SyntacticSugar() = default;
 	SyntacticSugar(const SyntacticSugar&) = default;
