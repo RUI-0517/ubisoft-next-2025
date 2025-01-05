@@ -10,8 +10,6 @@
 #include "app\app.h"
 //------------------------------------------------------------------------
 
-#include <sstream>
-
 #include "Vector.h"
 #include "World.h"
 
