@@ -69,6 +69,7 @@ namespace Rendering
 	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
 		const Vector4f skyColor = {0.0f, 0.0f, 0.0f, 1.0f};
+
 		Vector4f fragColor = skyColor;
 
 		auto [t, materialId] = IntersectScene(rayOrigin, rayDirection);
@@ -76,15 +77,15 @@ namespace Rendering
 
 		if (hasIntersected)
 		{
-			Vector3f hitPoint = rayOrigin + t * rayDirection;
+			const Vector3f hitPoint = rayOrigin + t * rayDirection;
 
 			// TODO: Using geom transform
-			const Vector3f sphereCenter{0.0f, 0.0f, 0.0f};
 			// Calculate Normal
-			Vector3f normal = materialId == 1.0f ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, sphereCenter);
+			const Vector3f normal =
+				materialId == 1.0f ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, SPHERE_CENTER);
 
 			// Apply Lighting
-			Vector3f lightPosition = {-15, 15, 0};
+			const Vector3f lightPosition = {-15, 15, 0};
 			fragColor = ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
 		}
 
@@ -103,9 +104,8 @@ namespace Rendering
 			materialId = PLANE_MATERIAL_ID;
 		}
 
-		const Vector3f sphereCenter{0.0f, 0.0f, 0.0f};
 		constexpr float sphereRadius = 1.0f;
-		const float tSphere = IntersectSphere(rayOrigin, rayDirection, sphereCenter, sphereRadius);
+		const float tSphere = IntersectSphere(rayOrigin, rayDirection, SPHERE_CENTER, sphereRadius);
 
 		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
 		{
@@ -125,25 +125,27 @@ namespace Rendering
 	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
 	                      const Vector3f& sphereCenter, const float sphereRadius)
 	{
-		float t = 0.0;
-		for (int i = 0; i < 100; i++)
+		float t = 0.0f;
+		for (size_t i = 0; i < 100; i++)
 		{
 			// Iterate for a maximum of 100 steps
 			Vector3f p = rayOrigin + rayDirection * t;
 			const float d = SdSphere(p - sphereCenter, sphereRadius);
-			if (d < 0.001)
+			if (d < 0.001f)
 			{
 				// If the distance is small enough, we have an intersection
 				return t;
 			}
-			t += d; // Move along the ray by the distance
+
+			// Move along the ray by the distance
+			t += d;
 			if (t > 100.0)
 			{
 				// If we've moved too far, stop
 				break;
 			}
 		}
-		return -1.0; // No intersection found
+		return -1.0f; // No intersection found
 	}
 
 	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center)

@@ -16,7 +16,9 @@ namespace Rendering
 	constexpr float SPHERE_MATERIAL_ID = 0.0f;
 	constexpr float PLANE_MATERIAL_ID = 1.0f;
 
-	const Vector3f PLANE_NORMAL = {0.0f, 1.0f, 0.0f};
+	const Vector3f PLANE_NORMAL{0.0f, 1.0f, 0.0f};
+
+	inline Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
 
 	void InitializePixels(size_t resolution, size_t pixelSize);
 	void UpdatePixels(const Buffer& pixels, const std::vector<Vector4f>& colorBuffer);

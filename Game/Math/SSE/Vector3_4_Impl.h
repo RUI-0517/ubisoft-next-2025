@@ -216,8 +216,8 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	{
 	}
 
-	template <size_t Size>
-	Vector(std::initializer_list<float> elements, std::enable_if_t<Size == N>* = nullptr)
+	template <size_t Size, typename = std::enable_if_t<Size == N>>
+	Vector(std::initializer_list<float> elements)
 	{
 		auto it = elements.begin();
 		for (size_t i = 0; i < N; i++)

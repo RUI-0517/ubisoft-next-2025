@@ -10,6 +10,8 @@
 #include "app/app.h"
 //------------------------------------------------------------------------
 
+#include <sstream>
+
 #include "Physics.h"
 #include "Render.h"
 
@@ -41,15 +43,36 @@ void Init()
 //------------------------------------------------------------------------
 void Update(const float deltaTime)
 {
-	Rendering::TIME_PASSED += deltaTime / 1000.0f;
+	const float deltaTimeInSecond = deltaTime / 1000.0f;
+	Rendering::TIME_PASSED += deltaTimeInSecond;
 
 	// Fixed Update
-	Physics::ACCUMULATED_TIME += deltaTime / 1000.0f;
+	Physics::ACCUMULATED_TIME += deltaTimeInSecond;
 	if (Physics::ACCUMULATED_TIME >= Physics::FIXED_DELTA_TIME)
 	{
 		Physics::WORLD->simulate(Physics::FIXED_DELTA_TIME);
 		Physics::ACCUMULATED_TIME -= Physics::FIXED_DELTA_TIME;
 	}
+	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	Transform& sphereTransform = sphereBody->transform;
+	// sphereBody->setKinematic();
+	// sphereTransform.position.y = 1.0f;
+
+	constexpr float velocityThreshold = 1.0f;
+
+	if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
+	{
+		Vector3f& velocity = sphereBody->getLinearVelocity();
+	
+		if (std::fabs(velocity.y) < velocityThreshold)
+		{
+			velocity.y = 0.0f;
+			sphereTransform.position.y = 1.0f;
+		}
+		else velocity.y *= -0.9f;
+	}
+
+	Rendering::SPHERE_CENTER = sphereTransform.position;
 
 	// Game Logic Update
 
@@ -112,6 +135,19 @@ void Render()
 		pixel->Draw();
 
 	App::Print(result.x - 10, result.y - 10, "+");
+
+
+	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	const Vector3f& velocity = sphereBody->getLinearVelocity();
+	const Vector3f& position = sphereBody->transform.position;
+
+	std::ostringstream os;
+	os << velocity;
+	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
+	os.str("");
+	os.clear();
+	os << position;
+	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------
