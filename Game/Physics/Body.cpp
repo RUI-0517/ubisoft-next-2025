@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Body.h"
 
-Body::Body(const float mass)
+Body::Body(const float mass): m_accumulatedForce(), m_linearVelocity(), m_angularVelocity()
 {
 	setMass(mass);
 	setDynamic();

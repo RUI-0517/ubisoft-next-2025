@@ -25,6 +25,12 @@ struct Vector<3, T> final : SyntacticSugar<Vector<3, T>, T>
 	/// </summary>
 	Vector() = default;
 
+	explicit Vector(const T scalar)
+	{
+		for (size_t i = 0; i < 3; i++)
+			elements[i] = scalar;
+	}
+
 	Vector(T x, T y, T z)
 	{
 		elements[0] = x;

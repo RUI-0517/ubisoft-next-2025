@@ -24,6 +24,12 @@ struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
 	/// </summary>
 	Vector() = default;
 
+	explicit Vector(const T scalar)
+	{
+		for (size_t i = 0; i < 4; i++)
+			elements[i] = scalar;
+	}
+
 	Vector(T x, T y, T z, T w)
 	{
 		elements[0] = x;
@@ -40,13 +46,13 @@ struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
 
 	const T& operator[](const size_t index) const
 	{
-		assert(index >= 0 && index < 2 && "Index out of bounds");
+		assert(index < 4 && "Index out of bounds");
 		return elements[index];
 	}
 
 	T& operator[](const size_t index)
 	{
-		assert(index >= 0 && index < 2 && "Index out of bounds");
+		assert(index < 4 && "Index out of bounds");
 		return elements[index];
 	}
 

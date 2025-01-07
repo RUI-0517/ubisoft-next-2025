@@ -6,7 +6,7 @@ World::World()
 	bodies.emplace_back(std::make_shared<Body>(1.0f));
 	bodies[0]->transform.position = {512, 768 - 128, 0};
 	bodies.emplace_back(std::make_shared<Body>(1.0f));
-	bodies[1]->transform.position = {512, 768 - 64, 0};
+	bodies[1]->transform.position = {0.0f, 5.0f, 0.0f};
 
 	m_boxGeom = std::make_shared<BoxGeometry>();
 	m_sphereGeom = std::make_shared<SphereGeometry>(1.0f);
@@ -19,6 +19,8 @@ void World::simulate(const float timeStep) const
 {
 	for (const auto& body : bodies)
 	{
+		if (body->isKinematic()) return;
+
 		// Forward Euler
 		Vector3f acceleration = body->calculateAcceleration();
 		acceleration += m_gravity;

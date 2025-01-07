@@ -27,6 +27,22 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return *this = *this + other;
 	}
 
+	Vector operator+(const float scalar) const
+	{
+		return Vector(_mm_add_ps(m_value, _mm_set1_ps(scalar)));
+	}
+
+	Vector& operator+=(const float scalar)
+	{
+		return *this = *this + scalar;
+	}
+
+	Vector operator-() const
+	{
+		const __m128 zero = _mm_setzero_ps();
+		return Vector(_mm_sub_ps(zero, m_value));
+	}
+
 	Vector operator-(const Vector& other) const
 	{
 		return Vector(_mm_sub_ps(m_value, other.m_value));
@@ -37,10 +53,15 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return *this = *this - other;
 	}
 
-	Vector operator*(float scalar) const
+	Vector operator*(const float scalar) const
 	{
 		const __m128 packedScalar = _mm_set1_ps(scalar);
 		return Vector(_mm_mul_ps(m_value, packedScalar));
+	}
+
+	friend Vector operator*(const float scalar, const Vector& self)
+	{
+		return self * scalar;
 	}
 
 	Vector& operator*=(float scalar)
@@ -48,7 +69,7 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return *this = *this * scalar;
 	}
 
-	Vector operator/(float scalar) const
+	Vector operator/(const float scalar) const
 	{
 		const float inverseScalar = 1.0f / scalar;
 		const __m128 packedInverseScalar = _mm_set1_ps(inverseScalar);
@@ -141,6 +162,17 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return Vector(_mm_mul_ps(m_value, other.m_value));
 	}
 
+	template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
+	Vector pow(const T exponent) const
+	{
+		alignas(16) T result[4];
+
+		for (int i = 0; i < 4; ++i)
+			result[i] = std::pow((*this)[i], exponent);
+
+		return Vector(_mm_load_ps(result));
+	}
+
 	float& operator[](const size_t index)
 	{
 		assert(index < N && "Index out of bounds");
@@ -168,16 +200,30 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	{
 	}
 
-	Vector(const float x, const float y, const float z, const float w = 0.0f)
+	explicit Vector(const T scalar) : m_value(_mm_set1_ps(scalar))
+	{
+	}
+
+	template <typename = std::enable_if_t<N == 3>>
+	Vector(const float x, const float y, const float z)
+		: m_value(_mm_setr_ps(x, y, z, 0.0f))
+	{
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	Vector(const float x, const float y, const float z, const float w)
 		: m_value(_mm_setr_ps(x, y, z, w))
 	{
 	}
 
+	template <size_t Size, typename = std::enable_if_t<Size == N>>
 	Vector(std::initializer_list<float> elements)
 	{
 		auto it = elements.begin();
 		for (size_t i = 0; i < N; i++)
 			(*this)[i] = *it++;
+		if constexpr (N == 3)
+			(&x)[3] = 0.0f;
 	}
 
 	explicit Vector(const __m128 value) : m_value(value)

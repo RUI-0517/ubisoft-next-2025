@@ -7,32 +7,34 @@
 //------------------------------------------------------------------------
 #include <windows.h>
 //------------------------------------------------------------------------
-#include "app\app.h"
+#include "app/app.h"
 //------------------------------------------------------------------------
 
 #include <sstream>
 
-#include "Vector.h"
-#include "World.h"
-
-#define RESOURCE_FOLDER "..\\Resources\\"
-#define RESOURCE_PATH(file) (RESOURCE_FOLDER file)
-
-// Physics Configs
-constexpr float FIXED_DELTA_TIME = 0.02f;
-static Vector3f GRAVITY = {0, -9.81f, 0};
-
-std::unique_ptr<World> PHYSICS_WORLD;
-float ACCUMULATED_TIME;
+#include "Physics.h"
+#include "Render.h"
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
 //------------------------------------------------------------------------
 void Init()
 {
-	ACCUMULATED_TIME = 0.0f;
-	PHYSICS_WORLD = std::make_unique<World>();
-	PHYSICS_WORLD->setGravity(GRAVITY);
+	// Physics
+	Physics::ACCUMULATED_TIME = 0.0f;
+	Physics::WORLD = std::make_unique<World>();
+	Physics::WORLD->setGravity(Physics::GRAVITY);
+
+	// Rendering
+	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
+	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
+
+	Rendering::RENDERER = std::make_unique<Renderer>(width / Rendering::PIXEL_SIZE,
+	                                                 height / Rendering::PIXEL_SIZE);
+
+	constexpr size_t resolution = width * height;
+	Rendering::PIXELS = std::vector<std::unique_ptr<CSimpleSprite>>();
+	Rendering::InitializePixels(resolution, Rendering::PIXEL_SIZE);
 }
 
 //------------------------------------------------------------------------
@@ -41,15 +43,75 @@ void Init()
 //------------------------------------------------------------------------
 void Update(const float deltaTime)
 {
+	const float deltaTimeInSecond = deltaTime / 1000.0f;
+	Rendering::TIME_PASSED += deltaTimeInSecond;
+
 	// Fixed Update
-	ACCUMULATED_TIME += deltaTime / 1000.0f;
-	if (ACCUMULATED_TIME >= FIXED_DELTA_TIME)
+	Physics::ACCUMULATED_TIME += deltaTimeInSecond;
+	if (Physics::ACCUMULATED_TIME >= Physics::FIXED_DELTA_TIME)
 	{
-		PHYSICS_WORLD->simulate(FIXED_DELTA_TIME);
-		ACCUMULATED_TIME -= FIXED_DELTA_TIME;
+		Physics::WORLD->simulate(Physics::FIXED_DELTA_TIME);
+		Physics::ACCUMULATED_TIME -= Physics::FIXED_DELTA_TIME;
+	}
+	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	Transform& sphereTransform = sphereBody->transform;
+	// sphereBody->setKinematic();
+	// sphereTransform.position.y = 1.0f;
+
+	constexpr float velocityThreshold = 1.0f;
+
+	if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
+	{
+		Vector3f& velocity = sphereBody->getLinearVelocity();
+	
+		if (std::fabs(velocity.y) < velocityThreshold)
+		{
+			velocity.y = 0.0f;
+			sphereTransform.position.y = 1.0f;
+		}
+		else velocity.y *= -0.9f;
 	}
 
+	Rendering::SPHERE_CENTER = sphereTransform.position;
+
 	// Game Logic Update
+
+	// Rendering Logic
+	// TODO: using Vector2f instead individual component
+	auto rayMarching = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
+	{
+		// center uv
+		u -= 0.5f;
+		v -= 0.5f;
+
+		// ray info
+		const Vector3f rayOrigin = {0.0f, 2.0f, -10.0f};
+
+		// camera settings
+		const Vector3f& cameraOrigin = rayOrigin;
+		const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
+		constexpr float fov = 90.0f;
+		const float focalLength = Rendering::CalculateDepth(fov);
+
+		// camera coordinate system
+		const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
+		const Vector3f right = Vector3f(0.0f, 1.0f, 0.0f).cross(forward).normalize();
+		const Vector3f up = forward.cross(right);
+
+		const Vector3f rayDirection = Vector3f(u * right + v * up + focalLength * forward).normalize();
+
+		// render scene
+		Vector4f fragColor = Rendering::RenderScene(rayOrigin, rayDirection);
+
+		// gamma correction
+		fragColor = fragColor.pow(1.0f / 2.2f);
+
+		// write color back to color buffer
+		buffer[index] = fragColor;
+	};
+
+	// Execute the ray marching for all render threads
+	Rendering::RENDERER->each(Rendering::THREAD_COUNT, rayMarching);
 }
 
 //------------------------------------------------------------------------
@@ -62,7 +124,30 @@ void Render()
 	const Vector3f b{0.0f, 0.0f, 50.0f};
 	const Vector3f result = (a + b) / 2.0f;
 
-	App::Print(result.x, result.y, "Hello World");
+	// Synchronize the renderer's output buffer to the pixel textures
+	// This updates PIXELS with the latest data from the renderer's buffer
+	Rendering::UpdatePixels(Rendering::PIXELS, Rendering::RENDERER->getBuffer());
+
+	// Render each pixel on the screen
+	// Due to OpenGL's requirement for rendering on the main thread,
+	// the drawing process cannot be multithreaded
+	for (const auto& pixel : Rendering::PIXELS)
+		pixel->Draw();
+
+	App::Print(result.x - 10, result.y - 10, "+");
+
+
+	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	const Vector3f& velocity = sphereBody->getLinearVelocity();
+	const Vector3f& position = sphereBody->transform.position;
+
+	std::ostringstream os;
+	os << velocity;
+	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
+	os.str("");
+	os.clear();
+	os << position;
+	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------

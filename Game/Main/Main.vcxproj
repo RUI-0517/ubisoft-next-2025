@@ -92,10 +92,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Physics;$(SolutionDir)Math;$(SolutionDir)External</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -103,7 +103,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
@@ -117,10 +117,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)External</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -130,7 +130,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
@@ -142,10 +142,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Physics;$(SolutionDir)Math;$(SolutionDir)External</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -153,7 +153,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
@@ -167,10 +167,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)External</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -180,7 +180,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
@@ -196,6 +196,9 @@
     <ClCompile Include="..\External\miniaudio\miniaudio.cpp" />
     <ClCompile Include="..\External\stb_image\stb_image.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Render.cpp" />
+    <ClCompile Include="Resources.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -218,6 +221,9 @@
     <ClInclude Include="..\External\glut\include\GL\glut.h" />
     <ClInclude Include="..\External\miniaudio\miniaudio.h" />
     <ClInclude Include="..\External\stb_image\stb_image.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Render.h" />
+    <ClInclude Include="Resources.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

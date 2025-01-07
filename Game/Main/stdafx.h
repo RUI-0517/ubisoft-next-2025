@@ -10,6 +10,11 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#include <stdexcept>
+#include <thread>
+#include <vector>
+
+#include "Vector.h"
 
 
 // TODO: reference additional headers your program requires here

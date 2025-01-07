@@ -31,6 +31,16 @@ static void TEST_ParameterizedConstructor()
 	THROW_IF_FALSE(EQUAL(vector[2], 3.0f), "Parameterized constructor failed: z != 3");
 }
 
+static void TEST_ExplicitConstructor()
+{
+    Vector3f vector(1.0f);
+    THROW_IF_FALSE(EQUAL(vector[0], 1.0f), "ExplicitConstructor failed: x != 1");
+    THROW_IF_FALSE(EQUAL(vector[1], 1.0f), "ExplicitConstructor failed: y != 1");
+    THROW_IF_FALSE(EQUAL(vector[2], 1.0f), "ExplicitConstructor failed: z != 1");
+
+    std::cout << "TEST_ExplicitConstructor passed." << std::endl;
+}
+
 static void TEST_InitializeListConstructor()
 {
 	Vector3f vector{1.0f, 2.0f, 3.0f};
@@ -47,6 +57,36 @@ static void TEST_Addition()
 	THROW_IF_FALSE(EQUAL(result[0], 5.0f), "Addition failed: x != 5");
 	THROW_IF_FALSE(EQUAL(result[1], 7.0f), "Addition failed: y != 7");
 	THROW_IF_FALSE(EQUAL(result[2], 9.0f), "Addition failed: z != 9");
+}
+
+static void TEST_ScalarAddition()
+{
+    Vector3f vector(2.0f, 3.0f, 4.0f);
+    float scalar = 1.0f;
+
+    Vector3f result = vector + scalar;
+    THROW_IF_FALSE(EQUAL(result[0], 3.0f), "ScalarAddition failed: x + scalar != 3");
+    THROW_IF_FALSE(EQUAL(result[1], 4.0f), "ScalarAddition failed: y + scalar != 4");
+    THROW_IF_FALSE(EQUAL(result[2], 5.0f), "ScalarAddition failed: z + scalar != 5");
+
+    vector += scalar;
+    THROW_IF_FALSE(EQUAL(vector[0], 3.0f), "ScalarAddition failed: x += scalar != 3");
+    THROW_IF_FALSE(EQUAL(vector[1], 4.0f), "ScalarAddition failed: y += scalar != 4");
+    THROW_IF_FALSE(EQUAL(vector[2], 5.0f), "ScalarAddition failed: z += scalar != 5");
+
+    std::cout << "TEST_ScalarAddition passed." << std::endl;
+}
+
+static void TEST_Negation()
+{
+    const Vector3f vector(2.0f, -3.0f, 4.0f);
+    Vector3f result = -vector;
+
+    THROW_IF_FALSE(EQUAL(result[0], -2.0f), "Negation failed: x != -2");
+    THROW_IF_FALSE(EQUAL(result[1], 3.0f), "Negation failed: y != 3");
+    THROW_IF_FALSE(EQUAL(result[2], -4.0f), "Negation failed: z != -4");
+
+    std::cout << "TEST_Negation passed." << std::endl;
 }
 
 static void TEST_Subtraction()
@@ -194,14 +234,28 @@ static void TEST_Hadamard()
 	THROW_IF_FALSE(EQUAL(result[2], 8.0f), "Hadamard failed: z != 8");
 }
 
+static void TEST_Pow()
+{
+    const Vector3f vector(2.0f, 3.0f, 4.0f);
+    const float exponent = 2.0f;
+    Vector3f result = vector.pow(exponent);
+    THROW_IF_FALSE(EQUAL(result[0], 4.0f), "Pow failed: x^2 != 4");
+    THROW_IF_FALSE(EQUAL(result[1], 9.0f), "Pow failed: y^2 != 9");
+    THROW_IF_FALSE(EQUAL(result[2], 16.0f), "Pow failed: z^2 != 16");
+    std::cout << "TEST_Pow passed." << std::endl;
+}
+
 int main()
 {
 	try
 	{
 		TEST_DefaultConstructor();
 		TEST_ParameterizedConstructor();
+		TEST_ExplicitConstructor();
 		TEST_InitializeListConstructor();
 		TEST_Addition();
+		TEST_ScalarAddition();
+		TEST_Negation();
 		TEST_Subtraction();
 		TEST_ScalarMultiplication();
 		Test_DotProduct();
@@ -218,6 +272,7 @@ int main()
 		TEST_DistanceSquared();
 		TEST_Lerp();
 		TEST_Hadamard();
+		TEST_Pow();
 	}
 	catch (const std::exception &e)
 	{

@@ -25,6 +25,12 @@ struct Vector<2, T> final : SyntacticSugar<Vector<2, T>, T>
 	*/
 	Vector() = default;
 
+	explicit Vector(const T scalar)
+	{
+		for (size_t i = 0; i < 2; i++)
+			elements[i] = scalar;
+	}
+
 	Vector(T x, T y)
 	{
 		elements[0] = x;
