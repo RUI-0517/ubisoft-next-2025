@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-Transform::Transform(): scale({1, 1, 1})
+Transform::Transform(): scale(Vector3f{1, 1, 1})
 {
 }
 

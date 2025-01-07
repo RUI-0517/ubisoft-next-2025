@@ -26,7 +26,8 @@ struct Vector final
 	/// This allow this kind of init Vector<3, float> vec = {3.14, 6.28, 9.42};
 	/// </summary>
 	/// <param name="elements"></param>
-	Vector(const std::initializer_list<T>& elements)
+	template <size_t Size>
+	Vector(const std::initializer_list<T>& elements, std::enable_if_t<Size == N>* = nullptr)
 	{
 		auto it = elements.begin();
 		for (size_t i = 0; i < N; i++)

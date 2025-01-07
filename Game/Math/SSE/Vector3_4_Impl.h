@@ -162,7 +162,7 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return Vector(_mm_mul_ps(m_value, other.m_value));
 	}
 
-	template <typename U = T, typename = std::enable_if_t<std::is_floating_point_v<U>>>
+	template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
 	Vector pow(const T exponent) const
 	{
 		alignas(16) T result[4];
@@ -204,16 +204,26 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	{
 	}
 
-	Vector(const float x, const float y, const float z, const float w = 0.0f)
+	template <typename = std::enable_if_t<N == 3>>
+	Vector(const float x, const float y, const float z)
+		: m_value(_mm_setr_ps(x, y, z, 0.0f))
+	{
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	Vector(const float x, const float y, const float z, const float w)
 		: m_value(_mm_setr_ps(x, y, z, w))
 	{
 	}
 
-	Vector(std::initializer_list<float> elements)
+	template <size_t Size>
+	Vector(std::initializer_list<float> elements, std::enable_if_t<Size == N>* = nullptr)
 	{
 		auto it = elements.begin();
 		for (size_t i = 0; i < N; i++)
 			(*this)[i] = *it++;
+		if constexpr (N == 3)
+			(&x)[3] = 0.0f;
 	}
 
 	explicit Vector(const __m128 value) : m_value(value)
