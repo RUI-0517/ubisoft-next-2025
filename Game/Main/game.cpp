@@ -18,10 +18,12 @@
 //------------------------------------------------------------------------
 void Init()
 {
+	// Physics
 	Physics::ACCUMULATED_TIME = 0.0f;
 	Physics::WORLD = std::make_unique<World>();
 	Physics::WORLD->setGravity(Physics::GRAVITY);
 
+	// Rendering
 	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
 	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
 
@@ -50,6 +52,43 @@ void Update(const float deltaTime)
 	}
 
 	// Game Logic Update
+
+	// Rendering Logic
+	// TODO: using Vector2f instead individual component
+	auto rayMarching = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
+	{
+		// center uv
+		u -= 0.5f;
+		v -= 0.5f;
+
+		// ray info
+		const Vector3f rayOrigin = {0.0f, 2.0f, -10.0f};
+
+		// camera settings
+		const Vector3f& cameraOrigin = rayOrigin;
+		const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
+		constexpr float fov = 90.0f;
+		const float focalLength = Rendering::CalculateDepth(fov);
+
+		// camera coordinate system
+		const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
+		const Vector3f right = Vector3f(0.0f, 1.0f, 0.0f).cross(forward).normalize();
+		const Vector3f up = forward.cross(right);
+
+		const Vector3f rayDirection = Vector3f(u * right + v * up + focalLength * forward).normalize();
+
+		// render scene
+		Vector4f fragColor = Rendering::RenderScene(rayOrigin, rayDirection);
+
+		// gamma correction
+		fragColor = fragColor.pow(1.0f / 2.2f);
+
+		// write color back to color buffer
+		buffer[index] = fragColor;
+	};
+
+	// Execute the ray marching for all render threads
+	Rendering::RENDERER->each(Rendering::THREAD_COUNT, rayMarching);
 }
 
 //------------------------------------------------------------------------
@@ -61,46 +100,6 @@ void Render()
 	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
 	const Vector3f b{0.0f, 0.0f, 50.0f};
 	const Vector3f result = (a + b) / 2.0f;
-
-	// TODO: using Vector2f instead individual component
-	auto rayMarching = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
-	{
-		u -= 0.5f;
-		v -= 0.5f;
-
-		constexpr float fov = 90.0f;
-		const float depth = Rendering::CalculateDepth(fov);
-
-		const Vector3f rayOrigin = {0, 0, -8.0f};
-		const Vector3f rayDirection = Rendering::CalculateRayDirection(u, v, depth);
-
-		// TODO: Using geom transform
-		const Vector3f sphereCenter{0.0f, 0.0f, 0.0f};
-		constexpr float sphereRadius = 1.0f;
-
-		const float t = Rendering::IntersectSphere(rayOrigin, rayDirection, sphereCenter, sphereRadius);
-		const bool hasIntersected = t > 0.0f;
-
-		Vector4f fragColor;
-		if (hasIntersected)
-		{
-			// Calculate intersection point and normal
-			Vector3f hitPoint = rayOrigin + t * rayDirection;
-			Vector3f normal = Rendering::CalculateSphereNormal(hitPoint, sphereCenter);
-			Vector3f lightPosition = {-15, 15, 0};
-			// Apply Lighting
-			fragColor = Rendering::ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
-		}
-		else fragColor = {0.95f, 0.95f, 0.95f, 1.0f};
-
-		fragColor = Rendering::AcesFilm(fragColor);
-		fragColor = fragColor.pow(1.0f / 2.2f);
-
-		buffer[index] = fragColor;
-	};
-
-	// Execute the UV coordinate computation for all render threads
-	Rendering::RENDERER->each(Rendering::THREAD_COUNT, rayMarching);
 
 	// Synchronize the renderer's output buffer to the pixel textures
 	// This updates PIXELS with the latest data from the renderer's buffer

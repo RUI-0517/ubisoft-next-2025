@@ -66,9 +66,54 @@ namespace Rendering
 		return 1.0f / tan(halfFovRadians);
 	}
 
-	Vector3f CalculateRayDirection(const float u, const float v, const float depth)
+	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
-		return Vector3f(u, v, depth).normalize();
+		const Vector4f skyColor = {0.0f, 0.0f, 0.0f, 1.0f};
+		Vector4f fragColor = skyColor;
+
+		auto [t, materialId] = IntersectScene(rayOrigin, rayDirection);
+		const bool hasIntersected = t > 0.0f;
+
+		if (hasIntersected)
+		{
+			Vector3f hitPoint = rayOrigin + t * rayDirection;
+
+			// TODO: Using geom transform
+			const Vector3f sphereCenter{0.0f, 0.0f, 0.0f};
+			// Calculate Normal
+			Vector3f normal = materialId == 1.0f ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, sphereCenter);
+
+			// Apply Lighting
+			Vector3f lightPosition = {-15, 15, 0};
+			fragColor = ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
+		}
+
+		return fragColor;
+	}
+
+	std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+	{
+		float t = -1.0f;
+		float materialId = -1.0f;
+
+		const float tFloor = -rayOrigin.dot(PLANE_NORMAL) / rayDirection.dot(PLANE_NORMAL);
+		if (tFloor > 0.0f)
+		{
+			t = tFloor;
+			materialId = PLANE_MATERIAL_ID;
+		}
+
+		const Vector3f sphereCenter{0.0f, 0.0f, 0.0f};
+		constexpr float sphereRadius = 1.0f;
+		const float tSphere = IntersectSphere(rayOrigin, rayDirection, sphereCenter, sphereRadius);
+
+		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
+		{
+			t = tSphere;
+			materialId = SPHERE_MATERIAL_ID;
+		}
+
+		return {t, materialId};
 	}
 
 	// Signed distance function for a sphere
@@ -134,25 +179,5 @@ namespace Rendering
 		Vector3f color = ambient + diffuse + specular;
 
 		return {color.x, color.y, color.z, 1.0f};
-	}
-
-	// Apply ACES tone mapping
-	Vector4f AcesFilm(const Vector4f& color)
-	{
-		constexpr float a = 2.51f;
-		constexpr float b = 0.03f;
-		constexpr float c = 2.43f;
-		constexpr float d = 0.59f;
-		constexpr float e = 0.14f;
-
-		// TODO: SSE Version
-		Vector3f result;
-		for (int i = 0; i < 3; ++i)
-		{
-			const float numerator = color[i] * (color[i] * a + b);
-			const float denominator = color[i] * (color[i] * c + d) + e;
-			result[i] = std::clamp(numerator / denominator, 0.0f, 1.0f);
-		}
-		return {result.x, result.y, result.z, 1.0f};
 	}
 }
