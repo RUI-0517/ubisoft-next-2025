@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Renderer.h"
+
+#include <stdexcept>
 #include <thread>
 
 struct Renderer::Impl

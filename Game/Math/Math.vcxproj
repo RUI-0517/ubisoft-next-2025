@@ -186,6 +186,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Scalar\Matrix.h" />
+    <ClInclude Include="Scalar\Matrix_Impl.h" />
     <ClInclude Include="Scalar\SyntacticSugar_Impl.h" />
     <ClInclude Include="Scalar\Vector.h" />
     <ClInclude Include="Scalar\Vector2_Impl.h" />

@@ -51,8 +51,10 @@ void Init()
 
 	Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{1.0f, 0.0f, -1.0f});
 
-	Quaternion q1{0.7071f, 0.0f, 0.7071f, 0.0f};
-	Quaternion q2{0.7071f, 0.7071f, 0.0f, 0.0f};
+	// Quaternion q1{0.7071f, 0.0f, 0.7071f, 0.0f};
+	// Quaternion q2{0.7071f, 0.7071f, 0.0f, 0.0f};
+	Quaternion q1{1, 0, 0, 0};
+	Quaternion q2{0,1,0,0};
 	Quaternion result = q1.rotate(q2);
 	Quaternion result2 = q2.rotate(q1);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "SyntacticSugar_Impl.h"
+#include <ostream>
 
 template <typename T>
 struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
@@ -38,6 +39,19 @@ struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
 		elements[3] = w;
 	}
 
+	Vector(const Vector<3, T>& vector)
+	{
+		std::copy_n(vector.elements, 3, elements);
+		elements[3] = 1.0f;
+	}
+
+	Vector(const Vector<3, T>&& vector)
+	{
+		std::copy_n(vector.elements, 3, elements);
+		elements[3] = 1.0f;
+	}
+
+
 	~Vector() = default;
 	Vector(const Vector& other) = default;
 	Vector& operator=(const Vector& other) = default;
@@ -74,3 +88,4 @@ struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
 };
 
 using Vector4f = Vector<4, float>;
+using Quaternion = Vector<4, float>;

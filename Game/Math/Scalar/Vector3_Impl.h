@@ -38,6 +38,16 @@ struct Vector<3, T> final : SyntacticSugar<Vector<3, T>, T>
 		elements[2] = z;
 	}
 
+	Vector(const Vector<4, T>& vector)
+	{
+		std::copy_n(vector.elements, 3, elements);
+	}
+
+	Vector(const Vector<4, T>&& vector)
+	{
+		std::copy_n(vector.elements, 3, elements);
+	}
+
 	~Vector() = default;
 	Vector(const Vector& other) = default;
 	Vector& operator=(const Vector& other) = default;
