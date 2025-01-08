@@ -69,6 +69,46 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return *this = *this * scalar;
 	}
 
+	/// <summary>
+	/// Multiplies this quaternion by another, combining their rotations. Order matters as quaternion multiplication is non-commutative.
+	/// </summary>
+	/// <param name="quaternion">The quaternion to multiply with this one.</param>
+	/// <returns>A new quaternion representing the combined rotation.</returns>
+	template <typename = std::enable_if_t<N == 4>>
+	Vector rotate(const Vector& quaternion)
+	{
+		// {x, w, z, -y}
+		// {y, -z, w, x}
+		// {z, y, -x, w}
+		// {w, -x, -y, -z}
+
+		// a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,  // i
+		// a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,  // j
+		// a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w   // k
+		// a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,  // 1
+
+		Vector result;
+
+		// TODO: Vectorizing this might be a bit challenging
+		result.w = w * quaternion.w - x * quaternion.x - y * quaternion.y - z * quaternion.z;
+		result.x = w * quaternion.x + x * quaternion.w + y * quaternion.z - z * quaternion.y;
+		result.y = w * quaternion.y + y * quaternion.w + z * quaternion.x - x * quaternion.z;
+		result.z = w * quaternion.z + z * quaternion.w + x * quaternion.y - y * quaternion.x;
+
+		return result;
+	}
+
+	/// <summary>
+	/// Multiplies this quaternion by another, combining their rotations. Order matters as quaternion multiplication is non-commutative.
+	/// </summary>
+	/// <param name="quaternion">The quaternion to multiply with this one.</param>
+	/// <returns>A new quaternion representing the combined rotation.</returns>
+	template <typename = std::enable_if_t<N == 4>>
+	Vector& operator*=(const Vector& quaternion)
+	{
+		return *this * quaternion;
+	}
+
 	Vector operator/(const float scalar) const
 	{
 		const float inverseScalar = 1.0f / scalar;
@@ -239,7 +279,6 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	Vector(Vector&& other) noexcept = default;
 	Vector& operator=(Vector&& other) noexcept = default;
 
-
 	template <size_t NIn, typename = std::enable_if_t<NIn != N>>
 	Vector(const Vector<NIn, T>& other)
 	{
@@ -256,7 +295,6 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 			w = 0.0f;
 		}
 	}
-
 
 #pragma endregion
 

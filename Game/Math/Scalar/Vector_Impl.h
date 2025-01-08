@@ -269,3 +269,19 @@ template <size_t N, typename T, typename = std::enable_if_t<std::is_floating_poi
 
 	return result;
 }
+
+/// <summary>
+/// Quaternion Rotation
+/// </summary>
+template <size_t N, typename T, typename = std::enable_if_t<N == 4>>
+[[nodiscard]] Vector<N, T> rotate(Vector<N, T>& lhs, Vector<N, T>& rhs)
+{
+	Vector<N, T> result;
+
+	result.w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
+	result.x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
+	result.y = lhs.w * rhs.y + lhs.y * rhs.w + lhs.z * rhs.x - lhs.x * rhs.z;
+	result.z = lhs.w * rhs.z + lhs.z * rhs.w + lhs.x * rhs.y - lhs.y * rhs.x;
+
+	return result;
+}

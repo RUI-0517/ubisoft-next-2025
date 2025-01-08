@@ -61,6 +61,11 @@ struct Vector<4, T> final : SyntacticSugar<Vector<4, T>, T>
 		return ::cross(*this, other);
 	}
 
+	Vector rotate(const Vector& quaternion) const
+	{
+		return ::rotate(*this, quaternion);
+	}
+
 	friend std::ostream& operator<<(std::ostream& os, const Vector& vector)
 	{
 		os << "[" << vector[0] << ' ' << vector[1] << ' ' << vector[2] << ' ' << vector[3] << "]";

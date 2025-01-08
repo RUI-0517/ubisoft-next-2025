@@ -3,6 +3,14 @@
 
 Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 {
+	if (m_body == nullptr)
+	{
+		throw std::runtime_error(
+			std::string(__FUNCTION__) +
+			": body is not assigned! Please call attachBody to assign a Body to the Geometry object."
+		);
+	}
+
 	const auto& transform = m_body->transform;
 	const auto& vertices = m_vertices;
 
