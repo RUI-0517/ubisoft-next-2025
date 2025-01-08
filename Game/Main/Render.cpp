@@ -173,10 +173,10 @@ namespace Rendering
 		const float spec = std::pow(max(normal.dot(halfDir), 0.0f), shininess);
 
 		// White specular highlight
-		Vector3f specular = Vector3f(1.0f) * (spec * specularStrength);
+		Vector3f specular = Vector3f{1.0f} * (spec * specularStrength);
 
 		// Ambient component
-		Vector3f ambient(0.1f);
+		Vector3f ambient{0.1f};
 
 		Vector3f color = ambient + diffuse + specular;
 

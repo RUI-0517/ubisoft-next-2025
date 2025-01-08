@@ -8,6 +8,7 @@
 #define PCH_H
 
 #include "Vector.h"
+#include "Matrix.h"
 #include <cmath>
 #include <vector>
 

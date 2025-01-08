@@ -37,8 +37,6 @@ static void TEST_ExplicitConstructor()
     THROW_IF_FALSE(EQUAL(vector[0], 1.0f), "ExplicitConstructor failed: x != 1");
     THROW_IF_FALSE(EQUAL(vector[1], 1.0f), "ExplicitConstructor failed: y != 1");
     THROW_IF_FALSE(EQUAL(vector[2], 1.0f), "ExplicitConstructor failed: z != 1");
-
-    std::cout << "TEST_ExplicitConstructor passed." << std::endl;
 }
 
 static void TEST_InitializeListConstructor()
@@ -73,8 +71,6 @@ static void TEST_ScalarAddition()
     THROW_IF_FALSE(EQUAL(vector[0], 3.0f), "ScalarAddition failed: x += scalar != 3");
     THROW_IF_FALSE(EQUAL(vector[1], 4.0f), "ScalarAddition failed: y += scalar != 4");
     THROW_IF_FALSE(EQUAL(vector[2], 5.0f), "ScalarAddition failed: z += scalar != 5");
-
-    std::cout << "TEST_ScalarAddition passed." << std::endl;
 }
 
 static void TEST_Negation()
@@ -85,8 +81,6 @@ static void TEST_Negation()
     THROW_IF_FALSE(EQUAL(result[0], -2.0f), "Negation failed: x != -2");
     THROW_IF_FALSE(EQUAL(result[1], 3.0f), "Negation failed: y != 3");
     THROW_IF_FALSE(EQUAL(result[2], -4.0f), "Negation failed: z != -4");
-
-    std::cout << "TEST_Negation passed." << std::endl;
 }
 
 static void TEST_Subtraction()
@@ -242,7 +236,6 @@ static void TEST_Pow()
     THROW_IF_FALSE(EQUAL(result[0], 4.0f), "Pow failed: x^2 != 4");
     THROW_IF_FALSE(EQUAL(result[1], 9.0f), "Pow failed: y^2 != 9");
     THROW_IF_FALSE(EQUAL(result[2], 16.0f), "Pow failed: z^2 != 16");
-    std::cout << "TEST_Pow passed." << std::endl;
 }
 
 int main()

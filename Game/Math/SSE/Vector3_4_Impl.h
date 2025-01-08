@@ -219,6 +219,9 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	template <size_t Size, typename = std::enable_if_t<Size == N>>
 	Vector(std::initializer_list<float> elements)
 	{
+		if (elements.size() != N)
+			throw std::invalid_argument("Initializer list size must match NRow * NCol");
+
 		auto it = elements.begin();
 		for (size_t i = 0; i < N; i++)
 			(*this)[i] = *it++;
@@ -235,6 +238,25 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	Vector& operator=(const Vector& other) = default;
 	Vector(Vector&& other) noexcept = default;
 	Vector& operator=(Vector&& other) noexcept = default;
+
+
+	template <size_t NIn, typename = std::enable_if_t<NIn != N>>
+	Vector(const Vector<NIn, T>& other)
+	{
+		// 3 -> 4
+		if constexpr (NIn == 3)
+		{
+			m_value = other.m_value;
+			w = 1.0f;
+		}
+		// 4 -> 3
+		else if constexpr (NIn == 4)
+		{
+			m_value = other.m_value;
+			w = 0.0f;
+		}
+	}
+
 
 #pragma endregion
 

@@ -3,10 +3,11 @@
 
 SphereGeometry::SphereGeometry(const float radius): m_radius(radius)
 {
+
 }
 
-Vector3f SphereGeometry::GetSupportPoint(const Vector3f& direction)
+Vector3f SphereGeometry::getSupportPoint(const Vector3f& direction) const
 {
 	const Transform& transform = getBody()->transform;
-	return transform.TransformPoint(transform.position + direction * m_radius);
+	return transform.transformPoint(transform.position + direction * m_radius);
 }

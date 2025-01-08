@@ -14,6 +14,8 @@
 
 #include "Physics.h"
 #include "Render.h"
+#include "Matrix.h"
+#include "PlaneGeometry.h"
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -35,6 +37,19 @@ void Init()
 	constexpr size_t resolution = width * height;
 	Rendering::PIXELS = std::vector<std::unique_ptr<CSimpleSprite>>();
 	Rendering::InitializePixels(resolution, Rendering::PIXEL_SIZE);
+
+	// const Vector4f vector = {0.5f, 0.5f, 0.0f, 1.0f};
+	// const Matrix4f translateMatrix = Matrix4f::translate(2.0f);
+	// const Matrix4f scaleMatrix = Matrix4f::scale(2.0f);
+	// Vector4f result = vector * (translateMatrix * scaleMatrix);
+
+	Body planeBody{1.0f};
+	planeBody.transform.scale = Vector3f{2.0f};
+
+	PlaneGeometry planeGeom{2.0f};
+	planeGeom.attachBody(std::make_shared<Body>(planeBody));
+
+	Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{1.0f, 0.0f, -1.0f});
 }
 
 //------------------------------------------------------------------------
@@ -63,7 +78,7 @@ void Update(const float deltaTime)
 	if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
 	{
 		Vector3f& velocity = sphereBody->getLinearVelocity();
-	
+
 		if (std::fabs(velocity.y) < velocityThreshold)
 		{
 			velocity.y = 0.0f;
@@ -95,10 +110,10 @@ void Update(const float deltaTime)
 
 		// camera coordinate system
 		const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
-		const Vector3f right = Vector3f(0.0f, 1.0f, 0.0f).cross(forward).normalize();
+		const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
 		const Vector3f up = forward.cross(right);
 
-		const Vector3f rayDirection = Vector3f(u * right + v * up + focalLength * forward).normalize();
+		const Vector3f rayDirection = Vector3f{u * right + v * up + focalLength * forward}.normalize();
 
 		// render scene
 		Vector4f fragColor = Rendering::RenderScene(rayOrigin, rayDirection);
@@ -139,7 +154,7 @@ void Render()
 
 	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
 	const Vector3f& velocity = sphereBody->getLinearVelocity();
-	const Vector3f& position = sphereBody->transform.position;
+	const Vector4f& position = sphereBody->transform.position;
 
 	std::ostringstream os;
 	os << velocity;

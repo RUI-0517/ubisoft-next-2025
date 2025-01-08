@@ -57,6 +57,18 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scalar\Matrix.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Matrix.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Matrix3_4_Impl.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

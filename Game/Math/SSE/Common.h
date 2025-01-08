@@ -11,3 +11,6 @@
 
 template <size_t N, typename T, typename Enable = void>
 struct Vector;
+
+template <size_t NCol, size_t NRow, typename T, typename Enable = void>
+struct Matrix;

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Geometry.h"
 
-Vector3f Geometry::GetSupportPoint(const Vector3f& direction)
+Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 {
 	const auto& transform = m_body->transform;
 	const auto& vertices = m_vertices;
@@ -11,7 +11,7 @@ Vector3f Geometry::GetSupportPoint(const Vector3f& direction)
 
 	for (const Vector3f& vertex : vertices)
 	{
-		Vector3f worldVertex = transform.TransformPoint(vertex);
+		Vector3f worldVertex = transform.transformPoint(vertex);
 		const float supportValue = worldVertex.dot(direction);
 
 		if (supportValue < farthestExtent) continue;
