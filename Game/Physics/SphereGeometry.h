@@ -7,5 +7,6 @@ class SphereGeometry final : public Geometry
 
 public:
 	explicit SphereGeometry(float radius);
-	Vector3f GetSupportPoint(const Vector3f& direction) override;
+
+	[[nodiscard]] Vector3f getSupportPoint(const Vector3f& direction) const override;
 };

@@ -183,7 +183,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Scalar\Matrix.h" />
     <ClInclude Include="Scalar\SyntacticSugar_Impl.h" />
     <ClInclude Include="Scalar\Vector.h" />
     <ClInclude Include="Scalar\Vector2_Impl.h" />
@@ -191,6 +193,8 @@
     <ClInclude Include="Scalar\Vector3_Impl.h" />
     <ClInclude Include="Scalar\Vector4_Impl.h" />
     <ClInclude Include="SSE\Common.h" />
+    <ClInclude Include="SSE\Matrix.h" />
+    <ClInclude Include="SSE\Matrix3_4_Impl.h" />
     <ClInclude Include="SSE\Vector.h" />
     <ClInclude Include="SSE\Vector3_4_Impl.h" />
     <ClInclude Include="Vector.h" />

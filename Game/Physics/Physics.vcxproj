@@ -203,6 +203,7 @@
     <ClInclude Include="BoxGeometry.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="PlaneGeometry.h" />
     <ClInclude Include="SphereGeometry.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="World.h" />
@@ -217,6 +218,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="PlaneGeometry.cpp" />
     <ClCompile Include="SphereGeometry.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="World.cpp" />

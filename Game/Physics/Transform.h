@@ -10,5 +10,5 @@ public:
 
 	Transform();
 
-	[[nodiscard]] Vector3f TransformPoint(const Vector3f& point) const;
+	[[nodiscard]] Vector3f transformPoint(const Vector3f& point) const;
 };
