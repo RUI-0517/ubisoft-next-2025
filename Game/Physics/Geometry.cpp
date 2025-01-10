@@ -3,6 +3,14 @@
 
 Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 {
+	if (m_body == nullptr)
+	{
+		throw std::runtime_error(
+			std::string(__FUNCTION__) +
+			": body is not assigned! Please call attachBody to assign a Body to the Geometry object."
+		);
+	}
+
 	const auto& transform = m_body->transform;
 	const auto& vertices = m_vertices;
 
@@ -11,7 +19,7 @@ Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 
 	for (const Vector3f& vertex : vertices)
 	{
-		Vector3f worldVertex = transform.transformPoint(vertex);
+		Vector4f worldVertex = transform.transformPoint(vertex);
 		const float supportValue = worldVertex.dot(direction);
 
 		if (supportValue < farthestExtent) continue;

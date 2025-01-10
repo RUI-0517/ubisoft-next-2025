@@ -81,6 +81,58 @@ public:
 			0.0f, 0.0f, 0.0f, 1.0f,
 		};
 	}
+	
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] static Matrix<N, N, float> rotate(const Vector4f& quaternion)
+	{
+		const float w = quaternion.w;
+		const float x = quaternion.x;
+		const float y = quaternion.y;
+		const float z = quaternion.z;
+
+		const float xx = x * x;
+		const float yy = y * y;
+		const float zz = z * z;
+		const float xy = x * y;
+		const float xz = x * z;
+		const float yz = y * z;
+		const float wx = w * x;
+		const float wy = w * y;
+		const float wz = w * z;
+
+		return {
+			1.0f - 2.0f * (yy + zz), 2.0f * (xy - wz), 2.0f * (xz + wy), 0.0f,
+			2.0f * (xy + wz), 1.0f - 2.0f * (xx + zz), 2.0f * (yz - wx), 0.0f,
+			2.0f * (xz - wy), 2.0f * (yz + wx), 1.0f - 2.0f * (xx + yy), 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] static Matrix<N, N, float> rotate(const Vector4f&& quaternion)
+	{
+		const float w = quaternion.w;
+		const float x = quaternion.x;
+		const float y = quaternion.y;
+		const float z = quaternion.z;
+
+		const float xx = x * x;
+		const float yy = y * y;
+		const float zz = z * z;
+		const float xy = x * y;
+		const float xz = x * z;
+		const float yz = y * z;
+		const float wx = w * x;
+		const float wy = w * y;
+		const float wz = w * z;
+
+		return {
+			1.0f - 2.0f * (yy + zz), 2.0f * (xy - wz), 2.0f * (xz + wy), 0.0f,
+			2.0f * (xy + wz), 1.0f - 2.0f * (xx + zz), 2.0f * (yz - wx), 0.0f,
+			2.0f * (xz - wy), 2.0f * (yz + wx), 1.0f - 2.0f * (xx + yy), 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+	}
 
 	[[nodiscard]] static Matrix<N, N, float> scale(float scale)
 	{

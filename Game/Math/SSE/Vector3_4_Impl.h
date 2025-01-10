@@ -1,6 +1,9 @@
 #pragma once
 #include <ostream>
 #include "Common.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 template <size_t N, typename T>
 struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, float>>> final
@@ -162,8 +165,78 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return Vector(_mm_mul_ps(m_value, other.m_value));
 	}
 
+	/// <summary>
+	/// Multiplies this quaternion by another, combining their rotations. Order matters as quaternion multiplication is non-commutative.
+	/// </summary>
+	/// <param name="quaternion">The quaternion to multiply with this one.</param>
+	/// <returns>A new quaternion representing the combined rotation.</returns>
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] Vector rotate(const Vector& quaternion)
+	{
+		// {x, w, z, -y}
+		// {y, -z, w, x}
+		// {z, y, -x, w}
+		// {w, -x, -y, -z}
+
+		// a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,  // i
+		// a.w * b.y - a.x * b.z + a.y * b.w + a.z * b.x,  // j
+		// a.w * b.z + a.x * b.y - a.y * b.x + a.z * b.w   // k
+		// a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z,  // 1
+
+		Vector result;
+
+		// TODO: Vectorizing this might be a bit challenging
+		result.w = w * quaternion.w - x * quaternion.x - y * quaternion.y - z * quaternion.z;
+		result.x = w * quaternion.x + x * quaternion.w + y * quaternion.z - z * quaternion.y;
+		result.y = w * quaternion.y + y * quaternion.w + z * quaternion.x - x * quaternion.z;
+		result.z = w * quaternion.z + z * quaternion.w + x * quaternion.y - y * quaternion.x;
+
+		return result;
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] static Vector eulerToQuaternion(const float roll, const float pitch, const float yaw)
+	{
+		constexpr float degreeToRadian = M_PI / 180.f;
+		// Ideally, the factor 0.5 would be applied with the rotation angle at runtime
+		// e.g., cos(roll / 2).
+		// To optimize, we precompute 0.5 * degreeToRadian as a constexpr, 
+		// reducing a runtime multiplication.
+		constexpr float halfDegreeToRadian = 0.5f * degreeToRadian;
+
+		const float rollRad = roll * halfDegreeToRadian;
+		const float pitchRad = pitch * halfDegreeToRadian;
+		const float yawRad = yaw * halfDegreeToRadian;
+
+		const float cr = std::cos(rollRad);
+		const float sr = std::sin(rollRad);
+		const float cp = std::cos(pitchRad);
+		const float sp = std::sin(pitchRad);
+		const float cy = std::cos(yawRad);
+		const float sy = std::sin(yawRad);
+
+		const float w = cr * cp * cy + sr * sp * sy;
+		const float x = sr * cp * cy - cr * sp * sy;
+		const float y = cr * sp * cy + sr * cp * sy;
+		const float z = cr * cp * sy - sr * sp * cy;
+
+		return {x, y, z, w};
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] static Vector eulerToQuaternion(const Vector& euler)
+	{
+		return eulerToQuaternion(euler.x, euler.y, euler.z);
+	}
+
+	template <typename = std::enable_if_t<N == 4>>
+	[[nodiscard]] static Vector eulerToQuaternion(const Vector&& euler)
+	{
+		return eulerToQuaternion(euler.x, euler.y, euler.z);
+	}
+
 	template <typename = std::enable_if_t<std::is_floating_point_v<T>>>
-	Vector pow(const T exponent) const
+	[[nodiscard]] Vector pow(const T exponent) const
 	{
 		alignas(16) T result[4];
 
@@ -239,7 +312,6 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 	Vector(Vector&& other) noexcept = default;
 	Vector& operator=(Vector&& other) noexcept = default;
 
-
 	template <size_t NIn, typename = std::enable_if_t<NIn != N>>
 	Vector(const Vector<NIn, T>& other)
 	{
@@ -257,6 +329,22 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		}
 	}
 
+	template <size_t NIn, typename = std::enable_if_t<NIn != N>>
+	Vector(const Vector<NIn, T>&& other)
+	{
+		// 3 -> 4
+		if constexpr (NIn == 3)
+		{
+			m_value = other.m_value;
+			w = 1.0f;
+		}
+		// 4 -> 3
+		else if constexpr (NIn == 4)
+		{
+			m_value = other.m_value;
+			w = 0.0f;
+		}
+	}
 
 #pragma endregion
 

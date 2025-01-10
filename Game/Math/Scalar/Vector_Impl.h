@@ -1,5 +1,7 @@
 #pragma once
-#include  <cmath>
+#include <cmath>
+#include <initializer_list>
+#include <algorithm>
 
 template <size_t N, typename T>
 struct Vector final
@@ -266,6 +268,22 @@ template <size_t N, typename T, typename = std::enable_if_t<std::is_floating_poi
 
 	for (size_t i = 0; i < N; ++i)
 		result[i] = std::pow(self[i], exponent);
+
+	return result;
+}
+
+/// <summary>
+/// Quaternion Rotation
+/// </summary>
+template <typename T>
+[[nodiscard]] Vector<4, T> rotate(const Vector<4, T>& lhs, const Vector<4, T>& rhs)
+{
+	Vector<4, T> result;
+
+	result.w = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
+	result.x = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
+	result.y = lhs.w * rhs.y + lhs.y * rhs.w + lhs.z * rhs.x - lhs.x * rhs.z;
+	result.z = lhs.w * rhs.z + lhs.z * rhs.w + lhs.x * rhs.y - lhs.y * rhs.x;
 
 	return result;
 }

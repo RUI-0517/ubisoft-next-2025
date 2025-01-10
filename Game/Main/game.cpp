@@ -44,12 +44,23 @@ void Init()
 	// Vector4f result = vector * (translateMatrix * scaleMatrix);
 
 	Body planeBody{1.0f};
-	planeBody.transform.scale = Vector3f{2.0f};
+	planeBody.transform.scale = Vector3f{5.0f};
+	planeBody.transform.rotation = Vector4f{0.4545195f, 0.1227877f, 0.5416752f, 0.6963643f};
 
 	PlaneGeometry planeGeom{2.0f};
 	planeGeom.attachBody(std::make_shared<Body>(planeBody));
 
-	Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{1.0f, 0.0f, -1.0f});
+	Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{-1.0f, -1.0f, 1.0f});
+
+	// Quaternion q1{0.7071f, 0.0f, 0.7071f, 0.0f};
+	// Quaternion q2{0.7071f, 0.7071f, 0.0f, 0.0f};
+	Quaternion q1{1, 0, 0, 0};
+	Quaternion q2{0, 1, 0, 0};
+	Quaternion result = q1.rotate(q2);
+	Quaternion result2 = q2.rotate(q1);
+
+	// TODO: Radian or Degree
+	Quaternion q3 = Quaternion::eulerToQuaternion(60, 30, 90);
 }
 
 //------------------------------------------------------------------------
@@ -68,6 +79,7 @@ void Update(const float deltaTime)
 		Physics::WORLD->simulate(Physics::FIXED_DELTA_TIME);
 		Physics::ACCUMULATED_TIME -= Physics::FIXED_DELTA_TIME;
 	}
+
 	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
 	Transform& sphereTransform = sphereBody->transform;
 	// sphereBody->setKinematic();
@@ -151,10 +163,9 @@ void Render()
 
 	App::Print(result.x - 10, result.y - 10, "+");
 
-
 	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
 	const Vector3f& velocity = sphereBody->getLinearVelocity();
-	const Vector4f& position = sphereBody->transform.position;
+	const Vector3f& position = sphereBody->transform.position;
 
 	std::ostringstream os;
 	os << velocity;
@@ -163,6 +174,7 @@ void Render()
 	os.clear();
 	os << position;
 	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
+	App::Print(result.x - 10, result.y - 100, std::to_string(Physics::ACCUMULATED_TIME).c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------

@@ -4,11 +4,10 @@ class Transform
 {
 public:
 	Vector3f position;
-	// TODO: Refactor as quaternion
-	Vector3f rotation;
+	Quaternion rotation;
 	Vector3f scale;
 
 	Transform();
 
-	[[nodiscard]] Vector3f transformPoint(const Vector3f& point) const;
+	[[nodiscard]] Vector4f transformPoint(const Vector4f& point) const;
 };

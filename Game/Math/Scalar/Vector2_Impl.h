@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector_Impl.h"
 #include "SyntacticSugar_Impl.h"
+#include <ostream>
 
 template <typename T>
 struct Vector<2, T> final : SyntacticSugar<Vector<2, T>, T>

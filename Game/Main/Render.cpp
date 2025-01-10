@@ -22,6 +22,8 @@ namespace Rendering
 
 			CSimpleSprite* texture = App::CreateSprite(RESOURCE_PATH("Opacity Texture.png"), 100, 1);
 			texture->SetPosition(x, y);
+			// TODO: Remove as alpha will be handled in raymarching
+			texture->SetFrame(99);
 			PIXELS[index] = std::unique_ptr<CSimpleSprite>(texture);
 		}
 	}
@@ -40,8 +42,8 @@ namespace Rendering
 			for (size_t i = start; i < end; ++i)
 			{
 				const auto& color = colorBuffer[i];
-				const int alpha = static_cast<int>(color.w * 100 - 1);
-				pixels[i]->SetFrame(alpha);
+				// const int alpha = static_cast<int>(color.w * 100 - 1);
+				// pixels[i]->SetFrame(alpha);
 				pixels[i]->SetColor(color.x, color.y, color.z);
 			}
 		};
