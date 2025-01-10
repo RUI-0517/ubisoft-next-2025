@@ -60,7 +60,8 @@ void Init()
 	Quaternion result2 = q2.rotate(q1);
 
 	// TODO: Radian or Degree
-	Quaternion q3 = Quaternion::eulerToQuaternion(60, 30, 90);
+	Quaternion q3 = Quaternion::eulerToQuaternion(30, 50, 90);
+
 }
 
 //------------------------------------------------------------------------
