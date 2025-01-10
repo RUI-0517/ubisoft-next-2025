@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-Transform::Transform(): position(), rotation(), scale(Vector3f{1})
+Transform::Transform(): position(), rotation(Vector4f{0.0f, 0.0f, 0.0f, 1.0f}), scale(Vector3f{1})
 {
 }
 

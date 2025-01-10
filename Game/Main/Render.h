@@ -19,6 +19,7 @@ namespace Rendering
 	const Vector3f PLANE_NORMAL{0.0f, 1.0f, 0.0f};
 
 	inline Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
+	inline float SPHERE_RADIUS = 1.0f;
 
 	void InitializePixels(size_t resolution, size_t pixelSize);
 	void UpdatePixels(const Buffer& pixels, const std::vector<Vector4f>& colorBuffer);

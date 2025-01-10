@@ -34,4 +34,8 @@ public:
 	{
 		m_vertices = std::move(vertices);
 	}
+
+	static Vector3f getSupportPoint(const Geometry& lhs, const Geometry& rhs, const Vector3f& direction);
+	static bool checkCollision(const Geometry& lhs, const Geometry& rhs);
+	static bool updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f& currentDirection);
 };

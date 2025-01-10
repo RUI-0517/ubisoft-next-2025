@@ -56,6 +56,11 @@ struct SyntacticSugar
 		return ::pow(static_cast<const TSelf&>(*this), exponent);
 	}
 
+	[[nodiscard]] static TSelf tripleProduct(const TSelf& a, const TSelf& b, const TSelf& c)
+	{
+		return a.dot(c) * b - a.dot(b) * c;
+	}
+
 private:
 	SyntacticSugar() = default;
 	SyntacticSugar(const SyntacticSugar&) = default;

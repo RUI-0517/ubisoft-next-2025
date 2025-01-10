@@ -246,6 +246,11 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		return Vector(_mm_load_ps(result));
 	}
 
+	[[nodiscard]] static Vector tripleProduct(const Vector& a, const Vector& b, const Vector& c)
+	{
+		return a.dot(c) * b - a.dot(b) * c;
+	}
+
 	float& operator[](const size_t index)
 	{
 		assert(index < N && "Index out of bounds");

@@ -1,18 +1,19 @@
 #pragma once
 #include "Body.h"
-#include "BoxGeometry.h"
+#include "PlaneGeometry.h"
 #include "SphereGeometry.h"
 
 class World
 {
 	Vector3f m_gravity;
 
-	std::shared_ptr<BoxGeometry> m_boxGeom;
-	std::shared_ptr<SphereGeometry> m_sphereGeom;
-
 public:
 	// TODO: TEST ONLY, Make it private & refactor as Object Pool
 	std::vector<std::shared_ptr<Body>> bodies;
+
+	// TODO: TEST ONLY
+	std::shared_ptr<PlaneGeometry> planeGeom;
+	std::shared_ptr<SphereGeometry> sphereGeom;
 
 	World();
 	~World() = default;
@@ -22,6 +23,7 @@ public:
 	World& operator=(World&&) = delete;
 
 	void simulate(float timeStep) const;
+	void detectCollision() const;
 
 	void setGravity(const Vector3f& gravity);
 };

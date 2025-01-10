@@ -9,4 +9,6 @@ public:
 	explicit SphereGeometry(float radius);
 
 	[[nodiscard]] Vector3f getSupportPoint(const Vector3f& direction) const override;
+
+	[[nodiscard]] float getRadius() const;
 };
