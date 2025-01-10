@@ -19,7 +19,7 @@ Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 
 	for (const Vector3f& vertex : vertices)
 	{
-		Vector3f worldVertex = transform.transformPoint(vertex);
+		Vector4f worldVertex = transform.transformPoint(vertex);
 		const float supportValue = worldVertex.dot(direction);
 
 		if (supportValue < farthestExtent) continue;
