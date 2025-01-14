@@ -96,7 +96,8 @@ void Update(const float deltaTime)
 	const std::shared_ptr<PlaneGeometry>& planeGeom = Physics::WORLD->planeGeom;
 	const std::shared_ptr<SphereGeometry>& sphereGeom = Physics::WORLD->sphereGeom;
 
-	HAS_COLLISION = Geometry::checkCollision(*planeGeom, *sphereGeom);
+	auto [collided, vertices] = Geometry::checkCollision(*planeGeom, *sphereGeom);
+	HAS_COLLISION = collided;
 
 	if (HAS_COLLISION) sphereBody->setKinematic();
 

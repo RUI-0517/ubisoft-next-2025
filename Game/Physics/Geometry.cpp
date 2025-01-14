@@ -48,7 +48,8 @@ Vector3f Geometry::getSupportPoint(const Geometry& lhs, const Geometry& rhs, con
 	return lhs.getSupportPoint(direction) - rhs.getSupportPoint(-direction);
 }
 
-bool Geometry::checkCollision(const Geometry& lhs, const Geometry& rhs)
+// GJK
+std::tuple<bool, std::vector<Vector3f>> Geometry::checkCollision(const Geometry& lhs, const Geometry& rhs)
 {
 	std::vector<Vector3f> vertices;
 
@@ -83,7 +84,7 @@ bool Geometry::checkCollision(const Geometry& lhs, const Geometry& rhs)
 
 		// Add Support Point
 		Vector3f newVertex = getSupportPoint(lhs, rhs, currentDirection);
-		const bool noIntersection = currentDirection.dot(newVertex) < 0;
+		const bool noIntersection = currentDirection.dot(newVertex) <= 1e-3f;
 		if (noIntersection) break;
 
 		vertices.push_back(newVertex);
@@ -91,8 +92,7 @@ bool Geometry::checkCollision(const Geometry& lhs, const Geometry& rhs)
 	}
 	while (currentAttempt < maxAttempts);
 
-	// return vertices for EPA
-	return containsOrigin;
+	return std::make_tuple(containsOrigin, containsOrigin ? std::vector<Vector3f>{} : std::move(vertices));
 }
 
 /// <summary>
