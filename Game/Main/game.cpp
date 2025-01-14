@@ -15,7 +15,10 @@
 #include "Physics.h"
 #include "Render.h"
 #include "Matrix.h"
-#include "PlaneGeometry.h"
+#include "Simplex.h"
+
+// TODO: TEMP
+bool HAS_COLLISION = false;
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -31,36 +34,44 @@ void Init()
 	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
 	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
 
-	Rendering::RENDERER = std::make_unique<Renderer>(width / Rendering::PIXEL_SIZE,
-	                                                 height / Rendering::PIXEL_SIZE);
+	constexpr size_t bufferWidth = width / Rendering::PIXEL_SIZE;
+	constexpr size_t bufferHeight = width / Rendering::PIXEL_SIZE;
+
+	Rendering::RENDERER = std::make_unique<Renderer>(bufferWidth, bufferHeight);
 
 	constexpr size_t resolution = width * height;
 	Rendering::PIXELS = std::vector<std::unique_ptr<CSimpleSprite>>();
 	Rendering::InitializePixels(resolution, Rendering::PIXEL_SIZE);
 
+	// TODO: Better Sync
+	Rendering::SPHERE_RADIUS = Physics::WORLD->sphereGeom->getRadius();
+
+	Vector3f transformedPoint =
+		Physics::WORLD->sphereGeom->getBody()->transform.transformPoint({0.0f, 0.5f, 0.0f, 1.0f});
+
+	Vector3f supportPoint = Physics::WORLD->sphereGeom->getSupportPoint({0, 1, 0});
 	// const Vector4f vector = {0.5f, 0.5f, 0.0f, 1.0f};
 	// const Matrix4f translateMatrix = Matrix4f::translate(2.0f);
 	// const Matrix4f scaleMatrix = Matrix4f::scale(2.0f);
 	// Vector4f result = vector * (translateMatrix * scaleMatrix);
 
-	Body planeBody{1.0f};
-	planeBody.transform.scale = Vector3f{5.0f};
-	planeBody.transform.rotation = Vector4f{0.4545195f, 0.1227877f, 0.5416752f, 0.6963643f};
+	// Body planeBody{1.0f};
+	// planeBody.transform.scale = Vector3f{5.0f};
+	// planeBody.transform.rotation = Vector4f{0.4545195f, 0.1227877f, 0.5416752f, 0.6963643f};
+	//
+	// PlaneGeometry planeGeom{2.0f};
+	// planeGeom.attachBody(std::make_shared<Body>(planeBody));
 
-	PlaneGeometry planeGeom{2.0f};
-	planeGeom.attachBody(std::make_shared<Body>(planeBody));
-
-	Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{-1.0f, -1.0f, 1.0f});
+	// Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{-1.0f, -1.0f, 1.0f});
 
 	// Quaternion q1{0.7071f, 0.0f, 0.7071f, 0.0f};
 	// Quaternion q2{0.7071f, 0.7071f, 0.0f, 0.0f};
-	Quaternion q1{1, 0, 0, 0};
-	Quaternion q2{0, 1, 0, 0};
-	Quaternion result = q1.rotate(q2);
-	Quaternion result2 = q2.rotate(q1);
+	// Quaternion q1{1, 0, 0, 0};
+	// Quaternion q2{0, 1, 0, 0};
+	// Quaternion result = q1.rotate(q2);
+	// Quaternion result2 = q2.rotate(q1);
 
-	// TODO: Radian or Degree
-	Quaternion q3 = Quaternion::eulerToQuaternion(60, 30, 90);
+	// Quaternion q3 = Quaternion::eulerToQuaternion(30, 40, 10);
 }
 
 //------------------------------------------------------------------------
@@ -81,23 +92,41 @@ void Update(const float deltaTime)
 	}
 
 	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
-	Transform& sphereTransform = sphereBody->transform;
+	const Transform& sphereTransform = sphereBody->transform;
+
+	const std::shared_ptr<PlaneGeometry>& planeGeom = Physics::WORLD->planeGeom;
+	const std::shared_ptr<SphereGeometry>& sphereGeom = Physics::WORLD->sphereGeom;
+
+	auto [collided, vertices] = Geometry::checkCollision(*planeGeom, *sphereGeom);
+	HAS_COLLISION = collided;
+
+	if (HAS_COLLISION)
+	{
+		const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), *planeGeom, *sphereGeom);
+
+		sphereBody->transform.position += info.depth * info.normal;
+		// sphereBody->setKinematic();
+		Vector3f& velocity = sphereBody->getLinearVelocity();
+		velocity.y *= -0.4f;
+		// sphereBody->setLinearVelocity({0.0f, 0.01f, 0.0f});
+	}
+
 	// sphereBody->setKinematic();
 	// sphereTransform.position.y = 1.0f;
 
-	constexpr float velocityThreshold = 1.0f;
+	// constexpr float velocityThreshold = 1.0f;
 
-	if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
-	{
-		Vector3f& velocity = sphereBody->getLinearVelocity();
-
-		if (std::fabs(velocity.y) < velocityThreshold)
-		{
-			velocity.y = 0.0f;
-			sphereTransform.position.y = 1.0f;
-		}
-		else velocity.y *= -0.9f;
-	}
+	// if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
+	// {
+	// 	Vector3f& velocity = sphereBody->getLinearVelocity();
+	//
+	// 	if (std::fabs(velocity.y) < velocityThreshold)
+	// 	{
+	// 		velocity.y = 0.0f;
+	// 		sphereTransform.position.y = 1.0f;
+	// 	}
+	// 	else velocity.y *= -0.9f;
+	// }
 
 	Rendering::SPHERE_CENTER = sphereTransform.position;
 
@@ -168,13 +197,16 @@ void Render()
 	const Vector3f& position = sphereBody->transform.position;
 
 	std::ostringstream os;
-	os << velocity;
+	os << "Velocity: " << velocity;
 	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
 	os.str("");
 	os.clear();
-	os << position;
+	os << "Position: " << position;
 	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
-	App::Print(result.x - 10, result.y - 100, std::to_string(Physics::ACCUMULATED_TIME).c_str(), 0, 0, 0);
+	os.str("");
+	os.clear();
+	os << "Collide: " << HAS_COLLISION;
+	App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------

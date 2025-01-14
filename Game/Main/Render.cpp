@@ -106,8 +106,8 @@ namespace Rendering
 			materialId = PLANE_MATERIAL_ID;
 		}
 
-		constexpr float sphereRadius = 1.0f;
-		const float tSphere = IntersectSphere(rayOrigin, rayDirection, SPHERE_CENTER, sphereRadius);
+		// constexpr float sphereRadius = 1.0f;
+		const float tSphere = IntersectSphere(rayOrigin, rayDirection, SPHERE_CENTER, SPHERE_RADIUS);
 
 		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
 		{

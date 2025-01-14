@@ -39,6 +39,12 @@
     <ClInclude Include="PlaneGeometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Simplex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlaneGeometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Simplex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

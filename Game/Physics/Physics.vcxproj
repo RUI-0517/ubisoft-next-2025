@@ -201,9 +201,11 @@
   <ItemGroup>
     <ClInclude Include="Body.h" />
     <ClInclude Include="BoxGeometry.h" />
+    <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="PlaneGeometry.h" />
+    <ClInclude Include="Simplex.h" />
     <ClInclude Include="SphereGeometry.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="World.h" />
@@ -211,6 +213,7 @@
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="BoxGeometry.cpp" />
+    <ClCompile Include="CollisionInfo.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -219,6 +222,7 @@
     </ClCompile>
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="PlaneGeometry.cpp" />
+    <ClCompile Include="Simplex.cpp" />
     <ClCompile Include="SphereGeometry.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="World.cpp" />

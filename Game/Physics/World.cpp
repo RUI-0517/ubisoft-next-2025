@@ -4,22 +4,24 @@
 World::World()
 {
 	bodies.emplace_back(std::make_shared<Body>(1.0f));
-	bodies[0]->transform.position = {512, 768 - 128, 0};
+	bodies[0]->transform.position = {0.0f, 0.0f, 0.0f};
+	bodies[0]->setKinematic();
+
 	bodies.emplace_back(std::make_shared<Body>(1.0f));
-	bodies[1]->transform.position = {0.0f, 5.0f, 0.0f};
+	bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
 
-	m_boxGeom = std::make_shared<BoxGeometry>();
-	m_sphereGeom = std::make_shared<SphereGeometry>(1.0f);
+	planeGeom = std::make_shared<PlaneGeometry>(2.0f);
+	sphereGeom = std::make_shared<SphereGeometry>(1.0f);
 
-	m_boxGeom->attachBody(bodies[0]);
-	m_sphereGeom->attachBody(bodies[1]);
+	planeGeom->attachBody(bodies[0]);
+	sphereGeom->attachBody(bodies[1]);
 }
 
 void World::simulate(const float timeStep) const
 {
 	for (const auto& body : bodies)
 	{
-		if (body->isKinematic()) return;
+		if (body->isKinematic()) continue;
 
 		// Forward Euler
 		Vector3f acceleration = body->calculateAcceleration();
@@ -35,8 +37,13 @@ void World::simulate(const float timeStep) const
 	}
 
 	// Collision Detection
+	// detectCollision();
 
 	// Collision Resolution
+}
+
+void World::detectCollision() const
+{
 }
 
 void World::setGravity(const Vector3f& gravity)

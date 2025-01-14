@@ -216,8 +216,8 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 		const float sy = std::sin(yawRad);
 
 		const float w = cr * cp * cy + sr * sp * sy;
-		const float x = sr * cp * cy - cr * sp * sy;
-		const float y = cr * sp * cy + sr * cp * sy;
+		const float x = sr * cp * cy + cr * sp * sy;
+		const float y = cr * sp * cy - sr * cp * sy;
 		const float z = cr * cp * sy - sr * sp * cy;
 
 		return {x, y, z, w};
@@ -244,6 +244,11 @@ struct Vector<N, T, std::enable_if_t<(N == 3 || N == 4) && std::is_same_v<T, flo
 			result[i] = std::pow((*this)[i], exponent);
 
 		return Vector(_mm_load_ps(result));
+	}
+
+	[[nodiscard]] static Vector tripleProduct(const Vector& a, const Vector& b, const Vector& c)
+	{
+		return a.dot(c) * b - a.dot(b) * c;
 	}
 
 	float& operator[](const size_t index)
