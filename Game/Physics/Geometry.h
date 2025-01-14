@@ -1,5 +1,6 @@
 #pragma once
 #include "Body.h"
+#include "CollisionInfo.h"
 
 class Geometry
 {
@@ -38,4 +39,7 @@ public:
 	static Vector3f getSupportPoint(const Geometry& lhs, const Geometry& rhs, const Vector3f& direction);
 	static std::tuple<bool, std::vector<Vector3f>> checkCollision(const Geometry& lhs, const Geometry& rhs);
 	static bool updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f& currentDirection);
+
+	static CollisionInfo calculateCollisionInfo(std::vector<Vector3f>&& vertices, const Geometry& self,
+	                                            const Geometry& other);
 };

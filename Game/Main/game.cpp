@@ -15,6 +15,7 @@
 #include "Physics.h"
 #include "Render.h"
 #include "Matrix.h"
+#include "Simplex.h"
 
 // TODO: TEMP
 bool HAS_COLLISION = false;
@@ -99,7 +100,14 @@ void Update(const float deltaTime)
 	auto [collided, vertices] = Geometry::checkCollision(*planeGeom, *sphereGeom);
 	HAS_COLLISION = collided;
 
-	if (HAS_COLLISION) sphereBody->setKinematic();
+	if (HAS_COLLISION)
+	{
+		const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), *planeGeom, *sphereGeom);
+
+		sphereBody->transform.position += info.depth * info.normal;
+		// sphereBody->setKinematic();
+		sphereBody->setLinearVelocity({0.0f, 0.0f, 0.0f});
+	}
 
 	// sphereBody->setKinematic();
 	// sphereTransform.position.y = 1.0f;

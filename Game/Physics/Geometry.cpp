@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Simplex.h"
+
 Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 {
 	if (m_body == nullptr)
@@ -92,7 +94,7 @@ std::tuple<bool, std::vector<Vector3f>> Geometry::checkCollision(const Geometry&
 	}
 	while (currentAttempt < maxAttempts);
 
-	return std::make_tuple(containsOrigin, containsOrigin ? std::vector<Vector3f>{} : std::move(vertices));
+	return std::make_tuple(containsOrigin, containsOrigin ? std::move(vertices) : std::vector<Vector3f>{});
 }
 
 /// <summary>
@@ -192,4 +194,44 @@ bool Geometry::updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f&
 
 	default: throw std::invalid_argument("Invalid case number: " + std::to_string(vertices.size()));
 	}
+}
+
+CollisionInfo Geometry::calculateCollisionInfo(std::vector<Vector3f>&& vertices,
+                                               const Geometry& self, const Geometry& other)
+{
+	Simplex simplex(std::move(vertices));
+
+	Vector3f normal{0.0f};
+	float depth = 0.0f;
+
+	constexpr size_t maxIterations = 24;
+	size_t iterationCount = 0;
+
+	bool solved = false;
+
+	do
+	{
+		const size_t closestFaceIndex = simplex.getClosestFaceIndex();
+
+		const float faceDistance = simplex.getDistance(closestFaceIndex);
+		const Vector3f& nextDirection = simplex.getNormal(closestFaceIndex);
+
+		Vector3f expandPoint = getSupportPoint(self, other, nextDirection);
+		const float projectedDistance = expandPoint.dot(nextDirection);
+
+		if (std::abs(projectedDistance - faceDistance) > 1e-3f) simplex.expand(expandPoint);
+		else
+		{
+			normal = nextDirection;
+			depth = projectedDistance;
+			solved = true;
+		}
+
+		++iterationCount;
+	}
+	while (iterationCount < maxIterations);
+
+	if (!solved) throw std::runtime_error("EPA algorithm failed.");
+
+	return {normal, depth};
 }

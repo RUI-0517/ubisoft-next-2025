@@ -8,7 +8,7 @@ World::World()
 	bodies[0]->setKinematic();
 
 	bodies.emplace_back(std::make_shared<Body>(1.0f));
-	bodies[1]->transform.position = {0.0f, 1.0f, 0.0f};
+	bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
 
 	planeGeom = std::make_shared<PlaneGeometry>(2.0f);
 	sphereGeom = std::make_shared<SphereGeometry>(1.0f);
