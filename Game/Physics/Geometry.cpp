@@ -26,7 +26,7 @@ Vector3f Geometry::getSupportPoint(const Vector3f& direction) const
 		Vector4f worldVertex = transform.transformPoint(vertex);
 		const float supportValue = worldVertex.dot(direction);
 
-		if (supportValue < farthestExtent) continue;
+		if (supportValue < farthestExtent + 1e-3) continue;
 		farthestExtent = supportValue;
 		supportingPoint = worldVertex;
 	}
@@ -136,7 +136,7 @@ bool Geometry::updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f&
 			const Vector3f a0 = -a;
 
 			currentDirection = ac.cross(ab).normalize();
-			if (currentDirection.dot(a0) < 0) currentDirection *= -1;
+			if (currentDirection.dot(a0) < 1e-3f) currentDirection *= -1;
 			return false;
 		}
 
@@ -156,7 +156,7 @@ bool Geometry::updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f&
 			const Vector3f bcdNormal = bd.cross(cd);
 			const Vector3f cadNormal = cd.cross(ad);
 
-			if (abdNormal.dot(d0) > 0)
+			if (abdNormal.dot(d0) > 1e-3)
 			{
 				vertices.erase(
 					std::remove(vertices.begin(), vertices.end(), c),
@@ -167,7 +167,7 @@ bool Geometry::updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f&
 				return false;
 			}
 
-			if (bcdNormal.dot(d0) > 0)
+			if (bcdNormal.dot(d0) > 1e-3)
 			{
 				vertices.erase(
 					std::remove(vertices.begin(), vertices.end(), a),
@@ -178,7 +178,7 @@ bool Geometry::updateCurrentDirection(std::vector<Vector3f>& vertices, Vector3f&
 				return false;
 			}
 
-			if (cadNormal.dot(d0) > 0)
+			if (cadNormal.dot(d0) > 1e-3)
 			{
 				vertices.erase(
 					std::remove(vertices.begin(), vertices.end(), b),
@@ -230,6 +230,25 @@ CollisionInfo Geometry::calculateCollisionInfo(std::vector<Vector3f>&& vertices,
 		++iterationCount;
 	}
 	while (iterationCount < maxIterations);
+
+	// TODO: DEBUG PURPOSE ONLY
+	// if (!solved)
+	// {
+	// 	const size_t closestFaceIndex = simplex.getClosestFaceIndex();
+	//
+	// 	const float faceDistance = simplex.getDistance(closestFaceIndex);
+	// 	const Vector3f& nextDirection = simplex.getNormal(closestFaceIndex);
+	//
+	// 	Vector3f expandPoint = getSupportPoint(self, other, nextDirection);
+	// 	const float projectedDistance = expandPoint.dot(nextDirection);
+	//
+	// 	normal = nextDirection;
+	// 	depth = projectedDistance + 1e-3f;
+	//
+	// 	auto& position = other.getBody()->transform.position;
+	// 	auto& velocity = other.getBody()->getLinearVelocity();
+	// 	solved = true;
+	// }
 
 	if (!solved) throw std::runtime_error("EPA algorithm failed.");
 

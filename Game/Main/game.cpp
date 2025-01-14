@@ -106,7 +106,9 @@ void Update(const float deltaTime)
 
 		sphereBody->transform.position += info.depth * info.normal;
 		// sphereBody->setKinematic();
-		sphereBody->setLinearVelocity({0.0f, 0.0f, 0.0f});
+		Vector3f& velocity = sphereBody->getLinearVelocity();
+		velocity.y *= -0.4f;
+		// sphereBody->setLinearVelocity({0.0f, 0.01f, 0.0f});
 	}
 
 	// sphereBody->setKinematic();
