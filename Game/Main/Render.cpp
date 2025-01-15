@@ -70,9 +70,7 @@ namespace Rendering
 
 	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
-		const Vector4f skyColor = {0.7f, 0.82f, 0.9f, 1.0f};
-
-		Vector4f fragColor = skyColor;
+		Vector3f color = SKY_COLOR;
 
 		auto [t, materialId] = IntersectScene(rayOrigin, rayDirection);
 		const bool hasIntersected = t > 0.0f;
@@ -89,17 +87,19 @@ namespace Rendering
 
 			if (isGround)
 			{
-				fragColor = {0.0f, 0.0f, 1.0f, 1.0f};
+				const float x = SdCheckerBoard(hitPoint);
+				color = Vector3f{0.15f} + x * Vector3f{0.05f};
 			}
-			else
-			{
-				fragColor = Vector4f{1.0f};
-			}
+			else color = Vector3f{0.0f, 1.0f, 0.0f};
 
-			float skyLight = ApplySkyLight(normal);
-
+			auto skyLight = ApplySkyLight(color, rayDirection, normal);
 			float ambientOcclusion = CalculateAmbientOcclusion(hitPoint, normal);
-			fragColor *= skyLight * ambientOcclusion;
+
+			color = skyLight * ambientOcclusion;
+
+			float fogFactor = ApplyFog(t, 1e-6f);
+
+			color = color.lerp(SKY_COLOR, fogFactor);
 
 			// Temporary fix for the object not casting a shadow
 			// if (materialId != 1.0f)
@@ -113,6 +113,8 @@ namespace Rendering
 			// 	fragColor = light;
 			// }
 		}
+
+		Vector4f fragColor = color;
 
 		return fragColor;
 	}
@@ -156,6 +158,13 @@ namespace Rendering
 		result = Union(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
 
 		return result;
+	}
+
+	float SdCheckerBoard(const Vector3f& point)
+	{
+		const int x = static_cast<int>(round(point.x + 0.5f));
+		const int z = static_cast<int>(round(point.z + 0.5f));
+		return static_cast<float>((x ^ z) & 1);
 	}
 
 	float Union(const float d1, const float d2)
@@ -229,7 +238,7 @@ namespace Rendering
 		return {};
 	}
 
-	float ApplySkyLight(const Vector3f& normal)
+	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection, const Vector3f& normal)
 	{
 		// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
 		// simulating bounced light and avoiding complete darkness.
@@ -239,7 +248,17 @@ namespace Rendering
 		// Calculate diffuse lighting with clamping to ensure valid range [0, 1]
 		const float diffuse = sqrt(std::clamp(bias + scale * normal.y, 0.0f, 1.0f));
 
-		return diffuse;
+		const Vector3f reflect = Reflect(rayDirection, normal);
+		const float smoothSpecularFactor = SmoothStep(-0.2f, 0.2f, reflect.y);
+
+		// schlick fresnel approximation
+		constexpr float baseReflectivity = 0.04f;
+		constexpr float oneMinusBaseReflectivity = 1.0f - baseReflectivity;
+		float cosTheta = normal.dot(-rayDirection);
+		cosTheta = std::clamp(cosTheta, 0.0f, 1.0f);
+		const float fresnelReflectance = baseReflectivity + oneMinusBaseReflectivity * pow((1.0f - cosTheta), 5.0f);
+
+		return color.hadamard(SKY_COLOR * diffuse) + smoothSpecularFactor * fresnelReflectance * SKY_COLOR;
 	}
 
 	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal)
@@ -259,11 +278,27 @@ namespace Rendering
 			// it indicates a closer surface, meaning the hit point is occluded.
 			value += (minDistance - distance) * attenuationFactor;
 
-			attenuationFactor *= 0.9f;
+			attenuationFactor *= 0.8f;
 		}
 
 		// Adjust the parameters to achieve the desired visual effect.
 		const float normalFactor = 0.5f + 0.5f * normal.y;
-		return std::clamp(exp(-5.0f * value), 0.0f, 1.0f) * normalFactor;
+		return std::clamp(exp(-10.0f * value), 0.0f, 1.0f) * normalFactor;
+	}
+
+	float ApplyFog(const float t, const float density)
+	{
+		return 1.0f - exp(-density * t * t * t);
+	}
+
+	float SmoothStep(const float edge0, const float edge1, const float x)
+	{
+		const float t = std::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+		return t * t * (3.0f - 2.0f * t);
+	}
+
+	Vector3f Reflect(const Vector3f& in, const Vector3f& normal)
+	{
+		return in - 2.0f * in.dot(normal) * normal;
 	}
 }

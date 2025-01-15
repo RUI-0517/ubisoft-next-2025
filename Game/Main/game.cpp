@@ -15,7 +15,6 @@
 #include "Physics.h"
 #include "Render.h"
 #include "Matrix.h"
-#include "Simplex.h"
 
 // TODO: TEMP
 bool HAS_COLLISION = false;

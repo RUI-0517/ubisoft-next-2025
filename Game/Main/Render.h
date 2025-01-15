@@ -9,7 +9,7 @@ namespace Rendering
 	static size_t THREAD_COUNT = std::thread::hardware_concurrency();
 
 	inline Buffer PIXELS;
-	constexpr size_t PIXEL_SIZE = 6;
+	constexpr size_t PIXEL_SIZE = 4;
 
 	inline float TIME_PASSED;
 
@@ -21,6 +21,8 @@ namespace Rendering
 	inline Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
 	inline float SPHERE_RADIUS = 1.0f;
 
+	const Vector3f SKY_COLOR{0.8f};
+
 	void InitializePixels(size_t resolution, size_t pixelSize);
 	void UpdatePixels(const Buffer& pixels, const std::vector<Vector4f>& colorBuffer);
 
@@ -30,6 +32,8 @@ namespace Rendering
 
 	float SdSphere(const Vector3f& point, float radius);
 	float SdScene(const Vector3f& point);
+
+	float SdCheckerBoard(const Vector3f& point);
 
 	float Union(float d1, float d2);
 
@@ -41,7 +45,14 @@ namespace Rendering
 	                       const Vector3f& rayDirection, const Vector3f& lightPosition);
 
 	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal);
-	[[nodiscard]] float ApplySkyLight(const Vector3f& normal);
+	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
+	                                     const Vector3f& normal);
 
 	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
+
+	float ApplyFog(float t, float density);
+
+	float SmoothStep(float edge0, float edge1, float x);
+
+	Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
 }
