@@ -104,10 +104,13 @@ void Update(const float deltaTime)
 	{
 		const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), *planeGeom, *sphereGeom);
 
-		sphereBody->transform.position += info.depth * info.normal;
+		sphereBody->transform.position += info.depth * info.normal * 0.9f;
 		// sphereBody->setKinematic();
 		Vector3f& velocity = sphereBody->getLinearVelocity();
 		velocity.y *= -0.4f;
+
+		if (velocity.magnitudeSquared() <= 0.2f)
+			velocity = Vector3f{0.0f};
 		// sphereBody->setLinearVelocity({0.0f, 0.01f, 0.0f});
 	}
 
@@ -141,7 +144,7 @@ void Update(const float deltaTime)
 		v -= 0.5f;
 
 		// ray info
-		const Vector3f rayOrigin = {0.0f, 2.0f, -10.0f};
+		const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
 
 		// camera settings
 		const Vector3f& cameraOrigin = rayOrigin;

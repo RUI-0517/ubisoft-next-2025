@@ -70,7 +70,7 @@ namespace Rendering
 
 	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
-		const Vector4f skyColor = {0.0f, 0.0f, 0.0f, 1.0f};
+		const Vector4f skyColor = {0.7f, 0.82f, 0.9f, 1.0f};
 
 		Vector4f fragColor = skyColor;
 
@@ -81,14 +81,37 @@ namespace Rendering
 		{
 			const Vector3f hitPoint = rayOrigin + t * rayDirection;
 
+			const bool isGround = materialId == 1.0f;
+
 			// TODO: Using geom transform
 			// Calculate Normal
-			const Vector3f normal =
-				materialId == 1.0f ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, SPHERE_CENTER);
+			const Vector3f normal = isGround ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, SPHERE_CENTER);
 
-			// Apply Lighting
-			const Vector3f lightPosition = {-15, 15, 0};
-			fragColor = ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
+			if (isGround)
+			{
+				fragColor = {0.0f, 0.0f, 1.0f, 1.0f};
+			}
+			else
+			{
+				fragColor = Vector4f{1.0f};
+			}
+
+			float skyLight = ApplySkyLight(normal);
+
+			float ambientOcclusion = CalculateAmbientOcclusion(hitPoint, normal);
+			fragColor *= skyLight * ambientOcclusion;
+
+			// Temporary fix for the object not casting a shadow
+			// if (materialId != 1.0f)
+			// {
+			// 	// Apply Lighting
+			// 	const Vector3f lightPosition = {-15, 15, 0};
+			// 	const Vector3f light = ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
+			// 	const Vector3f shadow = ApplyShadow(hitPoint, lightPosition);
+			//
+			// 	// light * shadow
+			// 	fragColor = light;
+			// }
 		}
 
 		return fragColor;
@@ -119,9 +142,25 @@ namespace Rendering
 	}
 
 	// Signed distance function for a sphere
-	float SdSphere(const Vector3f& p, const float s)
+	float SdSphere(const Vector3f& point, const float radius)
 	{
-		return p.magnitude() - s;
+		return point.magnitude() - radius;
+	}
+
+	float SdScene(const Vector3f& point)
+	{
+		// Plane
+		float result = point.y;
+
+		// Sphere
+		result = Union(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
+
+		return result;
+	}
+
+	float Union(const float d1, const float d2)
+	{
+		return d1 < d2 ? d1 : d2;
 	}
 
 	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
@@ -183,5 +222,48 @@ namespace Rendering
 		Vector3f color = ambient + diffuse + specular;
 
 		return {color.x, color.y, color.z, 1.0f};
+	}
+
+	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal)
+	{
+		return {};
+	}
+
+	float ApplySkyLight(const Vector3f& normal)
+	{
+		// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
+		// simulating bounced light and avoiding complete darkness.
+		constexpr float bias = 0.5f; // Offset to brighten downward-facing surfaces
+		constexpr float scale = 0.5f; // Scale factor for normal.y contribution
+
+		// Calculate diffuse lighting with clamping to ensure valid range [0, 1]
+		const float diffuse = sqrt(std::clamp(bias + scale * normal.y, 0.0f, 1.0f));
+
+		return diffuse;
+	}
+
+	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal)
+	{
+		float value = 0.0f;
+		float attenuationFactor = 1.0f;
+		constexpr size_t maxIteration = 5;
+
+		for (size_t i = 0; i < maxIteration; ++i)
+		{
+			const float minDistance = 0.025f * static_cast<float>(i);
+			const Vector3f samplePoint = hitPoint + minDistance * normal;
+			const auto distance = SdScene(samplePoint);
+
+			// Sample along the normal to check for occlusion.
+			// If the SDF value at samplePoint is smaller than sampleDistance, 
+			// it indicates a closer surface, meaning the hit point is occluded.
+			value += (minDistance - distance) * attenuationFactor;
+
+			attenuationFactor *= 0.9f;
+		}
+
+		// Adjust the parameters to achieve the desired visual effect.
+		const float normalFactor = 0.5f + 0.5f * normal.y;
+		return std::clamp(exp(-5.0f * value), 0.0f, 1.0f) * normalFactor;
 	}
 }

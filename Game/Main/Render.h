@@ -28,11 +28,20 @@ namespace Rendering
 	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 	std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
-	float SdSphere(const Vector3f& p, float s);
+	float SdSphere(const Vector3f& point, float radius);
+	float SdScene(const Vector3f& point);
+
+	float Union(float d1, float d2);
+
 	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
 	                      const Vector3f& sphereCenter, float sphereRadius);
 
 	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
 	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
 	                       const Vector3f& rayDirection, const Vector3f& lightPosition);
+
+	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal);
+	[[nodiscard]] float ApplySkyLight(const Vector3f& normal);
+
+	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
 }
