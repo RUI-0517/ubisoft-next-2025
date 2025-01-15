@@ -29,17 +29,17 @@ namespace Rendering
 
 	[[nodiscard]] float CalculateDepth(float fov);
 	[[nodiscard]] Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
-	[[nodiscard]] std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] std::tuple<float, float> TraceRay(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
 	[[nodiscard]] float SdSphere(const Vector3f& point, float radius);
 	[[nodiscard]] float SdScene(const Vector3f& point);
 
 	[[nodiscard]] float SdCheckerBoard(const Vector3f& point);
 
-	[[nodiscard]] float Union(float d1, float d2);
+	[[nodiscard]] constexpr float Union(float d1, float d2);
 
-	[[nodiscard]] float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
-	                                    const Vector3f& sphereCenter, float sphereRadius);
+	[[nodiscard]] float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] float IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
 	[[nodiscard]] Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
 	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,

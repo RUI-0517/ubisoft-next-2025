@@ -72,7 +72,7 @@ namespace Rendering
 	{
 		Vector3f color = SKY_COLOR;
 
-		auto [t, materialId] = IntersectScene(rayOrigin, rayDirection);
+		auto [t, materialId] = TraceRay(rayOrigin, rayDirection);
 		const bool hasIntersected = t > 0.0f;
 
 		if (hasIntersected)
@@ -113,7 +113,7 @@ namespace Rendering
 		return fragColor;
 	}
 
-	std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+	std::tuple<float, float> TraceRay(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
 		float t = -1.0f;
 		float materialId = -1.0f;
@@ -122,11 +122,18 @@ namespace Rendering
 		if (tFloor > 0.0f)
 		{
 			t = tFloor;
+			// tMax = min(tMax, t);
 			materialId = PLANE_MATERIAL_ID;
 		}
 
-		const float tSphere = IntersectSphere(rayOrigin, rayDirection, SPHERE_CENTER, SPHERE_RADIUS);
+		// const float tScene = IntersectScene(rayOrigin, rayDirection);
+		// if (tScene > 1.0f && (t < 0.0f || tScene < t))
+		// {
+		// 	t = tScene;
+		// 	materialId = SPHERE_MATERIAL_ID;
+		// }
 
+		const float tSphere = IntersectSphere(rayOrigin, rayDirection);
 		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
 		{
 			t = tSphere;
@@ -144,11 +151,20 @@ namespace Rendering
 
 	float SdScene(const Vector3f& point)
 	{
-		// Plane
-		float result = point.y;
+		float result = 1.0f;
 
 		// Sphere
 		result = Union(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
+		// Note: When I first used this function, its performance was unexpectedly poor.
+		// I then replaced it with the following inline comparison version:
+		// 
+		// const float d1 = result;
+		// const float d2 = SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS);
+		// if (d1 < d2) result = d1;
+		// else result = d2;
+		// 
+		// After compiling once with the inline comparison, switching back to the Union() function
+		// resolved the issue, and performance returned to normal. The behavior is quite puzzling.
 
 		return result;
 	}
@@ -160,20 +176,25 @@ namespace Rendering
 		return static_cast<float>((x ^ z) & 1);
 	}
 
-	float Union(const float d1, const float d2)
+	// inline float Union(const float d1, const float d2)
+	// {
+	// 	return d1 < d2 ? d1 : d2;
+	// }
+
+	constexpr float Union(const float d1, const float d2)
 	{
 		return d1 < d2 ? d1 : d2;
 	}
 
-	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
-	                      const Vector3f& sphereCenter, const float sphereRadius)
+
+	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
 		float t = 0.0f;
 		for (size_t i = 0; i < 128; i++)
 		{
 			// Iterate for a maximum of 100 steps
 			Vector3f p = rayOrigin + rayDirection * t;
-			const float d = SdSphere(p - sphereCenter, sphereRadius);
+			const float d = SdSphere(p - SPHERE_CENTER, SPHERE_RADIUS);
 			if (d < 0.001f)
 			{
 				// If the distance is small enough, we have an intersection
@@ -184,12 +205,36 @@ namespace Rendering
 			t += d;
 			if (t > 100.0)
 			{
-				// If we've moved too far, stop
 				break;
 			}
 		}
 		return -1.0f; // No intersection found
 	}
+
+	float IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+	{
+		float t = 0.0f;
+		for (size_t i = 0; i < 128; i++)
+		{
+			// Iterate for a maximum of 100 steps
+			Vector3f p = rayOrigin + rayDirection * t;
+			const float d = SdScene(p);
+			if (d < 0.001f)
+			{
+				// If the distance is small enough, we have an intersection
+				return t;
+			}
+
+			// Move along the ray by the distance
+			t += d;
+			if (t > 100.0)
+			{
+				break;
+			}
+		}
+		return -1.0f; // No intersection found
+	}
+
 
 	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center)
 	{
