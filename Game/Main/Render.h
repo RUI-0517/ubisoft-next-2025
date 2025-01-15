@@ -22,34 +22,37 @@ namespace Rendering
 	inline float SPHERE_RADIUS = 1.0f;
 
 	const Vector3f SKY_COLOR{0.8f};
+	const Vector3f DIRECTIONAL_LIGHT_DIR{-0.5f, 0.5f, -0.5f};
 
 	void InitializePixels(size_t resolution, size_t pixelSize);
 	void UpdatePixels(const Buffer& pixels, const std::vector<Vector4f>& colorBuffer);
 
-	float CalculateDepth(float fov);
-	Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
-	std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] float CalculateDepth(float fov);
+	[[nodiscard]] Vector4f RenderScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] std::tuple<float, float> IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
-	float SdSphere(const Vector3f& point, float radius);
-	float SdScene(const Vector3f& point);
+	[[nodiscard]] float SdSphere(const Vector3f& point, float radius);
+	[[nodiscard]] float SdScene(const Vector3f& point);
 
-	float SdCheckerBoard(const Vector3f& point);
+	[[nodiscard]] float SdCheckerBoard(const Vector3f& point);
 
-	float Union(float d1, float d2);
+	[[nodiscard]] float Union(float d1, float d2);
 
-	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
-	                      const Vector3f& sphereCenter, float sphereRadius);
+	[[nodiscard]] float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection,
+	                                    const Vector3f& sphereCenter, float sphereRadius);
 
-	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
-	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
-	                       const Vector3f& rayDirection, const Vector3f& lightPosition);
-	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal);
-	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& hitPoint,
-	                                     const Vector3f& rayDirection, const Vector3f& normal);
-	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
-	float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax, float softness);
-	float ApplyFog(float t, float density);
+	[[nodiscard]] Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
+	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
+	                                                const Vector3f& hitPoint, const Vector3f& normal);
+	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
+	                                     const Vector3f& hitPoint, const Vector3f& normal);
+	[[nodiscard]] float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax,
+	                                float softness);
+	[[nodiscard]] float ApplyFog(float t, float density);
 
-	float SmoothStep(float edge0, float edge1, float x);
-	Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
+	[[nodiscard]] float SmoothStep(float edge0, float edge1, float x);
+	[[nodiscard]] Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
+
+	[[nodiscard]] float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
+	[[nodiscard]] float CalculateFresnel(const Vector3f& in, const Vector3f& normal);
 }

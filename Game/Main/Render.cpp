@@ -90,28 +90,22 @@ namespace Rendering
 				const float x = SdCheckerBoard(hitPoint);
 				color = Vector3f{0.15f} + x * Vector3f{0.05f};
 			}
-			else color = Vector3f{0.0f, 1.0f, 0.0f};
+			else color = Vector3f{0.0f, 0.5f, 0.0f};
 
-			auto skyLight = ApplySkyLight(color, hitPoint, rayDirection, normal);
+			Vector3f lighting{0.0f};
+
+			auto directionalLight = ApplyDirectionalLighting(color, rayDirection, hitPoint, normal);
+
+			lighting += directionalLight;
+
+			Vector3f skyLight = ApplySkyLight(color, rayDirection, hitPoint, normal);
 			float ambientOcclusion = CalculateAmbientOcclusion(hitPoint, normal);
 
-			color = skyLight * ambientOcclusion;
+			lighting += skyLight * ambientOcclusion;
 
 			float fogFactor = ApplyFog(t, 1e-5f);
 
-			color = color.lerp(SKY_COLOR, fogFactor);
-
-			// Temporary fix for the object not casting a shadow
-			// if (materialId != 1.0f)
-			// {
-			// 	// Apply Lighting
-			// 	const Vector3f lightPosition = {-15, 15, 0};
-			// 	const Vector3f light = ApplyLighting(hitPoint, normal, rayDirection, lightPosition);
-			// 	const Vector3f shadow = ApplyShadow(hitPoint, lightPosition);
-			//
-			// 	// light * shadow
-			// 	fragColor = light;
-			// }
+			color = lighting.lerp(SKY_COLOR, fogFactor);
 		}
 
 		Vector4f fragColor = color;
@@ -131,7 +125,6 @@ namespace Rendering
 			materialId = PLANE_MATERIAL_ID;
 		}
 
-		// constexpr float sphereRadius = 1.0f;
 		const float tSphere = IntersectSphere(rayOrigin, rayDirection, SPHERE_CENTER, SPHERE_RADIUS);
 
 		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
@@ -233,13 +226,29 @@ namespace Rendering
 		return {color.x, color.y, color.z, 1.0f};
 	}
 
-	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal)
+	Vector3f ApplyDirectionalLighting(const Vector3f& color,
+	                                  const Vector3f& rayDirection, const Vector3f& hitPoint, const Vector3f& normal)
 	{
-		return {};
+		const Vector3f lightDir = DIRECTIONAL_LIGHT_DIR.normalize();
+		const float diffuseFactor = std::clamp(normal.dot(lightDir), 0.0f, 1.0f);
+		const float softShadow = ApplyShadow(hitPoint, lightDir, 0.02f, 2.5f, 8);
+
+		// Direction from point to camera (origin)
+		const Vector3f viewDir = -rayDirection.normalize();
+		// Halfway vector between light and view
+		const Vector3f halfDir = (lightDir + viewDir).normalize();
+
+		// Specular component
+		constexpr float shininess = 16.0;
+		float specularFactor = std::pow(max(normal.dot(halfDir), 0.0f), shininess);
+		specularFactor *= diffuseFactor;
+
+		const float fresnelReflectance = CalculateFresnel(lightDir, halfDir);
+		return color * diffuseFactor * softShadow + specularFactor * fresnelReflectance;
 	}
 
-	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& hitPoint, const Vector3f& rayDirection,
-	                       const Vector3f& normal)
+	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
+	                       const Vector3f& hitPoint, const Vector3f& normal)
 	{
 		// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
 		// simulating bounced light and avoiding complete darkness.
@@ -252,14 +261,8 @@ namespace Rendering
 		const Vector3f reflect = Reflect(rayDirection, normal);
 		const float smoothSpecularFactor = SmoothStep(-0.2f, 0.2f, reflect.y);
 
-		// schlick fresnel approximation
-		constexpr float baseReflectivity = 0.04f;
-		constexpr float oneMinusBaseReflectivity = 1.0f - baseReflectivity;
-		float cosTheta = normal.dot(-rayDirection);
-		cosTheta = std::clamp(cosTheta, 0.0f, 1.0f);
-		const float fresnelReflectance = baseReflectivity + oneMinusBaseReflectivity * pow((1.0f - cosTheta), 5.0f);
-
-		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.5f, 32.0f);
+		const float fresnelReflectance = CalculateFresnel(-rayDirection, normal);
+		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.5f, 8);
 
 		const Vector3f diffuseColor = color.hadamard(SKY_COLOR * diffuse);
 		const Vector3f specularFactor = (smoothSpecularFactor * fresnelReflectance * reflection) * SKY_COLOR;
@@ -337,5 +340,16 @@ namespace Rendering
 	Vector3f Reflect(const Vector3f& in, const Vector3f& normal)
 	{
 		return in - 2.0f * in.dot(normal) * normal;
+	}
+
+	// schlick fresnel approximation
+	float CalculateFresnel(const Vector3f& in, const Vector3f& normal)
+	{
+		constexpr float baseReflectivity = 0.04f;
+		constexpr float oneMinusBaseReflectivity = 1.0f - baseReflectivity;
+		float cosTheta = in.dot(normal);
+		cosTheta = std::clamp(cosTheta, 0.0f, 1.0f);
+		const float fresnelReflectance = baseReflectivity + oneMinusBaseReflectivity * pow((1.0f - cosTheta), 5.0f);
+		return fresnelReflectance;
 	}
 }
