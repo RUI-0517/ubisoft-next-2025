@@ -92,12 +92,12 @@ namespace Rendering
 			}
 			else color = Vector3f{0.0f, 1.0f, 0.0f};
 
-			auto skyLight = ApplySkyLight(color, rayDirection, normal);
+			auto skyLight = ApplySkyLight(color, hitPoint, rayDirection, normal);
 			float ambientOcclusion = CalculateAmbientOcclusion(hitPoint, normal);
 
 			color = skyLight * ambientOcclusion;
 
-			float fogFactor = ApplyFog(t, 1e-6f);
+			float fogFactor = ApplyFog(t, 1e-5f);
 
 			color = color.lerp(SKY_COLOR, fogFactor);
 
@@ -176,7 +176,7 @@ namespace Rendering
 	                      const Vector3f& sphereCenter, const float sphereRadius)
 	{
 		float t = 0.0f;
-		for (size_t i = 0; i < 100; i++)
+		for (size_t i = 0; i < 128; i++)
 		{
 			// Iterate for a maximum of 100 steps
 			Vector3f p = rayOrigin + rayDirection * t;
@@ -238,7 +238,8 @@ namespace Rendering
 		return {};
 	}
 
-	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection, const Vector3f& normal)
+	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& hitPoint, const Vector3f& rayDirection,
+	                       const Vector3f& normal)
 	{
 		// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
 		// simulating bounced light and avoiding complete darkness.
@@ -258,7 +259,12 @@ namespace Rendering
 		cosTheta = std::clamp(cosTheta, 0.0f, 1.0f);
 		const float fresnelReflectance = baseReflectivity + oneMinusBaseReflectivity * pow((1.0f - cosTheta), 5.0f);
 
-		return color.hadamard(SKY_COLOR * diffuse) + smoothSpecularFactor * fresnelReflectance * SKY_COLOR;
+		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.5f, 32.0f);
+
+		const Vector3f diffuseColor = color.hadamard(SKY_COLOR * diffuse);
+		const Vector3f specularFactor = (smoothSpecularFactor * fresnelReflectance * reflection) * SKY_COLOR;
+
+		return diffuseColor + specularFactor;
 	}
 
 	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal)
@@ -284,6 +290,37 @@ namespace Rendering
 		// Adjust the parameters to achieve the desired visual effect.
 		const float normalFactor = 0.5f + 0.5f * normal.y;
 		return std::clamp(exp(-10.0f * value), 0.0f, 1.0f) * normalFactor;
+	}
+
+	// remark: softness higher, clearer, harder
+	float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection,
+	                  const float tMin, const float tMax, const float softness)
+	{
+		float result = 1.0f;
+
+		float t = tMin;
+		for (size_t i = 0; i < 128; i++)
+		{
+			Vector3f samplePoint = rayOrigin + rayDirection * t;
+			const float currentDistance = SdScene(samplePoint);
+
+			if (currentDistance < 1e-3f) return 0.0f;
+
+			// Move along the ray by the distance
+			t += currentDistance;
+
+			// The following formula adjusts the shadow softness based on distance:
+			// The closer the ray is to the hit point, the darker the penumbra,
+			// creating a smoother shadow edge.
+			result = min(result, softness * currentDistance / t);
+
+			if (t >= tMax)
+			{
+				// If we've moved too far, stop
+				break;
+			}
+		}
+		return result;
 	}
 
 	float ApplyFog(const float t, const float density)

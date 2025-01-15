@@ -43,16 +43,13 @@ namespace Rendering
 	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center);
 	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
 	                       const Vector3f& rayDirection, const Vector3f& lightPosition);
-
 	Vector4f ApplyDirectionalLighting(const Vector3f& hitPoint, const Vector3f& normal);
-	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
-	                                     const Vector3f& normal);
-
+	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& hitPoint,
+	                                     const Vector3f& rayDirection, const Vector3f& normal);
 	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
-
+	float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax, float softness);
 	float ApplyFog(float t, float density);
 
 	float SmoothStep(float edge0, float edge1, float x);
-
 	Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
 }
