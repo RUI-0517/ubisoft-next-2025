@@ -21,9 +21,10 @@ namespace Rendering
 	inline Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
 	inline float SPHERE_RADIUS = 1.0f;
 
-	const Vector3f SKY_COLOR{0.8f};
-	const Vector3f DIRECTIONAL_LIGHT_DIR{-0.5f, 0.5f, -0.5f};
-
+	const Vector3f SKY_COLOR{0.85f, 0.8f, 0.75f};
+	const Vector3f DIRECTIONAL_LIGHT_DIR{-0.75f, 0.5f, -0.5f};
+	const Vector3f DIRECTIONAL_LIGHT_COLOR{0.95f, 0.85f, 0.8f};
+	
 	void InitializePixels(size_t resolution, size_t pixelSize);
 	void UpdatePixels(const Buffer& pixels, const std::vector<Vector4f>& colorBuffer);
 

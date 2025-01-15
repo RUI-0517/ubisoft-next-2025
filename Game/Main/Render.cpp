@@ -289,7 +289,11 @@ namespace Rendering
 		specularFactor *= diffuseFactor;
 
 		const float fresnelReflectance = CalculateFresnel(lightDir, halfDir);
-		return color * diffuseFactor * softShadow + specularFactor * fresnelReflectance;
+
+		const Vector3f diffuseColor = color.hadamard(DIRECTIONAL_LIGHT_COLOR) * diffuseFactor * softShadow;
+		const float specularColor = specularFactor * fresnelReflectance;
+
+		return diffuseColor + specularColor;
 	}
 
 	Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
@@ -307,12 +311,12 @@ namespace Rendering
 		const float smoothSpecularFactor = SmoothStep(-0.2f, 0.2f, reflect.y);
 
 		const float fresnelReflectance = CalculateFresnel(-rayDirection, normal);
-		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.5f, 8);
+		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.0f, 32);
 
 		const Vector3f diffuseColor = color.hadamard(SKY_COLOR * diffuse);
-		const Vector3f specularFactor = (smoothSpecularFactor * fresnelReflectance * reflection) * SKY_COLOR;
+		const Vector3f specularColor = (smoothSpecularFactor * fresnelReflectance * reflection) * SKY_COLOR;
 
-		return diffuseColor + specularFactor;
+		return diffuseColor + specularColor;
 	}
 
 	float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal)
