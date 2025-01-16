@@ -10,6 +10,7 @@ class World
 public:
 	// TODO: TEST ONLY, Make it private & refactor as Object Pool
 	std::vector<std::shared_ptr<Body>> bodies;
+	std::vector<std::shared_ptr<Geometry>> geometries;
 
 	// TODO: TEST ONLY
 	std::shared_ptr<PlaneGeometry> planeGeom;

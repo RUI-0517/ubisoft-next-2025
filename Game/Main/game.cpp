@@ -10,8 +10,6 @@
 #include "app/app.h"
 //------------------------------------------------------------------------
 
-#include <sstream>
-
 #include "Physics.h"
 #include "Render.h"
 #include "Matrix.h"
@@ -80,7 +78,6 @@ void Init()
 void Update(const float deltaTime)
 {
 	const float deltaTimeInSecond = deltaTime / 1000.0f;
-	Rendering::TIME_PASSED += deltaTimeInSecond;
 
 	// Fixed Update
 	Physics::ACCUMULATED_TIME += deltaTimeInSecond;
