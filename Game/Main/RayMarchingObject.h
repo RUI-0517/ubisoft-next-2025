@@ -1,26 +1,48 @@
 #pragma once
-#include <functional>
-#include "Transform.h"
+#include "BoxGeometry.h"
+#include "SphereGeometry.h"
 
 class RayMarchingObject
 {
-	size_t functionIndex;
 	float materialId;
 
-	static std::unordered_map<size_t, std::function<float(const Vector3f&)>> sdfFunctions;
-
 public:
-	std::pair<float, float> sdf(const Transform& transform, const Vector3f& point)
+	explicit RayMarchingObject(float materialId);
+
+	virtual ~RayMarchingObject() = default;
+
+	std::pair<float, float> evaluate(const Vector3f& point)
 	{
-		const Vector3f newPoint = transform.transformPoint(point);
-		float sdfValue = sdfFunctions[functionIndex](newPoint);
+		float sdfValue = evaluateImpl(point);
 		return {sdfValue, materialId};
 	}
 
-	static void registerSDF(const size_t index, const std::function<float(const Vector3f&)>& sdfFunc)
+	std::shared_ptr<Geometry> getGeometry()
 	{
-		sdfFunctions[index] = sdfFunc;
+		return getGeometryImpl();
 	}
 
-	[[nodiscard]] static float sd_sphere(const Vector3f& point, float radius);
+protected:
+	virtual float evaluateImpl(const Vector3f& point) =0;
+	virtual std::shared_ptr<Geometry> getGeometryImpl() = 0;
+};
+
+class SphereObject final : public RayMarchingObject
+{
+	std::shared_ptr<SphereGeometry> m_geometry;
+
+public:
+	SphereObject(const std::shared_ptr<SphereGeometry>& geometry, float materialId);
+	float evaluateImpl(const Vector3f& point) override;
+	std::shared_ptr<Geometry> getGeometryImpl() override;
+};
+
+class BoxObject final : public RayMarchingObject
+{
+	std::shared_ptr<BoxGeometry> m_geometry;
+
+public:
+	BoxObject(const std::shared_ptr<BoxGeometry>& geometry, float materialId);
+	float evaluateImpl(const Vector3f& point) override;
+	std::shared_ptr<Geometry> getGeometryImpl() override;
 };

@@ -7,19 +7,9 @@ World::World()
 	bodies[0]->transform.position = {0.0f, 0.0f, 0.0f};
 	bodies[0]->setKinematic();
 
-	bodies.emplace_back(std::make_shared<Body>(1.0f));
-	bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
-
 	planeGeom = std::make_shared<PlaneGeometry>(2.0f);
-	sphereGeom = std::make_shared<SphereGeometry>(1.0f);
-
 	planeGeom->attachBody(bodies[0]);
-	sphereGeom->attachBody(bodies[1]);
-
 	geometries.push_back(planeGeom);
-	geometries.push_back(sphereGeom);
-
-	transforms.emplace_back(&bodies[1]->transform);
 }
 
 void World::simulate(const float timeStep) const
@@ -82,9 +72,4 @@ const std::vector<std::shared_ptr<Body>>& World::getBodies() const
 const std::vector<std::shared_ptr<Geometry>>& World::getGeometries() const
 {
 	return geometries;
-}
-
-const std::vector<std::shared_ptr<const Transform>>& World::getTransforms() const
-{
-	return transforms;
 }

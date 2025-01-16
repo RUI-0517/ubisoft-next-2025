@@ -3,6 +3,8 @@
 #include "Transform.h"
 #include <Renderer.h>
 
+#include "RayMarchingObject.h"
+
 class RayMarchingRenderer final : public Renderer
 {
 	// pixelSize should be a multiple of APP_INIT_WIDTH for proper alignment.
@@ -26,8 +28,7 @@ class RayMarchingRenderer final : public Renderer
 	const Vector3f m_directionalLightDirection{-0.75f, 0.5f, -0.5f};
 	const Vector3f m_DirectionalLightColor{0.95f, 0.85f, 0.8f};
 
-	// std::vector<RayMarchingObject> m_objects;
-	std::vector<std::shared_ptr<const Transform>> m_transforms;
+	std::vector<std::shared_ptr<RayMarchingObject>> m_objects;
 
 	static constexpr float SPHERE_MATERIAL_ID = 0.0f;
 	static constexpr float PLANE_MATERIAL_ID = 1.0f;
@@ -45,8 +46,11 @@ public:
 	void Render();
 	static void shutdown();
 
-	// sync physics world transforms
-	void updateTransforms(const std::vector<std::shared_ptr<const Transform>>& transforms);
+	template <typename T, typename... Args>
+	void addObject(Args&&... args)
+	{
+		m_objects.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
+	}
 
 private:
 #pragma region Internals

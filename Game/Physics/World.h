@@ -11,7 +11,6 @@ public:
 	// TODO: TEST ONLY, Make it private & refactor as Object Pool
 	std::vector<std::shared_ptr<Body>> bodies;
 	std::vector<std::shared_ptr<Geometry>> geometries;
-	std::vector<std::shared_ptr<const Transform>> transforms;
 
 	// TODO: TEST ONLY
 	std::shared_ptr<PlaneGeometry> planeGeom;

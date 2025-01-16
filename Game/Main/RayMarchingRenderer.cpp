@@ -67,11 +67,6 @@ void RayMarchingRenderer::shutdown()
 {
 }
 
-void RayMarchingRenderer::updateTransforms(const std::vector<std::shared_ptr<const Transform>>& transforms)
-{
-	m_transforms = transforms;
-}
-
 void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t height)
 {
 	const size_t resolution = width * height;
@@ -214,10 +209,16 @@ float RayMarchingRenderer::sd_scene(const Vector3f& point) const
 {
 	float result = 1.0f;
 
-	for (const auto& transform : m_transforms)
+	// for (const auto& transform : m_transforms)
+	// {
+	// 	Vector3f sphereCenter = transform->position;
+	// 	const float currentResult = sd_sphere(point - sphereCenter, SPHERE_RADIUS);
+	// 	result = op_union(result, currentResult);
+	// }
+
+	for (const auto& object : m_objects)
 	{
-		Vector3f sphereCenter = transform->position;
-		const float currentResult = sd_sphere(point - sphereCenter, SPHERE_RADIUS);
+		auto [currentResult, materialId] = object->evaluate(point);
 		result = op_union(result, currentResult);
 	}
 

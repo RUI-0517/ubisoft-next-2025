@@ -24,4 +24,7 @@ public:
 	void Update(float deltaTimeInSecond) override;
 	void Render() override;
 	void Shutdown() override;
+
+private:
+	void add_object();
 };
