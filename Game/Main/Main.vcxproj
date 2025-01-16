@@ -195,6 +195,7 @@
     <ClCompile Include="..\External\App\SimpleSprite.cpp" />
     <ClCompile Include="..\External\miniaudio\miniaudio.cpp" />
     <ClCompile Include="..\External\stb_image\stb_image.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Render.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\External\glut\include\GL\glut.h" />
     <ClInclude Include="..\External\miniaudio\miniaudio.h" />
     <ClInclude Include="..\External\stb_image\stb_image.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Resources.h" />

@@ -10,12 +10,9 @@
 #include "app/app.h"
 //------------------------------------------------------------------------
 
-#include <sstream>
-
 #include "Physics.h"
 #include "Render.h"
 #include "Matrix.h"
-#include "Simplex.h"
 
 // TODO: TEMP
 bool HAS_COLLISION = false;
@@ -81,7 +78,6 @@ void Init()
 void Update(const float deltaTime)
 {
 	const float deltaTimeInSecond = deltaTime / 1000.0f;
-	Rendering::TIME_PASSED += deltaTimeInSecond;
 
 	// Fixed Update
 	Physics::ACCUMULATED_TIME += deltaTimeInSecond;
@@ -104,10 +100,13 @@ void Update(const float deltaTime)
 	{
 		const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), *planeGeom, *sphereGeom);
 
-		sphereBody->transform.position += info.depth * info.normal;
+		sphereBody->transform.position += info.depth * info.normal * 0.9f;
 		// sphereBody->setKinematic();
 		Vector3f& velocity = sphereBody->getLinearVelocity();
 		velocity.y *= -0.4f;
+
+		if (velocity.magnitudeSquared() <= 0.2f)
+			velocity = Vector3f{0.0f};
 		// sphereBody->setLinearVelocity({0.0f, 0.01f, 0.0f});
 	}
 
@@ -141,7 +140,7 @@ void Update(const float deltaTime)
 		v -= 0.5f;
 
 		// ray info
-		const Vector3f rayOrigin = {0.0f, 2.0f, -10.0f};
+		const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
 
 		// camera settings
 		const Vector3f& cameraOrigin = rayOrigin;
@@ -176,9 +175,9 @@ void Update(const float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
-	const Vector3f b{0.0f, 0.0f, 50.0f};
-	const Vector3f result = (a + b) / 2.0f;
+	// const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
+	// const Vector3f b{0.0f, 0.0f, 50.0f};
+	// const Vector3f result = (a + b) / 2.0f;
 
 	// Synchronize the renderer's output buffer to the pixel textures
 	// This updates PIXELS with the latest data from the renderer's buffer
@@ -190,23 +189,23 @@ void Render()
 	for (const auto& pixel : Rendering::PIXELS)
 		pixel->Draw();
 
-	App::Print(result.x - 10, result.y - 10, "+");
+	// App::Print(result.x - 10, result.y - 10, "+");
 
-	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
-	const Vector3f& velocity = sphereBody->getLinearVelocity();
-	const Vector3f& position = sphereBody->transform.position;
+	// const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	// const Vector3f& velocity = sphereBody->getLinearVelocity();
+	// const Vector3f& position = sphereBody->transform.position;
 
-	std::ostringstream os;
-	os << "Velocity: " << velocity;
-	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
-	os.str("");
-	os.clear();
-	os << "Position: " << position;
-	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
-	os.str("");
-	os.clear();
-	os << "Collide: " << HAS_COLLISION;
-	App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
+	// std::ostringstream os;
+	// os << "Velocity: " << velocity;
+	// App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
+	// os.str("");
+	// os.clear();
+	// os << "Position: " << position;
+	// App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
+	// os.str("");
+	// os.clear();
+	// os << "Collide: " << HAS_COLLISION;
+	// App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------
