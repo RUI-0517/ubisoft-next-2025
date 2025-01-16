@@ -142,7 +142,7 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 	{
 		const Vector3f hitPoint = rayOrigin + t * rayDirection;
 
-		const bool isGround = materialId == 1.0f;
+		const bool isGround = materialId == PLANE;
 
 		// TODO: Using geom transform
 		// Calculate Normal
@@ -153,7 +153,14 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 			const float x = sd_checkerboard(hitPoint);
 			color = Vector3f{0.15f} + x * Vector3f{0.05f};
 		}
-		else color = Vector3f{0.0f, 0.5f, 0.0f};
+		else if (materialId == GREEN)
+		{
+			color = Vector3f{0.0f, 0.5f, 0.0f};
+		}
+		else if (materialId == RED)
+		{
+			color = Vector3f{0.5f, 0.0f, 0.0f};
+		}
 
 		Vector3f lighting{0.0f};
 
@@ -176,24 +183,25 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 	return fragColor;
 }
 
-std::tuple<float, float> RayMarchingRenderer::trace_ray(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+std::pair<float, MaterialId> RayMarchingRenderer::trace_ray(const Vector3f& rayOrigin,
+                                                            const Vector3f& rayDirection) const
 {
 	float t = -1.0f;
-	float materialId = -1.0f;
+	MaterialId materialId = UNDEFINED;
 
 	const float tFloor = -rayOrigin.dot(m_planeNormal) / rayDirection.dot(m_planeNormal);
 	if (tFloor > 0.0f)
 	{
 		t = tFloor;
 		// tMax = min(tMax, t);
-		materialId = PLANE_MATERIAL_ID;
+		materialId = PLANE;
 	}
 
-	const float tScene = IntersectScene(rayOrigin, rayDirection);
+	auto [tScene ,tSceneMaterialId] = IntersectScene(rayOrigin, rayDirection);
 	if (tScene > 1.0f && (t < 0.0f || tScene < t))
 	{
 		t = tScene;
-		materialId = SPHERE_MATERIAL_ID;
+		materialId = tSceneMaterialId;
 	}
 
 	return {t, materialId};
@@ -209,17 +217,24 @@ float RayMarchingRenderer::sd_scene(const Vector3f& point) const
 {
 	float result = 1.0f;
 
-	// for (const auto& transform : m_transforms)
-	// {
-	// 	Vector3f sphereCenter = transform->position;
-	// 	const float currentResult = sd_sphere(point - sphereCenter, SPHERE_RADIUS);
-	// 	result = op_union(result, currentResult);
-	// }
 
 	for (const auto& object : m_objects)
 	{
-		auto [currentResult, materialId] = object->evaluate(point);
+		const float currentResult = object->evaluate(point).first;
 		result = op_union(result, currentResult);
+	}
+
+	return result;
+}
+
+std::pair<float, MaterialId> RayMarchingRenderer::sd_scene_material(const Vector3f& point) const
+{
+	std::pair result{1.0f, UNDEFINED};
+
+	for (const auto& object : m_objects)
+	{
+		const auto& currentResult = object->evaluate(point);
+		result = op_union_tuple(result, currentResult);
 	}
 
 	return result;
@@ -237,18 +252,26 @@ float RayMarchingRenderer::op_union(const float d1, const float d2)
 	return d1 < d2 ? d1 : d2;
 }
 
-float RayMarchingRenderer::IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+const std::pair<float, MaterialId>& RayMarchingRenderer::op_union_tuple(const std::pair<float, MaterialId>& t1,
+                                                                        const std::pair<float, MaterialId>& t2)
+{
+	return std::get<0>(t1) < std::get<0>(t2) ? t1 : t2;
+}
+
+
+std::pair<float, MaterialId> RayMarchingRenderer::IntersectScene(const Vector3f& rayOrigin,
+                                                                 const Vector3f& rayDirection) const
 {
 	float t = 0.0f;
 	for (size_t i = 0; i < 128; i++)
 	{
 		// Iterate for a maximum of 100 steps
 		Vector3f p = rayOrigin + rayDirection * t;
-		const float d = sd_scene(p);
+		auto [d, materialId] = sd_scene_material(p);
 		if (d < 0.001f)
 		{
 			// If the distance is small enough, we have an intersection
-			return t;
+			return {t, materialId};
 		}
 
 		// Move along the ray by the distance
@@ -258,12 +281,13 @@ float RayMarchingRenderer::IntersectScene(const Vector3f& rayOrigin, const Vecto
 			break;
 		}
 	}
-	return -1.0f; // No intersection found
+
+	return {-1.0f, UNDEFINED}; // No intersection found
 }
 
 // Calculate the SDF normal using forward differences for efficiency, 
 // requiring 4 sd_scene evaluations instead of 6 as in central differences.
-Vector3f RayMarchingRenderer::calculate_normal(const Vector3f& hitPoint)
+Vector3f RayMarchingRenderer::calculate_normal(const Vector3f& hitPoint) const
 {
 	// Equivalent to the formula: f(x) = f(x + h) - f(x)
 	// Optimized by introducing more constants to better leverage SIMD broadcast calculations.
@@ -335,7 +359,7 @@ Vector3f RayMarchingRenderer::ApplySkyLight(const Vector3f& color, const Vector3
 	return diffuseColor + specularColor;
 }
 
-float RayMarchingRenderer::CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal)
+float RayMarchingRenderer::CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	float value = 0.0f;
 	float attenuationFactor = 1.0f;

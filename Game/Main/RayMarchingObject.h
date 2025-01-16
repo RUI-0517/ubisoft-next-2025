@@ -2,16 +2,26 @@
 #include "BoxGeometry.h"
 #include "SphereGeometry.h"
 
+enum MaterialId : uint8_t
+{
+	PLANE = 0,
+	RED,
+	GREEN,
+	BLUE,
+	YELLOW,
+	UNDEFINED
+};
+
 class RayMarchingObject
 {
-	float materialId;
+	MaterialId materialId;
 
 public:
-	explicit RayMarchingObject(float materialId);
+	explicit RayMarchingObject(MaterialId materialId);
 
 	virtual ~RayMarchingObject() = default;
 
-	std::pair<float, float> evaluate(const Vector3f& point)
+	std::pair<float, MaterialId> evaluate(const Vector3f& point)
 	{
 		float sdfValue = evaluateImpl(point);
 		return {sdfValue, materialId};
@@ -32,7 +42,7 @@ class SphereObject final : public RayMarchingObject
 	std::shared_ptr<SphereGeometry> m_geometry;
 
 public:
-	SphereObject(const std::shared_ptr<SphereGeometry>& geometry, float materialId);
+	SphereObject(const std::shared_ptr<SphereGeometry>& geometry, MaterialId materialId);
 	float evaluateImpl(const Vector3f& point) override;
 	std::shared_ptr<Geometry> getGeometryImpl() override;
 };
@@ -42,7 +52,7 @@ class BoxObject final : public RayMarchingObject
 	std::shared_ptr<BoxGeometry> m_geometry;
 
 public:
-	BoxObject(const std::shared_ptr<BoxGeometry>& geometry, float materialId);
+	BoxObject(const std::shared_ptr<BoxGeometry>& geometry, MaterialId materialId);
 	float evaluateImpl(const Vector3f& point) override;
 	std::shared_ptr<Geometry> getGeometryImpl() override;
 };

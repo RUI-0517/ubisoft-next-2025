@@ -24,7 +24,15 @@ void PhysicsScene::Init()
 	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
 	m_renderer = std::make_unique<RayMarchingRenderer>(width, height);
 
-	add_object();
+	m_physicsWorld->bodies.emplace_back(std::make_shared<Body>(1.0f));
+	m_physicsWorld->bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
+	// m_physicsWorld->sphereGeom = std::make_shared<SphereGeometry>(1.0f);
+	// m_physicsWorld->sphereGeom->attachBody(m_physicsWorld->bodies[1]);
+	// add_shape(m_physicsWorld->sphereGeom);
+
+	const auto& body = m_physicsWorld->bodies[1];
+	m_physicsWorld->sphereGeom = std::make_shared<SphereGeometry>(1.0f);
+	create_geometry(body, m_physicsWorld->sphereGeom, RED);
 }
 
 void PhysicsScene::Update(const float deltaTimeInSecond)
@@ -66,14 +74,8 @@ void PhysicsScene::Shutdown()
 {
 }
 
-void PhysicsScene::add_object()
+void PhysicsScene::add_shape(const std::shared_ptr<SphereGeometry>& geom)
 {
-	m_physicsWorld->bodies.emplace_back(std::make_shared<Body>(1.0f));
-	m_physicsWorld->bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
-
-	m_physicsWorld->sphereGeom = std::make_shared<SphereGeometry>(1.0f);
-	m_physicsWorld->sphereGeom->attachBody(m_physicsWorld->bodies[1]);
-
 	m_physicsWorld->geometries.push_back(m_physicsWorld->sphereGeom);
-	m_renderer->addObject<SphereObject>(m_physicsWorld->sphereGeom, 1.0f);
+	m_renderer->addObject<SphereObject>(geom, RED);
 }

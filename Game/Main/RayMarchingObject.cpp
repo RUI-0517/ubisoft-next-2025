@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "RayMarchingObject.h"
 
-RayMarchingObject::RayMarchingObject(const float materialId): materialId(materialId)
+RayMarchingObject::RayMarchingObject(const MaterialId materialId): materialId(materialId)
 {
 }
 
-SphereObject::SphereObject(const std::shared_ptr<SphereGeometry>& geometry, const float materialId)
+SphereObject::SphereObject(const std::shared_ptr<SphereGeometry>& geometry, const MaterialId materialId)
 	: RayMarchingObject(materialId), m_geometry(geometry)
 {
 }
@@ -22,7 +22,7 @@ std::shared_ptr<Geometry> SphereObject::getGeometryImpl()
 	return m_geometry;
 }
 
-BoxObject::BoxObject(const std::shared_ptr<BoxGeometry>& geometry, float materialId)
+BoxObject::BoxObject(const std::shared_ptr<BoxGeometry>& geometry, const MaterialId materialId)
 	: RayMarchingObject(materialId)
 {
 	m_geometry = geometry;

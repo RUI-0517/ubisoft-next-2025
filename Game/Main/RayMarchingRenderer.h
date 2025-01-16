@@ -1,9 +1,7 @@
 #pragma once
 #include "App/SimpleSprite.h"
-#include "Transform.h"
-#include <Renderer.h>
-
 #include "RayMarchingObject.h"
+#include <Renderer.h>
 
 class RayMarchingRenderer final : public Renderer
 {
@@ -30,14 +28,8 @@ class RayMarchingRenderer final : public Renderer
 
 	std::vector<std::shared_ptr<RayMarchingObject>> m_objects;
 
-	static constexpr float SPHERE_MATERIAL_ID = 0.0f;
-	static constexpr float PLANE_MATERIAL_ID = 1.0f;
-
 	// Speical every scene has a plane
 	const Vector3f m_planeNormal{0.0f, 1.0f, 0.0f};
-	// Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
-
-	float SPHERE_RADIUS = 1.0f;
 
 public:
 	RayMarchingRenderer(size_t width, size_t height);
@@ -46,7 +38,7 @@ public:
 	void Render();
 	static void shutdown();
 
-	template <typename T, typename... Args>
+	template <typename T, typename= std::enable_if_t<std::is_base_of_v<RayMarchingObject, T>>, typename... Args>
 	void addObject(Args&&... args)
 	{
 		m_objects.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
@@ -54,23 +46,27 @@ public:
 
 private:
 #pragma region Internals
+	using SdfPair = std::pair<float, MaterialId>;
+
 	void initialize_pixels(size_t width, size_t height);
 	void update_pixels();
 
 	[[nodiscard]] static float calculate_depth(float fov);
 	[[nodiscard]] Vector4f render_scene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
-	[[nodiscard]] std::tuple<float, float> trace_ray(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] SdfPair trace_ray(const Vector3f& rayOrigin, const Vector3f& rayDirection) const;
 
 	[[nodiscard]] static float sd_sphere(const Vector3f& point, float radius);
 	[[nodiscard]] float sd_scene(const Vector3f& point) const;
+	[[nodiscard]] SdfPair sd_scene_material(const Vector3f& point) const;
 
 	[[nodiscard]] static float sd_checkerboard(const Vector3f& point);
 
 	[[nodiscard]] static float op_union(float d1, float d2);
+	[[nodiscard]] static const std::pair<float, MaterialId>& op_union_tuple(const SdfPair& t1, const SdfPair& t2);
 
-	[[nodiscard]] float IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] SdfPair IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection) const;
 
-	[[nodiscard]] Vector3f calculate_normal(const Vector3f& hitPoint);
+	[[nodiscard]] Vector3f calculate_normal(const Vector3f& hitPoint) const;
 
 	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
 	                                                const Vector3f& hitPoint, const Vector3f& normal);
@@ -83,7 +79,7 @@ private:
 	[[nodiscard]] float SmoothStep(float edge0, float edge1, float x);
 	[[nodiscard]] Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
 
-	[[nodiscard]] float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal);
-	[[nodiscard]] float CalculateFresnel(const Vector3f& in, const Vector3f& normal);
+	[[nodiscard]] float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal) const;
+	[[nodiscard]] static float CalculateFresnel(const Vector3f& in, const Vector3f& normal);
 #pragma endregion
 };

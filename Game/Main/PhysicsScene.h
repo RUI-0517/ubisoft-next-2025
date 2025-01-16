@@ -26,5 +26,23 @@ public:
 	void Shutdown() override;
 
 private:
-	void add_object();
+	// template <typename T, typename T1, typename = std::enable_if_t<std::is_base_of_v<Geometry, T>>, typename... Args>
+	// void create_geometry(const std::shared_ptr<Body>& body, MaterialId materialId, Args&&... args)
+	// {
+	// 	const auto geom = std::make_shared<T>(std::forward<Args>(args)...);
+	// 	geom->attachBody(body);
+	// 	m_physicsWorld->geometries.push_back(geom);
+	// 	m_renderer->addObject<T1>(geom, materialId);
+	// }
+
+	void create_geometry(const std::shared_ptr<Body>& body,
+	                     const std::shared_ptr<SphereGeometry>& geom, MaterialId materialId) const
+	{
+		const std::shared_ptr<SphereGeometry>& realGeom = geom;
+		realGeom->attachBody(body);
+		m_physicsWorld->geometries.push_back(realGeom);
+		m_renderer->addObject<SphereObject>(realGeom, materialId);
+	}
+
+	void add_shape(const std::shared_ptr<SphereGeometry>& geom);
 };
