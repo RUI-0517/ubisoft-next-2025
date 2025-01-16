@@ -45,6 +45,11 @@ void Geometry::attachBody(const std::shared_ptr<Body>& body)
 	m_body = body;
 }
 
+const Transform& Geometry::getTransform() const
+{
+	return m_body->transform;
+}
+
 Vector3f Geometry::getSupportPoint(const Geometry& lhs, const Geometry& rhs, const Vector3f& direction)
 {
 	return lhs.getSupportPoint(direction) - rhs.getSupportPoint(-direction);

@@ -16,6 +16,8 @@ public:
 	[[nodiscard]] const std::shared_ptr<Body>& getBody() const;
 	void attachBody(const std::shared_ptr<Body>& body);
 
+	[[nodiscard]] const Transform& getTransform() const;
+
 	[[nodiscard]] const std::vector<Vector3f>& getVertices() const
 	{
 		return m_vertices;

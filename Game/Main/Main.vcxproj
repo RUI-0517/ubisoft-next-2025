@@ -199,6 +199,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
+    <ClCompile Include="RayMarchingObject.cpp" />
     <ClCompile Include="RayMarchingRenderer.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderScene.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />
+    <ClInclude Include="RayMarchingObject.h" />
     <ClInclude Include="RayMarchingRenderer.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="RenderScene.h" />

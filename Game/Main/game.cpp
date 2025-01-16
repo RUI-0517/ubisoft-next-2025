@@ -9,9 +9,6 @@
 #include "Physics.h"
 #include "PhysicsScene.h"
 
-// TODO: TEMP
-bool HAS_COLLISION = false;
-
 std::unique_ptr<PhysicsScene> PHYSICS_SCENE;
 
 //------------------------------------------------------------------------
@@ -24,7 +21,7 @@ void Init()
 }
 
 //------------------------------------------------------------------------
-// Update your simulation here. deltaTime is the elapsed time since the last update in ms.
+// update your simulation here. deltaTime is the elapsed time since the last update in ms.
 // This will be called at no greater frequency than the value of APP_MAX_FRAME_RATE
 //------------------------------------------------------------------------
 void Update(const float deltaTime)

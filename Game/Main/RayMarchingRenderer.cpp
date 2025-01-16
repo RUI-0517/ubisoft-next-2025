@@ -13,28 +13,28 @@ RayMarchingRenderer::RayMarchingRenderer(const size_t width, const size_t height
 	initialize_pixels(width, height);
 }
 
-void RayMarchingRenderer::Update(float deltaTimeInSecond)
+void RayMarchingRenderer::update()
 {
+	// ray info
+	const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
+
+	// camera settings
+	const Vector3f& cameraOrigin = rayOrigin;
+	const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
+	constexpr float fov = 90.0f;
+	const float focalLength = calculate_depth(fov);
+
+	// camera coordinate system
+	const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
+	const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
+	const Vector3f up = forward.cross(right);
+
 	// TODO: Camera model
 	auto rayMarching = [&](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
 	{
 		// center uv
 		u -= 0.5f;
 		v -= 0.5f;
-
-		// ray info
-		const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
-
-		// camera settings
-		const Vector3f& cameraOrigin = rayOrigin;
-		const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
-		constexpr float fov = 90.0f;
-		const float focalLength = calculate_depth(fov);
-
-		// camera coordinate system
-		const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
-		const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
-		const Vector3f up = forward.cross(right);
 
 		const Vector3f rayDirection = Vector3f{u * right + v * up + focalLength * forward}.normalize();
 
@@ -63,8 +63,13 @@ void RayMarchingRenderer::Render()
 		pixel->Draw();
 }
 
-void RayMarchingRenderer::Shutdown()
+void RayMarchingRenderer::shutdown()
 {
+}
+
+void RayMarchingRenderer::updateTransforms(const std::vector<std::shared_ptr<const Transform>>& transforms)
+{
+	m_transforms = transforms;
 }
 
 void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t height)
@@ -73,7 +78,7 @@ void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t hei
 	const size_t size = resolution / (pixelSize * pixelSize);
 	m_pixels.resize(size);
 
-	const float pixelSizeInFloat = static_cast<float>(pixelSize);
+	constexpr float pixelSizeInFloat = static_cast<float>(pixelSize);
 
 	for (size_t index = 0; index < size; ++index)
 	{
@@ -146,8 +151,7 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 
 		// TODO: Using geom transform
 		// Calculate Normal
-		// const Vector3f normal = isGround ? PLANE_NORMAL : calculate_sphere_normal(hitPoint, SPHERE_CENTER);
-		const Vector3f normal = isGround ? PLANE_NORMAL : calculate_normal(hitPoint);
+		const Vector3f normal = isGround ? m_planeNormal : calculate_normal(hitPoint);
 
 		if (isGround)
 		{
@@ -182,7 +186,7 @@ std::tuple<float, float> RayMarchingRenderer::trace_ray(const Vector3f& rayOrigi
 	float t = -1.0f;
 	float materialId = -1.0f;
 
-	const float tFloor = -rayOrigin.dot(PLANE_NORMAL) / rayDirection.dot(PLANE_NORMAL);
+	const float tFloor = -rayOrigin.dot(m_planeNormal) / rayDirection.dot(m_planeNormal);
 	if (tFloor > 0.0f)
 	{
 		t = tFloor;
@@ -197,13 +201,6 @@ std::tuple<float, float> RayMarchingRenderer::trace_ray(const Vector3f& rayOrigi
 		materialId = SPHERE_MATERIAL_ID;
 	}
 
-	// const float tSphere = intersect_sphere(rayOrigin, rayDirection);
-	// if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
-	// {
-	// 	t = tSphere;
-	// 	materialId = SPHERE_MATERIAL_ID;
-	// }
-
 	return {t, materialId};
 }
 
@@ -213,31 +210,15 @@ float RayMarchingRenderer::sd_sphere(const Vector3f& point, const float radius)
 	return point.magnitude() - radius;
 }
 
-float RayMarchingRenderer::sd_scene(const Vector3f& point)
+float RayMarchingRenderer::sd_scene(const Vector3f& point) const
 {
 	float result = 1.0f;
 
-	// This function causes the API profiler to malfunction.
-	// The render and update times appear reversed, and the maximum time values are incorrect.
-
-	constexpr size_t n = 5;
-	constexpr float gap = 0.5f;
-
-	const float offset = (n - 1) * (SPHERE_RADIUS + gap) / 2.0f;
-
-	for (size_t i = 0; i < n; ++i)
+	for (const auto& transform : m_transforms)
 	{
-		for (size_t j = 0; j < n; ++j)
-		{
-			Vector3f sphereCenter = {
-				SPHERE_CENTER.x - (i * (SPHERE_RADIUS * 2 + gap) - offset),
-				SPHERE_CENTER.y,
-				SPHERE_CENTER.z + (j * (SPHERE_RADIUS * 2 + gap) - offset)
-			};
-			const float currentResult = sd_sphere(point - sphereCenter, SPHERE_RADIUS);
-
-			result = Union(result, currentResult);
-		}
+		Vector3f sphereCenter = transform->position;
+		const float currentResult = sd_sphere(point - sphereCenter, SPHERE_RADIUS);
+		result = op_union(result, currentResult);
 	}
 
 	return result;
@@ -250,33 +231,9 @@ float RayMarchingRenderer::sd_checkerboard(const Vector3f& point)
 	return static_cast<float>((x ^ z) & 1);
 }
 
-float RayMarchingRenderer::Union(const float d1, const float d2)
+float RayMarchingRenderer::op_union(const float d1, const float d2)
 {
 	return d1 < d2 ? d1 : d2;
-}
-
-float RayMarchingRenderer::intersect_sphere(const Vector3f& rayOrigin, const Vector3f& rayDirection)
-{
-	float t = 0.0f;
-	for (size_t i = 0; i < 128; i++)
-	{
-		// Iterate for a maximum of 100 steps
-		Vector3f p = rayOrigin + rayDirection * t;
-		const float d = sd_sphere(p - SPHERE_CENTER, SPHERE_RADIUS);
-		if (d < 0.001f)
-		{
-			// If the distance is small enough, we have an intersection
-			return t;
-		}
-
-		// Move along the ray by the distance
-		t += d;
-		if (t > 100.0)
-		{
-			break;
-		}
-	}
-	return -1.0f; // No intersection found
 }
 
 float RayMarchingRenderer::IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
@@ -329,14 +286,8 @@ Vector3f RayMarchingRenderer::calculate_normal(const Vector3f& hitPoint)
 	return gradient.normalize();
 }
 
-Vector3f RayMarchingRenderer::calculate_sphere_normal(const Vector3f& hitPoint, const Vector3f& center)
-{
-	return (hitPoint - center).normalize();
-}
-
-Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color,
-                                                       const Vector3f& rayDirection, const Vector3f& hitPoint,
-                                                       const Vector3f& normal)
+Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
+                                                       const Vector3f& hitPoint, const Vector3f& normal)
 {
 	const Vector3f lightDir = m_directionalLightDirection.normalize();
 	const float diffuseFactor = std::clamp(normal.dot(lightDir), 0.0f, 1.0f);

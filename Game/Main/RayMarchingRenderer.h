@@ -1,6 +1,7 @@
 #pragma once
-#include <Renderer.h>
 #include "App/SimpleSprite.h"
+#include "Transform.h"
+#include <Renderer.h>
 
 class RayMarchingRenderer final : public Renderer
 {
@@ -25,21 +26,27 @@ class RayMarchingRenderer final : public Renderer
 	const Vector3f m_directionalLightDirection{-0.75f, 0.5f, -0.5f};
 	const Vector3f m_DirectionalLightColor{0.95f, 0.85f, 0.8f};
 
+	// std::vector<RayMarchingObject> m_objects;
+	std::vector<std::shared_ptr<const Transform>> m_transforms;
+
 	static constexpr float SPHERE_MATERIAL_ID = 0.0f;
 	static constexpr float PLANE_MATERIAL_ID = 1.0f;
 
-	const Vector3f PLANE_NORMAL{0.0f, 1.0f, 0.0f};
-
-	Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
+	// Speical every scene has a plane
+	const Vector3f m_planeNormal{0.0f, 1.0f, 0.0f};
+	// Vector3f SPHERE_CENTER{0.0f, 1.0f, 0.0f};
 
 	float SPHERE_RADIUS = 1.0f;
 
 public:
 	RayMarchingRenderer(size_t width, size_t height);
 
-	void Update(float deltaTimeInSecond);
+	void update();
 	void Render();
-	void Shutdown();
+	static void shutdown();
+
+	// sync physics world transforms
+	void updateTransforms(const std::vector<std::shared_ptr<const Transform>>& transforms);
 
 private:
 #pragma region Internals
@@ -51,17 +58,15 @@ private:
 	[[nodiscard]] std::tuple<float, float> trace_ray(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
 	[[nodiscard]] static float sd_sphere(const Vector3f& point, float radius);
-	[[nodiscard]] float sd_scene(const Vector3f& point);
+	[[nodiscard]] float sd_scene(const Vector3f& point) const;
 
 	[[nodiscard]] static float sd_checkerboard(const Vector3f& point);
 
-	[[nodiscard]] static float Union(float d1, float d2);
+	[[nodiscard]] static float op_union(float d1, float d2);
 
-	[[nodiscard]] float intersect_sphere(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 	[[nodiscard]] float IntersectScene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
 
 	[[nodiscard]] Vector3f calculate_normal(const Vector3f& hitPoint);
-	[[nodiscard]] Vector3f calculate_sphere_normal(const Vector3f& hitPoint, const Vector3f& center);
 
 	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
 	                                                const Vector3f& hitPoint, const Vector3f& normal);
