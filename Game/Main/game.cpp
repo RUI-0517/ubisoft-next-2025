@@ -178,9 +178,9 @@ void Update(const float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
-	const Vector3f b{0.0f, 0.0f, 50.0f};
-	const Vector3f result = (a + b) / 2.0f;
+	// const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
+	// const Vector3f b{0.0f, 0.0f, 50.0f};
+	// const Vector3f result = (a + b) / 2.0f;
 
 	// Synchronize the renderer's output buffer to the pixel textures
 	// This updates PIXELS with the latest data from the renderer's buffer
@@ -192,23 +192,23 @@ void Render()
 	for (const auto& pixel : Rendering::PIXELS)
 		pixel->Draw();
 
-	App::Print(result.x - 10, result.y - 10, "+");
+	// App::Print(result.x - 10, result.y - 10, "+");
 
-	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
-	const Vector3f& velocity = sphereBody->getLinearVelocity();
-	const Vector3f& position = sphereBody->transform.position;
+	// const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
+	// const Vector3f& velocity = sphereBody->getLinearVelocity();
+	// const Vector3f& position = sphereBody->transform.position;
 
-	std::ostringstream os;
-	os << "Velocity: " << velocity;
-	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
-	os.str("");
-	os.clear();
-	os << "Position: " << position;
-	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
-	os.str("");
-	os.clear();
-	os << "Collide: " << HAS_COLLISION;
-	App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
+	// std::ostringstream os;
+	// os << "Velocity: " << velocity;
+	// App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
+	// os.str("");
+	// os.clear();
+	// os << "Position: " << position;
+	// App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
+	// os.str("");
+	// os.clear();
+	// os << "Collide: " << HAS_COLLISION;
+	// App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
 }
 
 //------------------------------------------------------------------------

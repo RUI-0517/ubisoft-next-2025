@@ -2,6 +2,7 @@
 #include "Render.h"
 #include "Resources.h"
 #include <algorithm>
+#include <mutex>
 
 namespace Rendering
 {
@@ -83,7 +84,8 @@ namespace Rendering
 
 			// TODO: Using geom transform
 			// Calculate Normal
-			const Vector3f normal = isGround ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, SPHERE_CENTER);
+			// const Vector3f normal = isGround ? PLANE_NORMAL : CalculateSphereNormal(hitPoint, SPHERE_CENTER);
+			const Vector3f normal = isGround ? PLANE_NORMAL : CalculateNormal(hitPoint);
 
 			if (isGround)
 			{
@@ -126,19 +128,19 @@ namespace Rendering
 			materialId = PLANE_MATERIAL_ID;
 		}
 
-		// const float tScene = IntersectScene(rayOrigin, rayDirection);
-		// if (tScene > 1.0f && (t < 0.0f || tScene < t))
-		// {
-		// 	t = tScene;
-		// 	materialId = SPHERE_MATERIAL_ID;
-		// }
-
-		const float tSphere = IntersectSphere(rayOrigin, rayDirection);
-		if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
+		const float tScene = IntersectScene(rayOrigin, rayDirection);
+		if (tScene > 1.0f && (t < 0.0f || tScene < t))
 		{
-			t = tSphere;
+			t = tScene;
 			materialId = SPHERE_MATERIAL_ID;
 		}
+
+		// const float tSphere = IntersectSphere(rayOrigin, rayDirection);
+		// if (tSphere > 0.0f && (t < 0.0f || tSphere < t))
+		// {
+		// 	t = tSphere;
+		// 	materialId = SPHERE_MATERIAL_ID;
+		// }
 
 		return {t, materialId};
 	}
@@ -153,8 +155,39 @@ namespace Rendering
 	{
 		float result = 1.0f;
 
+		// const float d1 = result;
+		// const float d2 = SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS);
+		// result = d1 < d2 ? d1 : d2;
+
+		// This function causes the API profiler to malfunction.
+		// The render and update times appear reversed, and the maximum time values are incorrect.
+
+		constexpr size_t n = 5;
+		constexpr float gap = 0.5f;
+
+		const float offset = (n - 1) * (SPHERE_RADIUS + gap) / 2.0f;
+
+		for (size_t i = 0; i < n; ++i)
+		{
+			for (size_t j = 0; j < n; ++j)
+			{
+				Vector3f sphereCenter = {
+					SPHERE_CENTER.x - (i * (SPHERE_RADIUS * 2 + gap) - offset),
+					SPHERE_CENTER.y,
+					SPHERE_CENTER.z + (j * (SPHERE_RADIUS * 2 + gap) - offset)
+				};
+							const float currentResult = SdSphere(point - sphereCenter, SPHERE_RADIUS);
+
+				result = Union(result, currentResult);
+			}
+		}
+
+		// result = SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS);
+
+		// result = fmin(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
+
 		// Sphere
-		result = Union(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
+		// result = Union(result, SdSphere(point - SPHERE_CENTER, SPHERE_RADIUS));
 		// Note: When I first used this function, its performance was unexpectedly poor.
 		// I then replaced it with the following inline comparison version:
 		// 
@@ -185,7 +218,6 @@ namespace Rendering
 	{
 		return d1 < d2 ? d1 : d2;
 	}
-
 
 	float IntersectSphere(const Vector3f& rayOrigin, const Vector3f& rayDirection)
 	{
@@ -235,40 +267,35 @@ namespace Rendering
 		return -1.0f; // No intersection found
 	}
 
+	// Calculate the SDF normal using forward differences for efficiency, 
+	// requiring 4 SdScene evaluations instead of 6 as in central differences.
+	Vector3f CalculateNormal(const Vector3f& hitPoint)
+	{
+		// Equivalent to the formula: f(x) = f(x + h) - f(x)
+		// Optimized by introducing more constants to better leverage SIMD broadcast calculations.
+
+		constexpr float epsilon = 1e-3f;
+		constexpr float epsilonInv = 1 / epsilon;
+		const Vector3f offsetX{epsilon, 0, 0};
+		const Vector3f offsetY{0, epsilon, 0};
+		const Vector3f offsetZ{0, 0, epsilon};
+		const float sdfAtPoint = SdScene(hitPoint);
+
+		const float partialX = SdScene(hitPoint + offsetX) - sdfAtPoint;
+		const float partialY = SdScene(hitPoint + offsetY) - sdfAtPoint;
+		const float partialZ = SdScene(hitPoint + offsetZ) - sdfAtPoint;
+
+		Vector3f gradient{partialX, partialY, partialZ};
+
+		// This form allows a SIMD implementation to leverage broadcast optimizations.
+		gradient *= epsilonInv;
+
+		return gradient.normalize();
+	}
 
 	Vector3f CalculateSphereNormal(const Vector3f& hitPoint, const Vector3f& center)
 	{
 		return (hitPoint - center).normalize();
-	}
-
-	// TODO: Light Color, Material Color
-	Vector4f ApplyLighting(const Vector3f& hitPoint, const Vector3f& normal,
-	                       const Vector3f& rayDirection, const Vector3f& lightPosition)
-	{
-		// Direction from point to light
-		Vector3f lightDir = (lightPosition - hitPoint).normalize();
-		// Direction from point to camera (origin)
-		Vector3f viewDir = -rayDirection.normalize();
-		// Halfway vector between light and view
-		Vector3f halfDir = (lightDir + viewDir).normalize();
-
-		// Diffuse component
-		float diffuse = max(normal.dot(lightDir), 0.0f);
-
-		// Specular component
-		constexpr float specularStrength = 0.5;
-		constexpr float shininess = 32.0;
-		const float spec = std::pow(max(normal.dot(halfDir), 0.0f), shininess);
-
-		// White specular highlight
-		Vector3f specular = Vector3f{1.0f} * (spec * specularStrength);
-
-		// Ambient component
-		Vector3f ambient{0.1f};
-
-		Vector3f color = ambient + diffuse + specular;
-
-		return {color.x, color.y, color.z, 1.0f};
 	}
 
 	Vector3f ApplyDirectionalLighting(const Vector3f& color,
@@ -291,7 +318,7 @@ namespace Rendering
 		const float fresnelReflectance = CalculateFresnel(lightDir, halfDir);
 
 		const Vector3f diffuseColor = color.hadamard(DIRECTIONAL_LIGHT_COLOR) * diffuseFactor * softShadow;
-		const float specularColor = specularFactor * fresnelReflectance;
+		const float specularColor = specularFactor * fresnelReflectance * 4.0f;
 
 		return diffuseColor + specularColor;
 	}
@@ -313,8 +340,8 @@ namespace Rendering
 		const float fresnelReflectance = CalculateFresnel(-rayDirection, normal);
 		const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.0f, 32);
 
-		const Vector3f diffuseColor = color.hadamard(SKY_COLOR * diffuse);
-		const Vector3f specularColor = (smoothSpecularFactor * fresnelReflectance * reflection) * SKY_COLOR;
+		const Vector3f diffuseColor = color.hadamard(SKY_COLOR * diffuse * 0.5f);
+		const Vector3f specularColor = (smoothSpecularFactor * fresnelReflectance * reflection * 2.0f) * SKY_COLOR;
 
 		return diffuseColor + specularColor;
 	}
