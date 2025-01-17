@@ -47,6 +47,11 @@ void Geometry::attachBody(const std::shared_ptr<Body>& body)
 
 const Transform& Geometry::getTransform() const
 {
+	if (!m_body)
+	{
+		throw std::runtime_error("Geometry::getTransform() failed: "
+			"m_body is null. Ensure a body is attached to this geometry before calling this method.");
+	}
 	return m_body->transform;
 }
 

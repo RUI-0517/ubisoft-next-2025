@@ -39,7 +39,7 @@ public:
 	static void shutdown();
 
 	template <typename T, typename= std::enable_if_t<std::is_base_of_v<RayMarchingObject, T>>, typename... Args>
-	void addObject(Args&&... args)
+	void addRenderObject(Args&&... args)
 	{
 		m_objects.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
 	}
@@ -69,15 +69,15 @@ private:
 	[[nodiscard]] Vector3f calculate_normal(const Vector3f& hitPoint) const;
 
 	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
-	                                                const Vector3f& hitPoint, const Vector3f& normal);
+	                                                const Vector3f& hitPoint, const Vector3f& normal) const;
 	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
-	                                     const Vector3f& hitPoint, const Vector3f& normal);
+	                                     const Vector3f& hitPoint, const Vector3f& normal) const;
 	[[nodiscard]] float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax,
-	                                float softness);
-	[[nodiscard]] float ApplyFog(float t, float density);
+	                                float softness) const;
+	[[nodiscard]] static float ApplyFog(float t, float density);
 
-	[[nodiscard]] float SmoothStep(float edge0, float edge1, float x);
-	[[nodiscard]] Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
+	[[nodiscard]] static float SmoothStep(float edge0, float edge1, float x);
+	[[nodiscard]] static Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
 
 	[[nodiscard]] float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal) const;
 	[[nodiscard]] static float CalculateFresnel(const Vector3f& in, const Vector3f& normal);

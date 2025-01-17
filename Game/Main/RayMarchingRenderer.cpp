@@ -312,7 +312,7 @@ Vector3f RayMarchingRenderer::calculate_normal(const Vector3f& hitPoint) const
 }
 
 Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
-                                                       const Vector3f& hitPoint, const Vector3f& normal)
+                                                       const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	const Vector3f lightDir = m_directionalLightDirection.normalize();
 	const float diffuseFactor = std::clamp(normal.dot(lightDir), 0.0f, 1.0f);
@@ -337,7 +337,7 @@ Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color, co
 }
 
 Vector3f RayMarchingRenderer::ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
-                                            const Vector3f& hitPoint, const Vector3f& normal)
+                                            const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
 	// simulating bounced light and avoiding complete darkness.
@@ -386,7 +386,7 @@ float RayMarchingRenderer::CalculateAmbientOcclusion(const Vector3f& hitPoint, c
 
 // remark: softness higher, clearer, harder
 float RayMarchingRenderer::ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection,
-                                       const float tMin, const float tMax, const float softness)
+                                       const float tMin, const float tMax, const float softness) const
 {
 	float result = 1.0f;
 

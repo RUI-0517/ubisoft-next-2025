@@ -24,15 +24,51 @@ void PhysicsScene::Init()
 	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
 	m_renderer = std::make_unique<RayMarchingRenderer>(width, height);
 
-	m_physicsWorld->bodies.emplace_back(std::make_shared<Body>(1.0f));
-	m_physicsWorld->bodies[1]->transform.position = {0.0f, 10.0f, 0.0f};
-	// m_physicsWorld->sphereGeom = std::make_shared<SphereGeometry>(1.0f);
-	// m_physicsWorld->sphereGeom->attachBody(m_physicsWorld->bodies[1]);
-	// add_shape(m_physicsWorld->sphereGeom);
+	// m_physicsWorld->m_bodies.emplace_back(std::make_shared<Body>(1.0f));
 
-	const auto& body = m_physicsWorld->bodies[1];
-	m_physicsWorld->sphereGeom = std::make_shared<SphereGeometry>(1.0f);
-	create_geometry(body, m_physicsWorld->sphereGeom, RED);
+	// const auto& body = m_physicsWorld->createBody(1.0f);
+	// body->transform.position = {0.0f, 10.0f, 0.0f};
+	// const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+	// sphereGeom->attachBody(body);
+	// m_renderer->addRenderObject<SphereObject>(sphereGeom, RED);
+	//
+	// const auto& body1 = m_physicsWorld->createBody(1.0f);
+	// body1->transform.position = {2.0f, 20.0f, 0.0f};
+	// const auto& sphereGeom1 = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+	// sphereGeom1->attachBody(body1);
+	// m_renderer->addRenderObject<SphereObject>(sphereGeom1, GREEN);
+
+	const auto& body = m_physicsWorld->createBody(1.0f);
+	if (!body)
+	{
+		throw std::runtime_error("Failed to create body");
+	}
+	body->transform.position = {0.0f, 10.0f, 0.0f};
+
+	const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+	if (!sphereGeom)
+	{
+		throw std::runtime_error("Failed to create SphereGeometry");
+	}
+	sphereGeom->attachBody(body);
+
+	m_renderer->addRenderObject<SphereObject>(sphereGeom, RED);
+
+	const auto& body1 = m_physicsWorld->createBody(1.0f);
+	if (!body1)
+	{
+		throw std::runtime_error("Failed to create body1");
+	}
+	body1->transform.position = {2.0f, 20.0f, 0.0f};
+	
+	const auto& sphereGeom1 = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+	if (!sphereGeom1)
+	{
+		throw std::runtime_error("Failed to create SphereGeometry1");
+	}
+	sphereGeom1->attachBody(body1);
+	
+	m_renderer->addRenderObject<SphereObject>(sphereGeom1, GREEN);
 }
 
 void PhysicsScene::Update(const float deltaTimeInSecond)
@@ -57,25 +93,19 @@ void PhysicsScene::Render()
 
 	// App::Print(result.x - 10, result.y - 10, "+");
 
-	const std::shared_ptr<Body>& sphereBody = m_physicsWorld->bodies[1];
+	const std::shared_ptr<Body>& sphereBody = m_physicsWorld->getBodies().back();
 	const Vector3f& velocity = sphereBody->getLinearVelocity();
 	const Vector3f& position = sphereBody->transform.position;
 
 	std::ostringstream os;
 	os << "Velocity: " << velocity;
-	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
+	App::Print(result.x - 10, result.y - 10, os.str().c_str(), 1, 1, 1);
 	os.str("");
 	os.clear();
 	os << "Position: " << position;
-	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
+	App::Print(result.x - 10, result.y - 50, os.str().c_str(), 1, 1, 1);
 }
 
 void PhysicsScene::Shutdown()
 {
-}
-
-void PhysicsScene::add_shape(const std::shared_ptr<SphereGeometry>& geom)
-{
-	m_physicsWorld->geometries.push_back(m_physicsWorld->sphereGeom);
-	m_renderer->addObject<SphereObject>(geom, RED);
 }
