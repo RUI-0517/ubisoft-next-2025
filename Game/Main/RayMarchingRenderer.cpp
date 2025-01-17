@@ -164,16 +164,16 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 
 		Vector3f lighting{0.0f};
 
-		auto directionalLight = ApplyDirectionalLighting(color, rayDirection, hitPoint, normal);
+		auto directionalLight = apply_directional_lighting(color, rayDirection, hitPoint, normal);
 
 		lighting += directionalLight;
 
-		Vector3f skyLight = ApplySkyLight(color, rayDirection, hitPoint, normal);
-		float ambientOcclusion = CalculateAmbientOcclusion(hitPoint, normal);
+		Vector3f skyLight = apply_sky_light(color, rayDirection, hitPoint, normal);
+		float ambientOcclusion = calculate_ambient_occlusion(hitPoint, normal);
 
 		lighting += skyLight * ambientOcclusion;
 
-		float fogFactor = ApplyFog(t, 1e-5f);
+		float fogFactor = apply_fog(t, 1e-5f);
 
 		color = lighting.lerp(m_skyColor, fogFactor);
 	}
@@ -311,12 +311,12 @@ Vector3f RayMarchingRenderer::calculate_normal(const Vector3f& hitPoint) const
 	return gradient.normalize();
 }
 
-Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
-                                                       const Vector3f& hitPoint, const Vector3f& normal) const
+Vector3f RayMarchingRenderer::apply_directional_lighting(const Vector3f& color, const Vector3f& rayDirection,
+                                                         const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	const Vector3f lightDir = m_directionalLightDirection.normalize();
 	const float diffuseFactor = std::clamp(normal.dot(lightDir), 0.0f, 1.0f);
-	const float softShadow = ApplyShadow(hitPoint, lightDir, 0.02f, 2.5f, 8);
+	const float softShadow = apply_shadow(hitPoint, lightDir, 0.02f, 2.5f, 8);
 
 	// Direction from point to camera (origin)
 	const Vector3f viewDir = -rayDirection.normalize();
@@ -328,16 +328,16 @@ Vector3f RayMarchingRenderer::ApplyDirectionalLighting(const Vector3f& color, co
 	float specularFactor = std::pow(max(normal.dot(halfDir), 0.0f), shininess);
 	specularFactor *= diffuseFactor;
 
-	const float fresnelReflectance = CalculateFresnel(lightDir, halfDir);
+	const float fresnelReflectance = calculate_fresnel(lightDir, halfDir);
 
-	const Vector3f diffuseColor = color.hadamard(m_DirectionalLightColor) * diffuseFactor * softShadow;
-	const float specularColor = specularFactor * fresnelReflectance * 4.0f;
+	const Vector3f diffuseColor = color.hadamard(m_DirectionalLightColor) * diffuseFactor * softShadow * 1.75f;
+	const float specularColor = specularFactor * fresnelReflectance * 5.0f;
 
 	return diffuseColor + specularColor;
 }
 
-Vector3f RayMarchingRenderer::ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
-                                            const Vector3f& hitPoint, const Vector3f& normal) const
+Vector3f RayMarchingRenderer::apply_sky_light(const Vector3f& color, const Vector3f& rayDirection,
+                                              const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	// Calculate diffuse lighting with an offset to brighten downward-facing surfaces,
 	// simulating bounced light and avoiding complete darkness.
@@ -347,19 +347,19 @@ Vector3f RayMarchingRenderer::ApplySkyLight(const Vector3f& color, const Vector3
 	// Calculate diffuse lighting with clamping to ensure valid range [0, 1]
 	const float diffuse = sqrt(std::clamp(bias + scale * normal.y, 0.0f, 1.0f));
 
-	const Vector3f reflect = Reflect(rayDirection, normal);
-	const float smoothSpecularFactor = SmoothStep(-0.2f, 0.2f, reflect.y);
+	const Vector3f reflectDir = reflect(rayDirection, normal);
+	const float smoothSpecularFactor = smooth_step(-0.2f, 0.2f, reflectDir.y);
 
-	const float fresnelReflectance = CalculateFresnel(-rayDirection, normal);
-	const float reflection = ApplyShadow(hitPoint, reflect, 0.02f, 2.0f, 32);
+	const float fresnelReflectance = calculate_fresnel(-rayDirection, normal);
+	const float reflection = apply_shadow(hitPoint, reflectDir, 0.02f, 2.0f, 32);
 
 	const Vector3f diffuseColor = color.hadamard(m_skyColor * diffuse * 0.5f);
-	const Vector3f specularColor = (smoothSpecularFactor * fresnelReflectance * reflection * 2.0f) * m_skyColor;
+	const Vector3f specularColor = (smoothSpecularFactor * fresnelReflectance * reflection * 1.25f) * m_skyColor;
 
 	return diffuseColor + specularColor;
 }
 
-float RayMarchingRenderer::CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal) const
+float RayMarchingRenderer::calculate_ambient_occlusion(const Vector3f& hitPoint, const Vector3f& normal) const
 {
 	float value = 0.0f;
 	float attenuationFactor = 1.0f;
@@ -385,8 +385,8 @@ float RayMarchingRenderer::CalculateAmbientOcclusion(const Vector3f& hitPoint, c
 }
 
 // remark: softness higher, clearer, harder
-float RayMarchingRenderer::ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection,
-                                       const float tMin, const float tMax, const float softness) const
+float RayMarchingRenderer::apply_shadow(const Vector3f& rayOrigin, const Vector3f& rayDirection,
+                                        const float tMin, const float tMax, const float softness) const
 {
 	float result = 1.0f;
 
@@ -415,24 +415,24 @@ float RayMarchingRenderer::ApplyShadow(const Vector3f& rayOrigin, const Vector3f
 	return result;
 }
 
-float RayMarchingRenderer::ApplyFog(const float t, const float density)
+float RayMarchingRenderer::apply_fog(const float t, const float density)
 {
 	return 1.0f - exp(-density * t * t * t);
 }
 
-float RayMarchingRenderer::SmoothStep(const float edge0, const float edge1, const float x)
+float RayMarchingRenderer::smooth_step(const float edge0, const float edge1, const float x)
 {
 	const float t = std::clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
 	return t * t * (3.0f - 2.0f * t);
 }
 
-Vector3f RayMarchingRenderer::Reflect(const Vector3f& in, const Vector3f& normal)
+Vector3f RayMarchingRenderer::reflect(const Vector3f& in, const Vector3f& normal)
 {
 	return in - 2.0f * in.dot(normal) * normal;
 }
 
 // schlick fresnel approximation
-float RayMarchingRenderer::CalculateFresnel(const Vector3f& in, const Vector3f& normal)
+float RayMarchingRenderer::calculate_fresnel(const Vector3f& in, const Vector3f& normal)
 {
 	constexpr float baseReflectivity = 0.04f;
 	constexpr float oneMinusBaseReflectivity = 1.0f - baseReflectivity;

@@ -68,18 +68,18 @@ private:
 
 	[[nodiscard]] Vector3f calculate_normal(const Vector3f& hitPoint) const;
 
-	[[nodiscard]] Vector3f ApplyDirectionalLighting(const Vector3f& color, const Vector3f& rayDirection,
-	                                                const Vector3f& hitPoint, const Vector3f& normal) const;
-	[[nodiscard]] Vector3f ApplySkyLight(const Vector3f& color, const Vector3f& rayDirection,
-	                                     const Vector3f& hitPoint, const Vector3f& normal) const;
-	[[nodiscard]] float ApplyShadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax,
-	                                float softness) const;
-	[[nodiscard]] static float ApplyFog(float t, float density);
+	[[nodiscard]] Vector3f apply_directional_lighting(const Vector3f& color, const Vector3f& rayDirection,
+	                                                  const Vector3f& hitPoint, const Vector3f& normal) const;
+	[[nodiscard]] Vector3f apply_sky_light(const Vector3f& color, const Vector3f& rayDirection,
+	                                       const Vector3f& hitPoint, const Vector3f& normal) const;
+	[[nodiscard]] float apply_shadow(const Vector3f& rayOrigin, const Vector3f& rayDirection, float tMin, float tMax,
+	                                 float softness) const;
+	[[nodiscard]] static float apply_fog(float t, float density);
 
-	[[nodiscard]] static float SmoothStep(float edge0, float edge1, float x);
-	[[nodiscard]] static Vector3f Reflect(const Vector3f& in, const Vector3f& normal);
+	[[nodiscard]] static float smooth_step(float edge0, float edge1, float x);
+	[[nodiscard]] static Vector3f reflect(const Vector3f& in, const Vector3f& normal);
 
-	[[nodiscard]] float CalculateAmbientOcclusion(const Vector3f& hitPoint, const Vector3f& normal) const;
-	[[nodiscard]] static float CalculateFresnel(const Vector3f& in, const Vector3f& normal);
+	[[nodiscard]] float calculate_ambient_occlusion(const Vector3f& hitPoint, const Vector3f& normal) const;
+	[[nodiscard]] static float calculate_fresnel(const Vector3f& in, const Vector3f& normal);
 #pragma endregion
 };
