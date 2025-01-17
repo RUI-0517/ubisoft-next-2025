@@ -197,6 +197,7 @@
     <ClCompile Include="..\External\stb_image\stb_image.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
     <ClCompile Include="RayMarchingObject.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="..\External\miniaudio\miniaudio.h" />
     <ClInclude Include="..\External\stb_image\stb_image.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />
     <ClInclude Include="RayMarchingObject.h" />

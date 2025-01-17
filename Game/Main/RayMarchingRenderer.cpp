@@ -7,27 +7,41 @@
 size_t RayMarchingRenderer::m_threadCounts = std::thread::hardware_concurrency();
 
 RayMarchingRenderer::RayMarchingRenderer(const size_t width, const size_t height)
-	: Renderer(width / pixelSize, height / pixelSize)
+	: Renderer(width / pixelSize, height / pixelSize),
+	  m_camera({0.0f, 4.0f, -10.0f}, Vector3f{0}),
+	  m_accumulateTime(0.0f)
+
 {
 	m_pixels = std::vector<std::unique_ptr<CSimpleSprite>>();
 	initialize_pixels(width, height);
 }
 
-void RayMarchingRenderer::update()
+void RayMarchingRenderer::update(float deltaTimeInSecond)
 {
-	// ray info
-	const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
+	m_accumulateTime += deltaTimeInSecond;
+	// // ray info
+	// const Vector3f rayOrigin = {0.0f, 4.0f, -8.0f};
+	//
+	// // camera settings
+	// const Vector3f& cameraOrigin = rayOrigin;
+	// const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
+	// constexpr float fov = 90.0f;
+	// const float focalLength = calculate_depth(fov);
+	//
+	// // camera coordinate system
+	// const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
+	// const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
+	// const Vector3f up = forward.cross(right);
 
-	// camera settings
-	const Vector3f& cameraOrigin = rayOrigin;
-	const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
-	constexpr float fov = 90.0f;
-	const float focalLength = calculate_depth(fov);
-
-	// camera coordinate system
-	const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
-	const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
-	const Vector3f up = forward.cross(right);
+	constexpr float angularSpeed = 0.5f;
+	static float currentAngle = 0.0f;
+	currentAngle += angularSpeed * deltaTimeInSecond;
+	constexpr float pi = M_PI;
+	if (currentAngle > 2.0f * pi) currentAngle -= 2.0f * pi;
+	constexpr float radius = 10.0f;
+	m_camera.position.x = radius * sin(currentAngle);
+	m_camera.position.z = radius * cos(currentAngle);
+	m_camera.update();
 
 	// TODO: Camera model
 	auto rayMarching = [&](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
@@ -36,10 +50,11 @@ void RayMarchingRenderer::update()
 		u -= 0.5f;
 		v -= 0.5f;
 
-		const Vector3f rayDirection = Vector3f{u * right + v * up + focalLength * forward}.normalize();
+		// const Vector3f rayDirection = Vector3f{u * right + v * up + focalLength * forward}.normalize();
+		const Vector3f rayDirection = m_camera.getDirection(u, v);
 
 		// render scene
-		Vector4f fragColor = render_scene(rayOrigin, rayDirection);
+		Vector4f fragColor = render_scene(m_camera.GetPosition(), rayDirection);
 
 		// gamma correction
 		fragColor = fragColor.pow(1.0f / 2.2f);
@@ -124,14 +139,7 @@ void RayMarchingRenderer::update_pixels()
 		thread.join();
 }
 
-float RayMarchingRenderer::calculate_depth(const float fov)
-{
-	const float halfFov = fov / 2.0f;
-	const float halfFovRadians = halfFov * (PI / 180.0f); // Convert degrees to radians
-	return 1.0f / tan(halfFovRadians);
-}
-
-Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vector3f& rayDirection)
+Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vector3f& rayDirection) const
 {
 	Vector3f color = m_skyColor;
 
@@ -155,11 +163,11 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 		}
 		else if (materialId == GREEN)
 		{
-			color = Vector3f{0.0f, 0.5f, 0.0f};
+			color = Vector3f{0.0f, 0.25f, 0.0f};
 		}
 		else if (materialId == RED)
 		{
-			color = Vector3f{0.5f, 0.0f, 0.0f};
+			color = Vector3f{0.6f, 0.0f, 0.0f};
 		}
 
 		Vector3f lighting{0.0f};
@@ -331,7 +339,7 @@ Vector3f RayMarchingRenderer::apply_directional_lighting(const Vector3f& color, 
 	const float fresnelReflectance = calculate_fresnel(lightDir, halfDir);
 
 	const Vector3f diffuseColor = color.hadamard(m_DirectionalLightColor) * diffuseFactor * softShadow * 1.75f;
-	const float specularColor = specularFactor * fresnelReflectance * 5.0f;
+	const float specularColor = specularFactor * fresnelReflectance * 2.5f;
 
 	return diffuseColor + specularColor;
 }

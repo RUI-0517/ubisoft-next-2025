@@ -3,8 +3,12 @@
 #include "RayMarchingObject.h"
 #include <Renderer.h>
 
+#include "Camera.h"
+
 class RayMarchingRenderer final : public Renderer
 {
+	Camera m_camera;
+
 	// pixelSize should be a multiple of APP_INIT_WIDTH for proper alignment.
 	// TODO: Handle cases where pixelSize is not perfectly divisible by APP_INIT_WIDTH.
 	static constexpr size_t pixelSize = 4;
@@ -31,10 +35,12 @@ class RayMarchingRenderer final : public Renderer
 	// Speical every scene has a plane
 	const Vector3f m_planeNormal{0.0f, 1.0f, 0.0f};
 
+	float m_accumulateTime;
+
 public:
 	RayMarchingRenderer(size_t width, size_t height);
 
-	void update();
+	void update(float deltaTimeInSecond);
 	void Render();
 	static void shutdown();
 
@@ -51,8 +57,7 @@ private:
 	void initialize_pixels(size_t width, size_t height);
 	void update_pixels();
 
-	[[nodiscard]] static float calculate_depth(float fov);
-	[[nodiscard]] Vector4f render_scene(const Vector3f& rayOrigin, const Vector3f& rayDirection);
+	[[nodiscard]] Vector4f render_scene(const Vector3f& rayOrigin, const Vector3f& rayDirection) const;
 	[[nodiscard]] SdfPair trace_ray(const Vector3f& rayOrigin, const Vector3f& rayDirection) const;
 
 	[[nodiscard]] static float sd_sphere(const Vector3f& point, float radius);

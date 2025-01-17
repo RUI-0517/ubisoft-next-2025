@@ -60,14 +60,14 @@ void PhysicsScene::Init()
 		throw std::runtime_error("Failed to create body1");
 	}
 	body1->transform.position = {2.0f, 20.0f, 0.0f};
-	
+
 	const auto& sphereGeom1 = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
 	if (!sphereGeom1)
 	{
 		throw std::runtime_error("Failed to create SphereGeometry1");
 	}
 	sphereGeom1->attachBody(body1);
-	
+
 	m_renderer->addRenderObject<SphereObject>(sphereGeom1, GREEN);
 }
 
@@ -80,7 +80,7 @@ void PhysicsScene::Update(const float deltaTimeInSecond)
 		m_accumulatedTime -= m_fixedDeltaTime;
 	}
 
-	m_renderer->update();
+	m_renderer->update(deltaTimeInSecond);
 }
 
 void PhysicsScene::Render()
