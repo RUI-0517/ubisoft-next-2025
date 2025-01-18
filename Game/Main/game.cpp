@@ -13,6 +13,8 @@
 #include "App/app.h"
 #include <array>
 
+#include "Solver.h"
+
 std::array<std::shared_ptr<Scene>, 3> SCENES;
 
 std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
@@ -54,6 +56,12 @@ void Update(const float deltaTime)
 void Render()
 {
 	SCENES[CURRENT_SCENE_INDEX]->Render();
+
+	Solver solver;
+	char c = solver.helloSolver();
+	char s[1]{c};
+
+	App::Print(32, 32, s);
 }
 
 //------------------------------------------------------------------------

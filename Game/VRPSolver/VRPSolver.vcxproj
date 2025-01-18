@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{67477077-8f78-45b9-8b4f-b20fd06de37f}</ProjectGuid>
-    <RootNamespace>Main</RootNamespace>
+    <ProjectGuid>{6649276f-524e-45cb-8bfb-e646a865d1ed}</ProjectGuid>
+    <RootNamespace>VRPSolver</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -70,43 +70,47 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)Builds\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDir)Builds\Intermediate\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>VRPSolver</TargetName>
+    <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\$(ProjectName)</OutDir>
+    <IntDir>$(SolutionDir)Builds\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>VRPSolver</TargetName>
     <OutDir>$(SolutionDir)Builds\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)Builds\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>VRPSolver</TargetName>
+    <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\$(ProjectName)</OutDir>
     <IntDir>$(SolutionDir)Builds\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Builds\Intermediate\$(Platform)\$(ProjectName)\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>VRPSolver</TargetName>
+    <OutDir>$(SolutionDir)Builds\$(Configuration)</OutDir>
+    <IntDir>$(SolutionDir)Builds\Intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;VRPSOLVER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External;$(SolutionDir)VRPSolver</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Math.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
+      <Command>xcopy "$(OutDir)\*.lib" "$(SolutionDir)Libraries\" /E /Y /I
+xcopy "$(OutDir)\*.dll" "$(SolutionDir)Binaries\x64\" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,48 +119,49 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;VRPSOLVER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External;$(SolutionDir)VRPSolver</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Precise</FloatingPointModel>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Math.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
+      <Command>xcopy "$(OutDir)\*.lib" "$(SolutionDir)Libraries\" /E /Y /I
+xcopy "$(OutDir)\*.dll" "$(SolutionDir)Binaries\x64\" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;VRPSOLVER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External;$(SolutionDir)VRPSolver</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Precise</FloatingPointModel>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Math.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
+      <Command>xcopy "$(OutDir)\*.lib" "$(SolutionDir)Libraries\x64\" /E /Y /I
+xcopy "$(OutDir)\*.dll" "$(SolutionDir)Binaries\x64\" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,83 +170,47 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;VRPSOLVER_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Math;$(SolutionDir)Physics;$(SolutionDir)Rendering;$(SolutionDir)External;$(SolutionDir)VRPSolver</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Precise</FloatingPointModel>
+      <AdditionalIncludeDirectories>$(SolutionDir)Math</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)Libraries\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Math.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
+      <Command>xcopy "$(OutDir)\*.lib" "$(SolutionDir)Libraries\x64\" /E /Y /I
+xcopy "$(OutDir)\*.dll" "$(SolutionDir)Binaries\x64\" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\External\App\app.cpp" />
-    <ClCompile Include="..\External\App\DirectSound.cpp" />
-    <ClCompile Include="..\External\App\main.cpp" />
-    <ClCompile Include="..\External\App\SimpleController.cpp" />
-    <ClCompile Include="..\External\App\SimpleSound.cpp" />
-    <ClCompile Include="..\External\App\SimpleSprite.cpp" />
-    <ClCompile Include="..\External\miniaudio\miniaudio.cpp" />
-    <ClCompile Include="..\External\stb_image\stb_image.cpp" />
-    <ClCompile Include="Common.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="GameplayScene.cpp" />
-    <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="PhysicsScene.cpp" />
-    <ClCompile Include="RayMarchingObject.cpp" />
-    <ClCompile Include="RayMarchingRenderer.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="RenderScene.cpp" />
-    <ClCompile Include="Resources.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\External\App\app.h" />
-    <ClInclude Include="..\External\App\AppSettings.h" />
-    <ClInclude Include="..\External\App\DirectSound.h" />
-    <ClInclude Include="..\External\App\main.h" />
-    <ClInclude Include="..\External\App\mydirectsound.h" />
-    <ClInclude Include="..\External\App\SimpleController.h" />
-    <ClInclude Include="..\External\App\SimpleSound.h" />
-    <ClInclude Include="..\External\App\SimpleSprite.h" />
-    <ClInclude Include="..\External\glut\include\GL\freeglut.h" />
-    <ClInclude Include="..\External\glut\include\GL\freeglut_ext.h" />
-    <ClInclude Include="..\External\glut\include\GL\freeglut_std.h" />
-    <ClInclude Include="..\External\glut\include\GL\glut.h" />
-    <ClInclude Include="..\External\miniaudio\miniaudio.h" />
-    <ClInclude Include="..\External\stb_image\stb_image.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="GameplayScene.h" />
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="PhysicsScene.h" />
-    <ClInclude Include="RayMarchingObject.h" />
-    <ClInclude Include="RayMarchingRenderer.h" />
-    <ClInclude Include="Render.h" />
-    <ClInclude Include="RenderScene.h" />
-    <ClInclude Include="Resources.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Solver.h" />
+    <ClInclude Include="VRPSolver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Solver.cpp" />
+    <ClCompile Include="VRPSolver.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
