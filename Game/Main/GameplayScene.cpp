@@ -9,10 +9,14 @@ Vector3f GameplayScene::m_gravity{0, -9.81f, 0};
 Vector3f GameplayScene::m_topViewCameraPosition{0.0f, 20.0f, 0.0f};
 Vector3f GameplayScene::m_playerCameraOffset{0, -9.81f, 0};
 
-GameplayScene::GameplayScene(): m_accumulatedTime(0.0f), m_userState(OVERVIEW)
+GameplayScene::GameplayScene(): m_accumulatedTime(0.0f)
 {
 	m_targetCameraPosition = {0.0f, 4.0f, -10.0f};
 	m_targetCameraLookAt = Vector3f{0.0f};
+
+	initialize_states();
+
+	switch_state(OBSERVATION);
 }
 
 GameplayScene::~GameplayScene() = default;
@@ -72,8 +76,9 @@ void GameplayScene::Update(const float deltaTimeInSecond)
 		m_accumulatedTime -= m_fixedDeltaTime;
 	}
 
-	update_camera(deltaTimeInSecond);
+	onUpdate[m_userState](deltaTimeInSecond);
 
+	update_camera(deltaTimeInSecond);
 	m_renderer->update(deltaTimeInSecond);
 }
 
@@ -90,33 +95,27 @@ void GameplayScene::Render()
 	// const std::shared_ptr<Body>& sphereBody = m_physicsWorld->getBodies().back();
 	// const Vector3f& velocity = sphereBody->getLinearVelocity();
 	// const Vector3f& position = sphereBody->transform.position;
+
+	onRender[m_userState]();
 }
 
 void GameplayScene::Shutdown()
 {
+	if (m_userState != OTHER_PLAYER) onExit[m_userState]();
 }
 
 void GameplayScene::handle_user_input()
 {
-	constexpr int viewSwitchKey = 'N';
+	constexpr int stateSwitchKey = 'N';
 
-	if (isPressingN && !App::IsKeyPressed(viewSwitchKey))
-		isPressingN = false;
+	if (isStateSwitchKeyPressed && !App::IsKeyPressed(stateSwitchKey))
+		isStateSwitchKeyPressed = false;
 
-	if (App::IsKeyPressed(viewSwitchKey) && !isPressingN)
+	if (App::IsKeyPressed(stateSwitchKey) && !isStateSwitchKeyPressed)
 	{
-		if (m_userState == OVERVIEW)
-		{
-			m_targetCameraPosition = {0.0f, 4.0f, -10.0f};
-			m_targetCameraLookAt = Vector3f{0.0f};
-			m_userState = SHOOT;
-		}
-		else if (m_userState == SHOOT)
-		{
-			m_targetCameraPosition = m_topViewCameraPosition;
-			m_userState = OVERVIEW;
-		}
-		isPressingN = true;
+		m_userState = static_cast<UserState>((m_userState + 1) % INVALID);
+		switch_state(m_userState);
+		isStateSwitchKeyPressed = true;
 	}
 }
 
@@ -130,4 +129,105 @@ void GameplayScene::update_camera(const float deltaTimeInSecond) const
 	camera.lookAt = camera.lookAt.lerp(m_targetCameraLookAt, speed * deltaTimeInSecond);
 
 	camera.update();
+}
+
+void GameplayScene::switch_state(const UserState state)
+{
+	if (state != OTHER_PLAYER) onExit[m_userState]();
+	m_userState = state;
+	onEnter[m_userState]();
+}
+
+void GameplayScene::initialize_states()
+{
+	onEnter.emplace_back([this] { on_observation_enter(); });
+	onUpdate.emplace_back([this](const float deltaTimeInSecond) { on_observation_update(deltaTimeInSecond); });
+	onRender.emplace_back([this] { on_observation_render(); });
+	onExit.emplace_back([this] { on_observation_exit(); });
+
+	onEnter.emplace_back([this] { on_golf_aim_enter(); });
+	onUpdate.emplace_back([this](const float deltaTimeInSecond) { on_golf_aim_update(deltaTimeInSecond); });
+	onRender.emplace_back([this] { on_golf_aim_render(); });
+	onExit.emplace_back([this] { on_golf_aim_exit(); });
+
+	onEnter.emplace_back([this] { on_golf_shoot_enter(); });
+	onUpdate.emplace_back([this](const float deltaTimeInSecond) { on_golf_shoot_update(deltaTimeInSecond); });
+	onRender.emplace_back([this] { on_golf_shoot_render(); });
+	onExit.emplace_back([this] { on_golf_shoot_exit(); });
+
+	onEnter.emplace_back([this] { on_other_player_enter(); });
+	onUpdate.emplace_back([this](const float deltaTimeInSecond) { on_other_player_update(deltaTimeInSecond); });
+	onRender.emplace_back([this] { on_other_player_render(); });
+	onExit.emplace_back([this] { on_other_player_exit(); });
+}
+
+void GameplayScene::on_observation_enter()
+{
+	m_targetCameraPosition = m_topViewCameraPosition;
+}
+
+void GameplayScene::on_observation_update(float deltaTimeInSecond)
+{
+}
+
+void GameplayScene::on_observation_render()
+{
+	App::Print(32.0f, 32.0f, "Observation");
+}
+
+void GameplayScene::on_observation_exit()
+{
+}
+
+void GameplayScene::on_golf_aim_enter()
+{
+	m_targetCameraPosition = {0.0f, 4.0f, -10.0f};
+	m_targetCameraLookAt = Vector3f{0.0f};
+}
+
+void GameplayScene::on_golf_aim_update(float deltaTimeInSecond)
+{
+}
+
+void GameplayScene::on_golf_aim_render()
+{
+	App::Print(32.0f, 32.0f, "Aim");
+}
+
+void GameplayScene::on_golf_aim_exit()
+{
+}
+
+void GameplayScene::on_golf_shoot_enter()
+{
+}
+
+void GameplayScene::on_golf_shoot_update(float deltaTimeInSecond)
+{
+}
+
+void GameplayScene::on_golf_shoot_render()
+{
+	App::Print(32.0f, 32.0f, "Shoot");
+}
+
+void GameplayScene::on_golf_shoot_exit()
+{
+}
+
+void GameplayScene::on_other_player_enter()
+{
+}
+
+void GameplayScene::on_other_player_update(float deltaTimeInSecond)
+{
+}
+
+void GameplayScene::on_other_player_render()
+{
+	App::Print(32.0f, 32.0f, "Other Player's View");
+}
+
+void GameplayScene::on_other_player_exit()
+{
 }

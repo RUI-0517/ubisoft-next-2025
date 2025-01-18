@@ -5,9 +5,11 @@
 
 enum UserState : uint8_t
 {
-	OVERVIEW,
-	SHOOT,
-	COUNT
+	OBSERVATION,
+	GOLF_AIMING,
+	GOLF_SHOOT,
+	OTHER_PLAYER,
+	INVALID
 };
 
 class GameplayScene final : public Scene
@@ -24,7 +26,13 @@ class GameplayScene final : public Scene
 	static Vector3f m_playerCameraOffset;
 
 	UserState m_userState;
-	bool isPressingN;
+	bool isStateSwitchKeyPressed;
+
+	// Mini State Machine
+	std::vector<std::function<void()>> onEnter;
+	std::vector<std::function<void(float)>> onUpdate;
+	std::vector<std::function<void()>> onRender;
+	std::vector<std::function<void()>> onExit;
 
 	std::unique_ptr<RayMarchingRenderer> m_renderer;
 
@@ -45,5 +53,32 @@ private:
 #pragma region Internals
 	void handle_user_input();
 	void update_camera(float deltaTimeInSecond) const;
+	void switch_state(UserState state);
+
+	void initialize_states();
+
+	// Overview State
+	void on_observation_enter();
+	void on_observation_update(float deltaTimeInSecond);
+	void on_observation_render();
+	void on_observation_exit();
+
+	// Golf Aim State
+	void on_golf_aim_enter();
+	void on_golf_aim_update(float deltaTimeInSecond);
+	void on_golf_aim_render();
+	void on_golf_aim_exit();
+
+	// Golf Shoot State
+	void on_golf_shoot_enter();
+	void on_golf_shoot_update(float deltaTimeInSecond);
+	void on_golf_shoot_render();
+	void on_golf_shoot_exit();
+
+	// Other Player State
+	void on_other_player_enter();
+	void on_other_player_update(float deltaTimeInSecond);
+	void on_other_player_render();
+	void on_other_player_exit();
 #pragma endregion
 };
