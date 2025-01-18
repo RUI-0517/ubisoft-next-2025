@@ -67,11 +67,12 @@ void Shutdown()
 
 void HandleUserInput()
 {
-	if (App::IsKeyPressed(VK_SPACE))
-	{
-		++CURRENT_SCENE_INDEX %= SCENES.size();
-		SwitchScene(CURRENT_SCENE_INDEX);
-	}
+	// TODO: DONING GAMEPLAY
+	// if (App::IsKeyPressed(VK_SPACE))
+	// {
+	// 	++CURRENT_SCENE_INDEX %= SCENES.size();
+	// 	SwitchScene(CURRENT_SCENE_INDEX);
+	// }
 }
 
 void SwitchScene(const size_t index)

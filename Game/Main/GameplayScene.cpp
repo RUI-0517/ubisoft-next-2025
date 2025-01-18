@@ -1,12 +1,18 @@
 #include "stdafx.h"
 #include "GameplayScene.h"
 
+#include "App/app.h"
 #include "App/AppSettings.h"
 
 Vector3f GameplayScene::m_gravity{0, -9.81f, 0};
 
-GameplayScene::GameplayScene(): m_accumulatedTime(0.0f)
+Vector3f GameplayScene::m_topViewCameraPosition{0.0f, 20.0f, 0.0f};
+Vector3f GameplayScene::m_playerCameraOffset{0, -9.81f, 0};
+
+GameplayScene::GameplayScene(): m_accumulatedTime(0.0f), m_userState(OVERVIEW)
 {
+	m_targetCameraPosition = {0.0f, 4.0f, -10.0f};
+	m_targetCameraLookAt = Vector3f{0.0f};
 }
 
 GameplayScene::~GameplayScene() = default;
@@ -21,20 +27,6 @@ void GameplayScene::Init()
 	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
 	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
 	m_renderer = std::make_unique<RayMarchingRenderer>(width, height);
-
-	// m_physicsWorld->m_bodies.emplace_back(std::make_shared<Body>(1.0f));
-
-	// const auto& body = m_physicsWorld->createBody(1.0f);
-	// body->transform.position = {0.0f, 10.0f, 0.0f};
-	// const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-	// sphereGeom->attachBody(body);
-	// m_renderer->addRenderObject<SphereObject>(sphereGeom, RED);
-	//
-	// const auto& body1 = m_physicsWorld->createBody(1.0f);
-	// body1->transform.position = {2.0f, 20.0f, 0.0f};
-	// const auto& sphereGeom1 = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-	// sphereGeom1->attachBody(body1);
-	// m_renderer->addRenderObject<SphereObject>(sphereGeom1, GREEN);
 
 	const auto& body = m_physicsWorld->createBody(1.0f);
 	if (!body)
@@ -71,6 +63,8 @@ void GameplayScene::Init()
 
 void GameplayScene::Update(const float deltaTimeInSecond)
 {
+	handle_user_input();
+
 	m_accumulatedTime += deltaTimeInSecond;
 	if (m_accumulatedTime >= m_fixedDeltaTime)
 	{
@@ -102,19 +96,38 @@ void GameplayScene::Shutdown()
 {
 }
 
+void GameplayScene::handle_user_input()
+{
+	constexpr int viewSwitchKey = 'N';
+
+	if (isPressingN && !App::IsKeyPressed(viewSwitchKey))
+		isPressingN = false;
+
+	if (App::IsKeyPressed(viewSwitchKey) && !isPressingN)
+	{
+		if (m_userState == OVERVIEW)
+		{
+			m_targetCameraPosition = {0.0f, 4.0f, -10.0f};
+			m_targetCameraLookAt = Vector3f{0.0f};
+			m_userState = SHOOT;
+		}
+		else if (m_userState == SHOOT)
+		{
+			m_targetCameraPosition = m_topViewCameraPosition;
+			m_userState = OVERVIEW;
+		}
+		isPressingN = true;
+	}
+}
+
 void GameplayScene::update_camera(const float deltaTimeInSecond) const
 {
 	Camera& camera = m_renderer->getCamera();
-	constexpr float angularSpeed = 0.5f;
 
-	static float currentAngle = 0.0f;
-	currentAngle += angularSpeed * deltaTimeInSecond;
+	constexpr float speed = 1.5f;
 
-	constexpr float pi = PI;
-	if (currentAngle > 2.0f * pi) currentAngle -= 2.0f * pi;
+	camera.position = camera.position.lerp(m_targetCameraPosition, speed * deltaTimeInSecond);
+	camera.lookAt = camera.lookAt.lerp(m_targetCameraLookAt, speed * deltaTimeInSecond);
 
-	constexpr float radius = 10.0f;
-	camera.position.x = radius * sin(currentAngle);
-	camera.position.z = radius * cos(currentAngle);
 	camera.update();
 }
