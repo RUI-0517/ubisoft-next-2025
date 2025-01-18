@@ -35,14 +35,14 @@ class RayMarchingRenderer final : public Renderer
 	// Speical every scene has a plane
 	const Vector3f m_planeNormal{0.0f, 1.0f, 0.0f};
 
-	float m_accumulateTime;
-
 public:
 	RayMarchingRenderer(size_t width, size_t height);
 
 	void update(float deltaTimeInSecond);
 	void Render();
 	static void shutdown();
+
+	Camera& getCamera();
 
 	template <typename T, typename= std::enable_if_t<std::is_base_of_v<RayMarchingObject, T>>, typename... Args>
 	void addRenderObject(Args&&... args)

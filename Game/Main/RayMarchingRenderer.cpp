@@ -8,9 +8,7 @@ size_t RayMarchingRenderer::m_threadCounts = std::thread::hardware_concurrency()
 
 RayMarchingRenderer::RayMarchingRenderer(const size_t width, const size_t height)
 	: Renderer(width / pixelSize, height / pixelSize),
-	  m_camera({0.0f, 4.0f, -10.0f}, Vector3f{0}),
-	  m_accumulateTime(0.0f)
-
+	  m_camera({0.0f, 4.0f, -10.0f}, Vector3f{0})
 {
 	m_pixels = std::vector<std::unique_ptr<CSimpleSprite>>();
 	initialize_pixels(width, height);
@@ -18,32 +16,6 @@ RayMarchingRenderer::RayMarchingRenderer(const size_t width, const size_t height
 
 void RayMarchingRenderer::update(float deltaTimeInSecond)
 {
-	m_accumulateTime += deltaTimeInSecond;
-	// // ray info
-	// const Vector3f rayOrigin = {0.0f, 4.0f, -8.0f};
-	//
-	// // camera settings
-	// const Vector3f& cameraOrigin = rayOrigin;
-	// const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
-	// constexpr float fov = 90.0f;
-	// const float focalLength = calculate_depth(fov);
-	//
-	// // camera coordinate system
-	// const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
-	// const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
-	// const Vector3f up = forward.cross(right);
-
-	constexpr float angularSpeed = 0.5f;
-	static float currentAngle = 0.0f;
-	currentAngle += angularSpeed * deltaTimeInSecond;
-	constexpr float pi = M_PI;
-	if (currentAngle > 2.0f * pi) currentAngle -= 2.0f * pi;
-	constexpr float radius = 10.0f;
-	m_camera.position.x = radius * sin(currentAngle);
-	m_camera.position.z = radius * cos(currentAngle);
-	m_camera.update();
-
-	// TODO: Camera model
 	auto rayMarching = [&](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
 	{
 		// center uv
@@ -80,6 +52,11 @@ void RayMarchingRenderer::Render()
 
 void RayMarchingRenderer::shutdown()
 {
+}
+
+Camera& RayMarchingRenderer::getCamera()
+{
+	return m_camera;
 }
 
 void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t height)
@@ -156,18 +133,36 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 		// Calculate Normal
 		const Vector3f normal = isGround ? m_planeNormal : calculate_normal(hitPoint);
 
-		if (isGround)
+		switch (materialId)
 		{
-			const float x = sd_checkerboard(hitPoint);
-			color = Vector3f{0.15f} + x * Vector3f{0.05f};
-		}
-		else if (materialId == GREEN)
-		{
-			color = Vector3f{0.0f, 0.25f, 0.0f};
-		}
-		else if (materialId == RED)
-		{
-			color = Vector3f{0.6f, 0.0f, 0.0f};
+		case PLANE:
+			{
+				const float x = sd_checkerboard(hitPoint);
+				color = Vector3f{0.15f} + x * Vector3f{0.05f};
+				break;
+			}
+		case RED:
+			{
+				color = Vector3f{0.75f, 0.0f, 0.0f};
+				break;
+			}
+		case GREEN:
+			{
+				color = Vector3f{0.0f, 0.75f, 0.0f};
+				break;
+			}
+		case BLUE:
+			{
+				color = Vector3f{0.0f, 0.0f, 0.75f};
+				break;
+			}
+		case YELLOW:
+			{
+				color = Vector3f{0.8f, 0.8f, 0.0f};
+				break;
+			}
+		case UNDEFINED:
+			break;
 		}
 
 		Vector3f lighting{0.0f};
@@ -205,7 +200,7 @@ std::pair<float, MaterialId> RayMarchingRenderer::trace_ray(const Vector3f& rayO
 		materialId = PLANE;
 	}
 
-	auto [tScene ,tSceneMaterialId] = IntersectScene(rayOrigin, rayDirection);
+	auto [tScene, tSceneMaterialId] = IntersectScene(rayOrigin, rayDirection);
 	if (tScene > 1.0f && (t < 0.0f || tScene < t))
 	{
 		t = tScene;

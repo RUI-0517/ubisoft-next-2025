@@ -8,7 +8,7 @@ World::World()
 	m_bodies[0]->transform.position = {0.0f, 0.0f, 0.0f};
 	m_bodies[0]->setKinematic();
 
-	const auto& planeGeom = std::make_shared<PlaneGeometry>(20.0f);
+	const auto& planeGeom = std::make_shared<PlaneGeometry>(10.0f);
 	planeGeom->attachBody(m_bodies[0]);
 	m_geometries.push_back(planeGeom);
 }
@@ -24,24 +24,22 @@ bool World::handle_collision() const
 			auto& self = *m_geometries[i];
 			auto& other = *m_geometries[j];
 
-			auto [collide, areSpheres] = check_collision_spheres(self, other);
-			if (areSpheres)
-			{
-				noCollision = !collide;
-				continue;
-			}
+			if (handle_spheres_collision(self, other)) continue;
 
 			auto [collided, vertices] = Geometry::checkCollision(self, other);
 			if (collided)
 			{
 				noCollision = false;
-				const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), self, other);
 
+				const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), self, other);
 				other.getBody()->transform.position += info.depth * info.normal * 0.3f;
+
+				// Vector3f& velocity = other.getBody()->getLinearVelocity();
+				// velocity = Vector3f{0.0f};
+
 				// sphereBody->setKinematic();
 				Vector3f& velocity = other.getBody()->getLinearVelocity();
 				velocity.y *= -0.7f;
-
 				if (velocity.magnitudeSquared() <= 0.2f) velocity = Vector3f{0.0f};
 			}
 		}
@@ -50,7 +48,7 @@ bool World::handle_collision() const
 	return noCollision;
 }
 
-std::pair<bool, bool> World::check_collision_spheres(Geometry& self, Geometry& other)
+bool World::handle_spheres_collision(Geometry& self, Geometry& other)
 {
 	if (const auto* sphereSelf = dynamic_cast<SphereGeometry*>(&self))
 	{
@@ -64,10 +62,11 @@ std::pair<bool, bool> World::check_collision_spheres(Geometry& self, Geometry& o
 
 			const float distanceSquared = selfCenter.distanceSquared(otherCenter);
 			const float radiusSum = selfRadius + otherRadius;
-			return {distanceSquared <= radiusSum * radiusSum, true};
+			// return distanceSquared <= radiusSum * radiusSum;
+			return true;
 		}
 	}
-	return {false, false};
+	return false;
 }
 
 void World::simulate(const float timeStep) const

@@ -80,6 +80,8 @@ void PhysicsScene::Update(const float deltaTimeInSecond)
 		m_accumulatedTime -= m_fixedDeltaTime;
 	}
 
+	update_camera(deltaTimeInSecond);
+
 	m_renderer->update(deltaTimeInSecond);
 }
 
@@ -108,4 +110,21 @@ void PhysicsScene::Render()
 
 void PhysicsScene::Shutdown()
 {
+}
+
+void PhysicsScene::update_camera(const float deltaTimeInSecond) const
+{
+	Camera& camera = m_renderer->getCamera();
+	constexpr float angularSpeed = 0.5f;
+
+	static float currentAngle = 0.0f;
+	currentAngle += angularSpeed * deltaTimeInSecond;
+
+	constexpr float pi = PI;
+	if (currentAngle > 2.0f * pi) currentAngle -= 2.0f * pi;
+
+	constexpr float radius = 10.0f;
+	camera.position.x = radius * sin(currentAngle);
+	camera.position.z = radius * cos(currentAngle);
+	camera.update();
 }

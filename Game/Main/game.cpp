@@ -8,16 +8,28 @@
 
 #include "Physics.h"
 #include "PhysicsScene.h"
+#include "RenderScene.h"
+#include "App/app.h"
+#include <array>
 
-std::unique_ptr<PhysicsScene> PHYSICS_SCENE;
+std::array<std::shared_ptr<Scene>, 2> SCENES;
+
+std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
+std::shared_ptr<RenderScene> RENDER_SCENE;
+size_t CURRENT_SCENE_INDEX;
+
+static void HandleUserInput();
+static void SwitchScene(size_t index);
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
 //------------------------------------------------------------------------
 void Init()
 {
-	PHYSICS_SCENE = std::make_unique<PhysicsScene>();
-	PHYSICS_SCENE->Init();
+	SCENES[0] = std::make_unique<PhysicsScene>();
+	SCENES[1] = std::make_unique<RenderScene>();
+
+	SwitchScene(1);
 }
 
 //------------------------------------------------------------------------
@@ -26,8 +38,10 @@ void Init()
 //------------------------------------------------------------------------
 void Update(const float deltaTime)
 {
-	const float deltaTimeInSecond = deltaTime / 1000.0f;
-	PHYSICS_SCENE->Update(deltaTimeInSecond);
+	HandleUserInput();
+
+	const float deltaTimeInSecond = deltaTime / 1e3f;
+	SCENES[CURRENT_SCENE_INDEX]->Update(deltaTimeInSecond);
 }
 
 //------------------------------------------------------------------------
@@ -36,7 +50,7 @@ void Update(const float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	PHYSICS_SCENE->Render();
+	SCENES[CURRENT_SCENE_INDEX]->Render();
 }
 
 //------------------------------------------------------------------------
@@ -45,5 +59,21 @@ void Render()
 //------------------------------------------------------------------------
 void Shutdown()
 {
-	PHYSICS_SCENE->Shutdown();
+	SCENES[CURRENT_SCENE_INDEX]->Shutdown();
+}
+
+void HandleUserInput()
+{
+	if (App::IsKeyPressed(VK_SPACE))
+	{
+		++CURRENT_SCENE_INDEX %= SCENES.size();
+		SwitchScene(CURRENT_SCENE_INDEX);
+	}
+}
+
+void SwitchScene(const size_t index)
+{
+	if (SCENES[CURRENT_SCENE_INDEX] != nullptr) SCENES[CURRENT_SCENE_INDEX]->Shutdown();
+	CURRENT_SCENE_INDEX = index;
+	SCENES[CURRENT_SCENE_INDEX]->Init();
 }

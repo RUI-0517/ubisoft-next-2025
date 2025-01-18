@@ -18,7 +18,7 @@ public:
 
 	void simulate(float timeStep) const;
 	[[nodiscard]] bool handle_collision() const;
-	static std::pair<bool, bool> check_collision_spheres(Geometry& self, Geometry& other);
+	static bool handle_spheres_collision(Geometry& self, Geometry& other);
 
 	void setGravity(const Vector3f& gravity);
 

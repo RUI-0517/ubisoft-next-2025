@@ -260,7 +260,7 @@ CollisionInfo Geometry::calculateCollisionInfo(std::vector<Vector3f>&& vertices,
 	// 	solved = true;
 	// }
 
-	if (!solved) throw std::runtime_error("EPA algorithm failed.");
+	// if (!solved) throw std::runtime_error("EPA algorithm failed.");
 
 	return {normal, depth};
 }
