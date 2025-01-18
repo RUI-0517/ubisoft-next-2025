@@ -9,13 +9,15 @@
 #include "Physics.h"
 #include "PhysicsScene.h"
 #include "RenderScene.h"
+#include "GameplayScene.h"
 #include "App/app.h"
 #include <array>
 
-std::array<std::shared_ptr<Scene>, 2> SCENES;
+std::array<std::shared_ptr<Scene>, 3> SCENES;
 
 std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
 std::shared_ptr<RenderScene> RENDER_SCENE;
+std::shared_ptr<GameplayScene> GAMEPLAY_SCENE;
 size_t CURRENT_SCENE_INDEX;
 
 static void HandleUserInput();
@@ -26,10 +28,11 @@ static void SwitchScene(size_t index);
 //------------------------------------------------------------------------
 void Init()
 {
-	SCENES[0] = std::make_unique<PhysicsScene>();
-	SCENES[1] = std::make_unique<RenderScene>();
+	SCENES[0] = std::make_shared<PhysicsScene>();
+	SCENES[1] = std::make_shared<RenderScene>();
+	SCENES[2] = std::make_shared<GameplayScene>();
 
-	SwitchScene(1);
+	SwitchScene(2);
 }
 
 //------------------------------------------------------------------------
