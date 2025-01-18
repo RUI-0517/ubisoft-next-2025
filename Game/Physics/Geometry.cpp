@@ -45,6 +45,16 @@ void Geometry::attachBody(const std::shared_ptr<Body>& body)
 	m_body = body;
 }
 
+const Transform& Geometry::getTransform() const
+{
+	if (!m_body)
+	{
+		throw std::runtime_error("Geometry::getTransform() failed: "
+			"m_body is null. Ensure a body is attached to this geometry before calling this method.");
+	}
+	return m_body->transform;
+}
+
 Vector3f Geometry::getSupportPoint(const Geometry& lhs, const Geometry& rhs, const Vector3f& direction)
 {
 	return lhs.getSupportPoint(direction) - rhs.getSupportPoint(-direction);
@@ -250,7 +260,7 @@ CollisionInfo Geometry::calculateCollisionInfo(std::vector<Vector3f>&& vertices,
 	// 	solved = true;
 	// }
 
-	if (!solved) throw std::runtime_error("EPA algorithm failed.");
+	// if (!solved) throw std::runtime_error("EPA algorithm failed.");
 
 	return {normal, depth};
 }

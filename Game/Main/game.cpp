@@ -5,168 +5,43 @@
 //------------------------------------------------------------------------
 #include "stdafx.h"
 //------------------------------------------------------------------------
-#include <windows.h>
-//------------------------------------------------------------------------
-#include "app/app.h"
-//------------------------------------------------------------------------
 
 #include "Physics.h"
-#include "Render.h"
-#include "Matrix.h"
+#include "PhysicsScene.h"
+#include "RenderScene.h"
+#include "App/app.h"
+#include <array>
 
-// TODO: TEMP
-bool HAS_COLLISION = false;
+std::array<std::shared_ptr<Scene>, 2> SCENES;
+
+std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
+std::shared_ptr<RenderScene> RENDER_SCENE;
+size_t CURRENT_SCENE_INDEX;
+
+static void HandleUserInput();
+static void SwitchScene(size_t index);
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
 //------------------------------------------------------------------------
 void Init()
 {
-	// Physics
-	Physics::ACCUMULATED_TIME = 0.0f;
-	Physics::WORLD = std::make_unique<World>();
-	Physics::WORLD->setGravity(Physics::GRAVITY);
+	SCENES[0] = std::make_unique<PhysicsScene>();
+	SCENES[1] = std::make_unique<RenderScene>();
 
-	// Rendering
-	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
-	constexpr size_t height = APP_INIT_WINDOW_HEIGHT;
-
-	constexpr size_t bufferWidth = width / Rendering::PIXEL_SIZE;
-	constexpr size_t bufferHeight = width / Rendering::PIXEL_SIZE;
-
-	Rendering::RENDERER = std::make_unique<Renderer>(bufferWidth, bufferHeight);
-
-	constexpr size_t resolution = width * height;
-	Rendering::PIXELS = std::vector<std::unique_ptr<CSimpleSprite>>();
-	Rendering::InitializePixels(resolution, Rendering::PIXEL_SIZE);
-
-	// TODO: Better Sync
-	Rendering::SPHERE_RADIUS = Physics::WORLD->sphereGeom->getRadius();
-
-	Vector3f transformedPoint =
-		Physics::WORLD->sphereGeom->getBody()->transform.transformPoint({0.0f, 0.5f, 0.0f, 1.0f});
-
-	Vector3f supportPoint = Physics::WORLD->sphereGeom->getSupportPoint({0, 1, 0});
-	// const Vector4f vector = {0.5f, 0.5f, 0.0f, 1.0f};
-	// const Matrix4f translateMatrix = Matrix4f::translate(2.0f);
-	// const Matrix4f scaleMatrix = Matrix4f::scale(2.0f);
-	// Vector4f result = vector * (translateMatrix * scaleMatrix);
-
-	// Body planeBody{1.0f};
-	// planeBody.transform.scale = Vector3f{5.0f};
-	// planeBody.transform.rotation = Vector4f{0.4545195f, 0.1227877f, 0.5416752f, 0.6963643f};
-	//
-	// PlaneGeometry planeGeom{2.0f};
-	// planeGeom.attachBody(std::make_shared<Body>(planeBody));
-
-	// Vector3f supportPoint = planeGeom.getSupportPoint(Vector3f{-1.0f, -1.0f, 1.0f});
-
-	// Quaternion q1{0.7071f, 0.0f, 0.7071f, 0.0f};
-	// Quaternion q2{0.7071f, 0.7071f, 0.0f, 0.0f};
-	// Quaternion q1{1, 0, 0, 0};
-	// Quaternion q2{0, 1, 0, 0};
-	// Quaternion result = q1.rotate(q2);
-	// Quaternion result2 = q2.rotate(q1);
-
-	// Quaternion q3 = Quaternion::eulerToQuaternion(30, 40, 10);
+	SwitchScene(1);
 }
 
 //------------------------------------------------------------------------
-// Update your simulation here. deltaTime is the elapsed time since the last update in ms.
+// update your simulation here. deltaTime is the elapsed time since the last update in ms.
 // This will be called at no greater frequency than the value of APP_MAX_FRAME_RATE
 //------------------------------------------------------------------------
 void Update(const float deltaTime)
 {
-	const float deltaTimeInSecond = deltaTime / 1000.0f;
+	HandleUserInput();
 
-	// Fixed Update
-	Physics::ACCUMULATED_TIME += deltaTimeInSecond;
-	if (Physics::ACCUMULATED_TIME >= Physics::FIXED_DELTA_TIME)
-	{
-		Physics::WORLD->simulate(Physics::FIXED_DELTA_TIME);
-		Physics::ACCUMULATED_TIME -= Physics::FIXED_DELTA_TIME;
-	}
-
-	const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
-	const Transform& sphereTransform = sphereBody->transform;
-
-	const std::shared_ptr<PlaneGeometry>& planeGeom = Physics::WORLD->planeGeom;
-	const std::shared_ptr<SphereGeometry>& sphereGeom = Physics::WORLD->sphereGeom;
-
-	auto [collided, vertices] = Geometry::checkCollision(*planeGeom, *sphereGeom);
-	HAS_COLLISION = collided;
-
-	if (HAS_COLLISION)
-	{
-		const CollisionInfo info = Geometry::calculateCollisionInfo(std::move(vertices), *planeGeom, *sphereGeom);
-
-		sphereBody->transform.position += info.depth * info.normal * 0.9f;
-		// sphereBody->setKinematic();
-		Vector3f& velocity = sphereBody->getLinearVelocity();
-		velocity.y *= -0.4f;
-
-		if (velocity.magnitudeSquared() <= 0.2f)
-			velocity = Vector3f{0.0f};
-		// sphereBody->setLinearVelocity({0.0f, 0.01f, 0.0f});
-	}
-
-	// sphereBody->setKinematic();
-	// sphereTransform.position.y = 1.0f;
-
-	// constexpr float velocityThreshold = 1.0f;
-
-	// if (sphereTransform.position.y < 1.0f && sphereTransform.position.y >= 0.0f)
-	// {
-	// 	Vector3f& velocity = sphereBody->getLinearVelocity();
-	//
-	// 	if (std::fabs(velocity.y) < velocityThreshold)
-	// 	{
-	// 		velocity.y = 0.0f;
-	// 		sphereTransform.position.y = 1.0f;
-	// 	}
-	// 	else velocity.y *= -0.9f;
-	// }
-
-	Rendering::SPHERE_CENTER = sphereTransform.position;
-
-	// Game Logic Update
-
-	// Rendering Logic
-	// TODO: using Vector2f instead individual component
-	auto rayMarching = [](std::vector<Vector4f>& buffer, const size_t index, float u, float v)
-	{
-		// center uv
-		u -= 0.5f;
-		v -= 0.5f;
-
-		// ray info
-		const Vector3f rayOrigin = {0.0f, 4.0f, -10.0f};
-
-		// camera settings
-		const Vector3f& cameraOrigin = rayOrigin;
-		const Vector3f cameraLookAt{0.0f, 0.0f, 0.0f};
-		constexpr float fov = 90.0f;
-		const float focalLength = Rendering::CalculateDepth(fov);
-
-		// camera coordinate system
-		const Vector3f forward = (cameraLookAt - cameraOrigin).normalize();
-		const Vector3f right = Vector3f{0.0f, 1.0f, 0.0f}.cross(forward).normalize();
-		const Vector3f up = forward.cross(right);
-
-		const Vector3f rayDirection = Vector3f{u * right + v * up + focalLength * forward}.normalize();
-
-		// render scene
-		Vector4f fragColor = Rendering::RenderScene(rayOrigin, rayDirection);
-
-		// gamma correction
-		fragColor = fragColor.pow(1.0f / 2.2f);
-
-		// write color back to color buffer
-		buffer[index] = fragColor;
-	};
-
-	// Execute the ray marching for all render threads
-	Rendering::RENDERER->each(Rendering::THREAD_COUNT, rayMarching);
+	const float deltaTimeInSecond = deltaTime / 1e3f;
+	SCENES[CURRENT_SCENE_INDEX]->Update(deltaTimeInSecond);
 }
 
 //------------------------------------------------------------------------
@@ -175,37 +50,7 @@ void Update(const float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	// const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
-	// const Vector3f b{0.0f, 0.0f, 50.0f};
-	// const Vector3f result = (a + b) / 2.0f;
-
-	// Synchronize the renderer's output buffer to the pixel textures
-	// This updates PIXELS with the latest data from the renderer's buffer
-	Rendering::UpdatePixels(Rendering::PIXELS, Rendering::RENDERER->getBuffer());
-
-	// Render each pixel on the screen
-	// Due to OpenGL's requirement for rendering on the main thread,
-	// the drawing process cannot be multithreaded
-	for (const auto& pixel : Rendering::PIXELS)
-		pixel->Draw();
-
-	// App::Print(result.x - 10, result.y - 10, "+");
-
-	// const std::shared_ptr<Body>& sphereBody = Physics::WORLD->bodies[1];
-	// const Vector3f& velocity = sphereBody->getLinearVelocity();
-	// const Vector3f& position = sphereBody->transform.position;
-
-	// std::ostringstream os;
-	// os << "Velocity: " << velocity;
-	// App::Print(result.x - 10, result.y - 10, os.str().c_str(), 0, 0, 0);
-	// os.str("");
-	// os.clear();
-	// os << "Position: " << position;
-	// App::Print(result.x - 10, result.y - 50, os.str().c_str(), 0, 0, 0);
-	// os.str("");
-	// os.clear();
-	// os << "Collide: " << HAS_COLLISION;
-	// App::Print(result.x - 10, result.y - 100, os.str().c_str(), 0, 0, 0);
+	SCENES[CURRENT_SCENE_INDEX]->Render();
 }
 
 //------------------------------------------------------------------------
@@ -214,4 +59,21 @@ void Render()
 //------------------------------------------------------------------------
 void Shutdown()
 {
+	SCENES[CURRENT_SCENE_INDEX]->Shutdown();
+}
+
+void HandleUserInput()
+{
+	if (App::IsKeyPressed(VK_SPACE))
+	{
+		++CURRENT_SCENE_INDEX %= SCENES.size();
+		SwitchScene(CURRENT_SCENE_INDEX);
+	}
+}
+
+void SwitchScene(const size_t index)
+{
+	if (SCENES[CURRENT_SCENE_INDEX] != nullptr) SCENES[CURRENT_SCENE_INDEX]->Shutdown();
+	CURRENT_SCENE_INDEX = index;
+	SCENES[CURRENT_SCENE_INDEX]->Init();
 }
