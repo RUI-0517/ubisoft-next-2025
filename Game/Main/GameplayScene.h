@@ -2,6 +2,7 @@
 #include "RayMarchingRenderer.h"
 #include "Scene.h"
 #include "World.h"
+#include <array>
 
 enum UserState : uint8_t
 {
@@ -23,16 +24,32 @@ class GameplayScene final : public Scene
 	Vector3f m_targetCameraLookAt;
 
 	static Vector3f m_topViewCameraPosition;
-	static Vector3f m_playerCameraOffset;
+	static Vector3f m_playerAimCameraOffset;
 
 	UserState m_userState;
-	bool isStateSwitchKeyPressed;
+	bool isStateSwitchKeyPressed = false;
+	bool isObservationKeyPressed = false;
+
+	bool isChargePressed = false;
+	bool shootKeyPressed = false;
+
+	float m_chargeTime = 0.0f;
+	float m_maxChargeTime = 3.75f;
+	int m_chargeTimeSign = 1;
+
+	float m_charge = 0.0f;
+
+	float previousMouseX = 0.0f;
+	float previousMouseY = 0.0f;
+
+	std::array<std::shared_ptr<Geometry>, 2> m_players;
+	std::vector<std::shared_ptr<Geometry>> m_holes;
 
 	// Mini State Machine
-	std::vector<std::function<void()>> onEnter;
-	std::vector<std::function<void(float)>> onUpdate;
-	std::vector<std::function<void()>> onRender;
-	std::vector<std::function<void()>> onExit;
+	std::vector<std::function<void()>> m_onEnter;
+	std::vector<std::function<void(float)>> m_onUpdate;
+	std::vector<std::function<void()>> m_onRender;
+	std::vector<std::function<void()>> m_onExit;
 
 	std::unique_ptr<RayMarchingRenderer> m_renderer;
 
@@ -54,6 +71,8 @@ private:
 	void handle_user_input();
 	void update_camera(float deltaTimeInSecond) const;
 	void switch_state(UserState state);
+	void init_players();
+	void init_holes();
 
 	void initialize_states();
 
@@ -66,7 +85,7 @@ private:
 	// Golf Aim State
 	void on_golf_aim_enter();
 	void on_golf_aim_update(float deltaTimeInSecond);
-	void on_golf_aim_render();
+	void on_golf_aim_render() const;
 	void on_golf_aim_exit();
 
 	// Golf Shoot State

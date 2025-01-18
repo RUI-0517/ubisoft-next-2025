@@ -31,5 +31,6 @@ public:
 private:
 #pragma region Internal
 	static float calculate_depth(float fov);
+
 #pragma endregion
 };
