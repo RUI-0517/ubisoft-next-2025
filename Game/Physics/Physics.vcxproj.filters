@@ -45,6 +45,9 @@
     <ClInclude Include="Simplex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SphereOnlyWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Simplex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereOnlyWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

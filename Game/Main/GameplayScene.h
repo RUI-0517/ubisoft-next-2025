@@ -4,6 +4,8 @@
 #include "World.h"
 #include <array>
 
+#include "SphereOnlyWorld.h"
+
 enum UserState : uint8_t
 {
 	OBSERVATION,
@@ -17,7 +19,7 @@ class GameplayScene final : public Scene
 {
 	static constexpr float m_fixedDeltaTime = 0.02f;
 	static Vector3f m_gravity;
-	std::unique_ptr<World> m_physicsWorld;
+	std::unique_ptr<SphereOnlyWorld> m_world;
 	float m_accumulatedTime;
 
 	Vector3f m_targetCameraPosition;
@@ -44,6 +46,7 @@ class GameplayScene final : public Scene
 
 	std::array<std::shared_ptr<Geometry>, 2> m_players;
 	std::vector<std::shared_ptr<Geometry>> m_holes;
+	std::vector<std::shared_ptr<SphereGeometry>> m_obstacles;
 
 	// Mini State Machine
 	std::vector<std::function<void()>> m_onEnter;
@@ -73,6 +76,7 @@ private:
 	void switch_state(UserState state);
 	void init_players();
 	void init_holes();
+	void init_obstacles();
 
 	void initialize_states();
 

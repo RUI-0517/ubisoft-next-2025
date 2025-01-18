@@ -6,7 +6,7 @@
 #include "App/app.h"
 #include "App/AppSettings.h"
 
-Vector3f GameplayScene::m_gravity{0, -9.81f, 0};
+Vector3f GameplayScene::m_gravity{0.0, 0.0f, 0.0f};
 
 Vector3f GameplayScene::m_topViewCameraPosition{0.0f, 20.0f, 0.0f};
 Vector3f GameplayScene::m_playerAimCameraOffset{0.0f, 4.0f, -10.0f};
@@ -18,12 +18,11 @@ GameplayScene::GameplayScene(): m_accumulatedTime(0.0f)
 
 GameplayScene::~GameplayScene() = default;
 
-
 void GameplayScene::Init()
 {
 	// Init physics world
-	m_physicsWorld = std::make_unique<World>();
-	m_physicsWorld->setGravity(m_gravity);
+	m_world = std::make_unique<SphereOnlyWorld>();
+	m_world->setGravity(m_gravity);
 
 	// Init renderer
 	constexpr size_t width = APP_INIT_WINDOW_WIDTH;
@@ -32,6 +31,7 @@ void GameplayScene::Init()
 
 	init_players();
 	init_holes();
+	init_obstacles();
 
 	switch_state(OBSERVATION);
 }
@@ -43,7 +43,7 @@ void GameplayScene::Update(const float deltaTimeInSecond)
 	m_accumulatedTime += deltaTimeInSecond;
 	if (m_accumulatedTime >= m_fixedDeltaTime)
 	{
-		m_physicsWorld->simulate(m_fixedDeltaTime);
+		m_world->simulate(m_fixedDeltaTime);
 		m_accumulatedTime -= m_fixedDeltaTime;
 	}
 
@@ -57,15 +57,14 @@ void GameplayScene::Render()
 {
 	m_renderer->Render();
 
-	// const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
-	// const Vector3f b{0.0f, 0.0f, 50.0f};
-	// const Vector3f result = (a + b) / 2.0f;
+	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
+	const Vector3f b;
+	const Vector3f result = (a + b) / 2.0f;
 
-	// App::Print(result.x - 10, result.y - 10, "+");
-	//
-	// const std::shared_ptr<Body>& sphereBody = m_physicsWorld->getBodies().back();
-	// const Vector3f& velocity = sphereBody->getLinearVelocity();
-	// const Vector3f& position = sphereBody->transform.position;
+	const std::shared_ptr<Body>& sphereBody = m_obstacles[0]->getBody();
+	const Vector3f& position = sphereBody->transform.position;
+
+	App::Print(result.x, result.y, std::to_string(position.y).c_str());
 
 	m_onRender[m_userState]();
 }
@@ -86,6 +85,7 @@ void GameplayScene::handle_user_input()
 	{
 		m_userState = static_cast<UserState>((m_userState + 1) % INVALID);
 		switch_state(m_userState);
+		// m_obstacles[0]->getBody()->addForce({0, 0, -20});
 		isStateSwitchKeyPressed = true;
 	}
 }
@@ -136,14 +136,16 @@ void GameplayScene::init_players()
 {
 	// Player #1
 	{
-		const auto player = m_physicsWorld->createBody(1.0f);
+		// const auto player = m_physicsWorld->createBody(1.0f);
+		const auto player = m_world->createBody(1.0f);
 		if (!player)
 		{
 			throw std::runtime_error("Failed to create body");
 		}
-		player->transform.position = {0.0f, 10.0f, 0.0f};
+		player->transform.position = {0.0f, 1.0f, 0.0f};
 
-		const auto playerGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		// const auto playerGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		const auto playerGeom = m_world->createGeometry(1.0f);
 		if (!playerGeom)
 		{
 			throw std::runtime_error("Failed to create SphereGeometry");
@@ -157,18 +159,17 @@ void GameplayScene::init_players()
 
 	// Player #2
 	{
-		const auto player = m_physicsWorld->createBody(1.0f);
+		const auto player = m_world->createBody(1.0f);
+		// const auto player = m_physicsWorld->createBody(1.0f);
 		if (!player)
 		{
 			throw std::runtime_error("Failed to create body1");
 		}
-		player->transform.position = {2.0f, 20.0f, 0.0f};
+		player->transform.position = {2.0f, 1.0f, 0.0f};
 
-		const auto playerGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-		if (!playerGeom)
-		{
-			throw std::runtime_error("Failed to create SphereGeometry1");
-		}
+		// const auto playerGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		const auto playerGeom = m_world->createGeometry(1.0f);
+		if (!playerGeom) throw std::runtime_error("Failed to create SphereGeometry");
 		playerGeom->attachBody(player);
 
 		m_renderer->addRenderObject<SphereObject>(playerGeom, GREEN);
@@ -179,18 +180,53 @@ void GameplayScene::init_players()
 
 void GameplayScene::init_holes()
 {
-	const auto hole = m_physicsWorld->createBody(1.0f);
+	const auto hole = m_world->createBody(1.0f);
 	hole->setKinematic();
 	if (!hole) throw std::runtime_error("Failed to create hole");
 	hole->transform.position = {-3.0f, 0.5f, 0.0f};
 
-	const auto holeGeom = m_physicsWorld->createGeometry<SphereGeometry>(0.5f);
+	const auto holeGeom = m_world->createGeometry(0.5f);
 	if (!holeGeom) throw std::runtime_error("Failed to create SphereGeometry1");
 	holeGeom->attachBody(hole);
 
 	m_renderer->addRenderObject<SphereObject>(holeGeom, YELLOW);
 
 	m_holes.emplace_back(holeGeom);
+}
+
+void GameplayScene::init_obstacles()
+{
+	constexpr float radius = 0.5f;
+
+	{
+		const auto obstacle = m_world->createBody();
+		obstacle->setSphere(0.5f, radius);
+
+		if (!obstacle) throw std::runtime_error("Failed to create obstacle");
+		obstacle->transform.position = {-3.0f, 0.5f, -0.5f};
+
+		const auto obstacleGeom = m_world->createGeometry(radius);
+		if (!obstacleGeom) throw std::runtime_error("Failed to create SphereGeometry");
+		obstacleGeom->attachBody(obstacle);
+
+		m_renderer->addRenderObject<SphereObject>(obstacleGeom, BLUE);
+		m_obstacles.emplace_back(obstacleGeom);
+	}
+
+	{
+		const auto obstacle = m_world->createBody();
+		obstacle->setSphere(0.5f, radius);
+
+		if (!obstacle) throw std::runtime_error("Failed to create obstacle");
+		obstacle->transform.position = {-3.0f, 0.5f, -1.75f};
+
+		const auto obstacleGeom = m_world->createGeometry(radius);
+		if (!obstacleGeom) throw std::runtime_error("Failed to create SphereGeometry");
+		obstacleGeom->attachBody(obstacle);
+
+		m_renderer->addRenderObject<SphereObject>(obstacleGeom, BLUE);
+		m_obstacles.emplace_back(obstacleGeom);
+	}
 }
 
 void GameplayScene::on_observation_enter()
