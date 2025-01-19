@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="External">
+      <UniqueIdentifier>{7c7ebbfc-2720-43f4-b309-684da157cd62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\App">
+      <UniqueIdentifier>{5bd6d08c-258a-42cc-b2e7-0d21cb7c36b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\glut">
+      <UniqueIdentifier>{a96f1883-e998-444b-a44f-7599a59788db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\miniaudio">
+      <UniqueIdentifier>{907d65f9-3ff4-48e9-a605-74f4aa78b625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\stb_image">
+      <UniqueIdentifier>{ac83f1e9-5371-474a-9df0-8ea402e98375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{49d2f5c4-7bb5-4637-acfc-f908065a2127}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{f26ce898-a945-4bcc-b08c-1b9d7a398527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{6b430b22-e538-421d-b5ae-f5b4cb880323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{8cf3fd66-97d7-4198-b3ad-20756c0e83bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Raymarching">
+      <UniqueIdentifier>{ccfbbe8a-9c72-4d56-bbd7-b175135ea797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Raymarching">
+      <UniqueIdentifier>{cf4436b0-a838-4c25-805e-efcdf5e0c19f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\app.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\DirectSound.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\main.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleController.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleSound.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\App\SimpleSprite.cpp">
+      <Filter>External\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\miniaudio\miniaudio.cpp">
+      <Filter>External\miniaudio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\stb_image\stb_image.cpp">
+      <Filter>External\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GolfAimingState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayStateMachine.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="GolfShootState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="ObservationState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="OtherPlayerState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Raymarching</Filter>
+    </ClCompile>
+    <ClCompile Include="RayMarchingObject.cpp">
+      <Filter>Source Files\Raymarching</Filter>
+    </ClCompile>
+    <ClCompile Include="RayMarchingRenderer.cpp">
+      <Filter>Source Files\Raymarching</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsResolveScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="WinState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="HoleProgressState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\app.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\AppSettings.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\DirectSound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\main.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\mydirectsound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleController.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleSound.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\App\SimpleSprite.h">
+      <Filter>External\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut_ext.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\freeglut_std.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\glut\include\GL\glut.h">
+      <Filter>External\glut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\miniaudio\miniaudio.h">
+      <Filter>External\miniaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\stb_image\stb_image.h">
+      <Filter>External\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OtherPlayerState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="ObservationState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GolfShootState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GolfAimingState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayStateMachine.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="RayMarchingRenderer.h">
+      <Filter>Header Files\Raymarching</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Raymarching</Filter>
+    </ClInclude>
+    <ClInclude Include="RayMarchingObject.h">
+      <Filter>Header Files\Raymarching</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsResolveScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="WinState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="HoleProgressState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

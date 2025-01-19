@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Test Files">
+      <UniqueIdentifier>{17c9762c-b5d9-4d7b-aded-6b5fef530d41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SSE">
+      <UniqueIdentifier>{ace6a76c-3e02-4a07-8a92-7fa6a9c08ea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scalar">
+      <UniqueIdentifier>{eb45fb85-a14f-419c-b86f-e37f02c98449}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Vector_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Vector3_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Vector4_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Common.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Vector3_4_Impl.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Vector.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Vector.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Vector2_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\SyntacticSugar_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Matrix.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Matrix.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="SSE\Matrix3_4_Impl.h">
+      <Filter>Header Files\SSE</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scalar\Matrix_Impl.h">
+      <Filter>Header Files\Scalar</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

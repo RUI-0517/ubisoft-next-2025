@@ -1,0 +1,40 @@
+name: Math Unit Test
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - "Game/Math/**"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        build_type: [Release]
+        architecture: [x64, Win32]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build with Makefile
+        run: |
+          cd "Unit Test"    
+          make build ARCH=${{ matrix.architecture }} BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Allow PR if tests succeed
+        if: success()
+        run: echo "√ Tests passed, PR is ready for review."
+
+      - name: Fail the PR if tests fail
+        if: failure()
+        run: echo "x Tests failed, please fix them before proceeding with the PR."
