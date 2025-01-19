@@ -6,11 +6,11 @@
 #include "stdafx.h"
 //------------------------------------------------------------------------
 
-#include "PhysicsScene.h"
 #include "RenderScene.h"
 #include <array>
 
 #include "GameScene.h"
+#include "PhysicsResolveScene.h"
 
 std::array<std::shared_ptr<Scene>, 3> SCENES;
 
@@ -24,11 +24,11 @@ static void SwitchScene(size_t index);
 //------------------------------------------------------------------------
 void Init()
 {
-	SCENES[0] = std::make_shared<PhysicsScene>();
+	SCENES[0] = std::make_shared<PhysicsResolveScene>();
 	SCENES[1] = std::make_shared<RenderScene>();
-	SCENES[3] = std::make_shared<GameScene>();
+	SCENES[2] = std::make_shared<GameScene>();
 
-	SwitchScene(3);
+	SwitchScene(2);
 }
 
 //------------------------------------------------------------------------

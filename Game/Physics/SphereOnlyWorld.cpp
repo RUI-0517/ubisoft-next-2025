@@ -1,6 +1,24 @@
 #include "pch.h"
 #include "SphereOnlyWorld.h"
 
+void SphereOnlyWorld::update()
+{
+	for (size_t i = m_bodyToRemove.size(); i-- > 0;)
+	{
+		const auto it = std::find(m_bodies.begin(), m_bodies.end(), m_bodyToRemove[i]);
+		if (it != m_bodies.end()) m_bodies.erase(it);
+	}
+
+	for (size_t i = m_sphereGeometryToRemove.size(); i-- > 0;)
+	{
+		const auto it = std::find(m_sphereGeometries.begin(), m_sphereGeometries.end(), m_sphereGeometryToRemove[i]);
+		if (it != m_sphereGeometries.end()) m_sphereGeometries.erase(it);
+	}
+
+	m_bodyToRemove.clear();
+	m_sphereGeometryToRemove.clear();
+}
+
 void SphereOnlyWorld::simulate(const float timeStep)
 {
 	m_timeStep = timeStep;
@@ -60,6 +78,21 @@ std::shared_ptr<Body> SphereOnlyWorld::createBody(float mass)
 	return object;
 }
 
+void SphereOnlyWorld::removeObject(const std::shared_ptr<SphereGeometry>& object)
+{
+	for (const auto& geometry : m_sphereGeometries)
+	{
+		if (geometry == object)
+		{
+			m_sphereGeometryToRemove.push_back(geometry);
+
+			auto body = object->getBody();
+			auto it = std::find(m_bodies.begin(), m_bodies.end(), body);
+			if (it != m_bodies.end()) m_bodyToRemove.push_back(*it);
+		}
+	}
+}
+
 const std::vector<std::shared_ptr<Body>>& SphereOnlyWorld::getBodies() const
 {
 	return m_bodies;
@@ -73,6 +106,7 @@ const std::vector<std::shared_ptr<SphereGeometry>>& SphereOnlyWorld::getGeometri
 void SphereOnlyWorld::handle_collision() const
 {
 	const size_t size = m_sphereGeometries.size();
+
 	for (size_t i = 0; i < size; ++i)
 	{
 		const std::shared_ptr<SphereGeometry> self = m_sphereGeometries[i];
@@ -104,6 +138,24 @@ void SphereOnlyWorld::handle_collision() const
 
 			const CollisionInfo collisionInfo{normal, ra, rb, c};
 			solve_penetration_constraint(collisionInfo, self->getBody(), other->getBody());
+
+			// TODO: Cache colliding object to optimize onCollision callbacks
+			for (const auto& callback : onCollision)
+				callback(self, other);
+		}
+	}
+
+	// Ground Constraint
+	for (size_t i = 0; i < size; ++i)
+	{
+		const std::shared_ptr<SphereGeometry> self = m_sphereGeometries[i];
+		Vector3f& selfCenter = self->getBody()->transform.position;
+		Vector3f& selfVelocity = self->getBody()->getLinearVelocity();
+		const float selfRadius = self->getRadius();
+		if (selfCenter.y - selfRadius < 0.0f)
+		{
+			selfCenter.y = selfRadius;
+			selfVelocity.y *= -0.9f;
 		}
 	}
 }
@@ -156,7 +208,7 @@ void SphereOnlyWorld::solve_penetration_constraint(const CollisionInfo& collisio
 	// Controls the amount of energy preserved after the collision
 	// TODO: Using physics material
 	constexpr float restitution = 0.8f;
-	
+
 	const Vector3f relativeVelocity = -selfLinearVelocity - selfAngularVelocity.cross(collision.ra)
 		+ otherLinearVelocity + otherAngularVelocity.cross(collision.rb);
 	const float closingVelocity = relativeVelocity.dot(collision.normal);

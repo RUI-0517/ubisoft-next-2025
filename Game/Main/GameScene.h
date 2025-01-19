@@ -14,6 +14,8 @@ class GameScene : public Scene
 	std::unique_ptr<RayMarchingRenderer> m_renderer;
 	std::shared_ptr<GameplayStateMachine> m_stateMachine;
 
+	size_t m_collisionTime;
+
 public:
 	GameScene();
 	void Init() override;
@@ -27,5 +29,8 @@ private:
 	void init_players() const;
 	void init_holes() const;
 	void init_obstacles() const;
+	void emit_particles()const;
+
+	void on_collision(const std::shared_ptr<SphereGeometry>& self, const std::shared_ptr<SphereGeometry>& other) const;
 #pragma endregion
 };

@@ -27,7 +27,7 @@ struct StateMachineGraph::Impl
 			for (size_t i = 0; i < currentConditions.size(); ++i)
 			{
 				const std::function<bool()>& currentCondition = currentConditions[i];
-				const bool shouldSwitch = currentCondition();
+				const bool shouldSwitch = currentState->getCanExit() && currentCondition();
 
 				if (shouldSwitch)
 				{

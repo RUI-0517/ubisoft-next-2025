@@ -4,6 +4,12 @@
 #include "GolfAimingState.h"
 
 
+void GolfAimingState::on_enter()
+{
+	m_displayChargeHint = false;
+	get_graph()->remainingHoleCountChanged = false;
+}
+
 void GolfAimingState::on_update(const float deltaTimeInSecond)
 {
 	const auto graph = get_graph();
@@ -62,14 +68,16 @@ void GolfAimingState::handle_rotation(const float deltaTimeInSecond, const std::
 	constexpr int viewAdjustLeftKey = 'A';
 	constexpr int viewAdjustRightKey = 'D';
 
+	constexpr float rotateSpeed = 2.0f;
+
 	float deltaYaw = 0.0f;
 	if (App::IsKeyPressed(viewAdjustLeftKey))
 	{
-		deltaYaw = 1.0f * deltaTimeInSecond;
+		deltaYaw = rotateSpeed * deltaTimeInSecond;
 	}
 	else if (App::IsKeyPressed(viewAdjustRightKey))
 	{
-		deltaYaw = -1.0f * deltaTimeInSecond;
+		deltaYaw = -rotateSpeed * deltaTimeInSecond;
 	}
 
 	accumulatedYaw += deltaYaw;

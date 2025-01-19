@@ -23,78 +23,54 @@ void RenderScene::Init()
 	m_renderer = std::make_unique<RayMarchingRenderer>(width, height);
 
 	// First Body
-	// {
-	// 	const auto& body = m_physicsWorld->createBody(1.0f);
-	// 	if (!body)
-	// 	{
-	// 		throw std::runtime_error("Failed to create body");
-	// 	}
-	// 	body->transform.position = {-1.5f, 10.0f, -1.5f};
-	// 	const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-	// 	if (!sphereGeom)
-	// 	{
-	// 		throw std::runtime_error("Failed to create SphereGeometry");
-	// 	}
-	// 	sphereGeom->attachBody(body);
-	// 	m_renderer->addRenderObject<SphereObject>(sphereGeom, RED);
-	// }
-
-	// // Second Body
-	// {
-	// 	const auto& body = m_physicsWorld->createBody(1.0f);
-	// 	if (!body)
-	// 	{
-	// 		throw std::runtime_error("Failed to create body");
-	// 	}
-	// 	body->transform.position = {3.0f, 15.0f, 0.0f};
-	// 	const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-	// 	if (!sphereGeom)
-	// 	{
-	// 		throw std::runtime_error("Failed to create SphereGeometry");
-	// 	}
-	// 	sphereGeom->attachBody(body);
-	// 	m_renderer->addRenderObject<SphereObject>(sphereGeom, GREEN);
-	// }
-	//
-	// // Third Body
-	// {
-	// 	const auto& body = m_physicsWorld->createBody(1.0f);
-	// 	if (!body)
-	// 	{
-	// 		throw std::runtime_error("Failed to create body");
-	// 	}
-	// 	body->transform.position = {-3.0f, 15.0f, 0.0f};
-	// 	const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-	// 	if (!sphereGeom)
-	// 	{
-	// 		throw std::runtime_error("Failed to create sphereGeom");
-	// 	}
-	// 	sphereGeom->attachBody(body);
-	// 	m_renderer->addRenderObject<SphereObject>(sphereGeom, GREEN);
-	// }
-
-	constexpr size_t n = 2;
-	constexpr float spacing = 3;
-	constexpr float startX = -(static_cast<float>(n) - 1) * spacing / 2.0f;
-	constexpr float startZ = -(static_cast<float>(n) - 1) * spacing / 2.0f;
-	
-	for (size_t i = 0; i < n; ++i)
 	{
-		for (size_t j = 0; j < n; ++j)
+		const auto& body = m_physicsWorld->createBody(1.0f);
+		if (!body)
 		{
-			const float mass = (i + j) % 2 == 0 ? 1.0f : 2.0f;
-			const auto& body = m_physicsWorld->createBody(mass);
-			if (!body) throw std::runtime_error("Failed to create body");
-	
-			body->transform.position = {startX + i * spacing, 10, startZ + j * spacing};
-	
-			const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
-			if (!sphereGeom) throw std::runtime_error("Failed to create SphereGeometry");
-			sphereGeom->attachBody(body);
-	
-			MaterialId materialId = (i + j) % 2 == 0 ? RED : YELLOW;
-			m_renderer->addRenderObject<SphereObject>(sphereGeom, materialId);
+			throw std::runtime_error("Failed to create body");
 		}
+		body->transform.position = {0.0f, 10.0f, -1.5f};
+		const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		if (!sphereGeom)
+		{
+			throw std::runtime_error("Failed to create SphereGeometry");
+		}
+		sphereGeom->attachBody(body);
+		m_renderer->addRenderObject<SphereObject>(sphereGeom, RED);
+	}
+
+	// Second Body
+	{
+		const auto& body = m_physicsWorld->createBody(1.0f);
+		if (!body)
+		{
+			throw std::runtime_error("Failed to create body");
+		}
+		body->transform.position = {3.0f, 15.0f, 0.0f};
+		const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		if (!sphereGeom)
+		{
+			throw std::runtime_error("Failed to create SphereGeometry");
+		}
+		sphereGeom->attachBody(body);
+		m_renderer->addRenderObject<SphereObject>(sphereGeom, BLUE);
+	}
+
+	// Third Body
+	{
+		const auto& body = m_physicsWorld->createBody(1.0f);
+		if (!body)
+		{
+			throw std::runtime_error("Failed to create body");
+		}
+		body->transform.position = {-3.0f, 15.0f, 0.0f};
+		const auto& sphereGeom = m_physicsWorld->createGeometry<SphereGeometry>(1.0f);
+		if (!sphereGeom)
+		{
+			throw std::runtime_error("Failed to create sphereGeom");
+		}
+		sphereGeom->attachBody(body);
+		m_renderer->addRenderObject<SphereObject>(sphereGeom, BLUE);
 	}
 }
 

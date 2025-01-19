@@ -11,6 +11,10 @@ const Vector3f& OtherPlayerState::getLinearVelocity()
 
 void OtherPlayerState::on_enter()
 {
+	const auto graph = get_graph();
+	++graph->currentPlayerIndex %= graph->maxPlayerCount;
+	graph->remainingHoleCountChanged = false;
+
 	determine_target_hole();
 }
 
@@ -55,7 +59,8 @@ void OtherPlayerState::determine_target_hole()
 	// TODO: Server-side solver communicating via TCP
 	const Solver solver;
 	const auto solution = solver.Solve(currentPosition, nodes);
-	m_targetPosition = (*nodes)[solution[0]];
+	if (!solution.empty()) m_targetPosition = (*nodes)[solution[0]];
+	else m_targetPosition = graph->players[1]->getTransform().position;
 }
 
 void OtherPlayerState::shoot()
@@ -68,4 +73,6 @@ void OtherPlayerState::shoot()
 	constexpr float magnitude = 5.0f;
 	auto& velocity = agent->getBody()->getLinearVelocity();
 	velocity += direction * magnitude;
+
+	++graph->totalStrokes;
 }

@@ -3,20 +3,26 @@
 #include "GameplayStateMachine.h"
 #include "App/app.h"
 
+void ObservationState::on_enter()
+{
+	const auto graph = get_graph();
+	++graph->currentPlayerIndex %= graph->maxPlayerCount;
+}
+
 void ObservationState::on_update(const float deltaTimeInSecond)
 {
-	const auto gameplayGraph = get_graph();
+	const auto graph = get_graph();
 
-	const auto& player = gameplayGraph->players[0];
+	const auto& player = graph->players[0];
 	const auto& playerPosition = player->getTransform().position;
-	gameplayGraph->targetCameraLookAt = player->getTransform().position;
+	graph->targetCameraLookAt = player->getTransform().position;
 
 	auto targetPosition = GameplayStateMachine::observationCameraPosition;
 	targetPosition.x = playerPosition.x;
 	targetPosition.z = playerPosition.z;
 
-	gameplayGraph->targetCameraPosition = targetPosition;
-	gameplayGraph->targetCameraLookAt = player->getTransform().position;
+	graph->targetCameraPosition = targetPosition;
+	graph->targetCameraLookAt = player->getTransform().position;
 }
 
 void ObservationState::on_render()

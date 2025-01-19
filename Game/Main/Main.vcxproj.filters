@@ -120,6 +120,15 @@
     <ClCompile Include="RayMarchingRenderer.cpp">
       <Filter>Source Files\Raymarching</Filter>
     </ClCompile>
+    <ClCompile Include="PhysicsResolveScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="WinState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="HoleProgressState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -211,6 +220,15 @@
     </ClInclude>
     <ClInclude Include="RayMarchingObject.h">
       <Filter>Header Files\Raymarching</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsResolveScene.h">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="WinState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="HoleProgressState.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

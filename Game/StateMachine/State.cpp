@@ -3,7 +3,9 @@
 
 struct State::Impl
 {
-	explicit Impl(const std::shared_ptr<State>& owner) : m_owner(owner)
+	bool canExit;
+
+	explicit Impl(const std::shared_ptr<State>& owner) : canExit(true), m_owner(owner)
 	{
 	}
 
@@ -160,6 +162,16 @@ const std::shared_ptr<StateMachineGraph>& State::getGraph() const
 float State::getTimeEllipse() const
 {
 	return pImpl->getTimeEllipse();
+}
+
+bool State::getCanExit() const
+{
+	return pImpl->canExit;
+}
+
+void State::setCanExit(const bool value) const
+{
+	pImpl->canExit = value;
 }
 
 void State::on_init()

@@ -15,17 +15,26 @@ void GolfShootState::on_enter()
 	const float magnitude = graph->charge;
 
 	auto& velocity = player->getBody()->getLinearVelocity();
-	velocity += direction * magnitude * 10.0f;
+	velocity += direction * magnitude * 20.0f;
 
 	charge = 0.0f;
+
+	++graph->totalStrokes;
 }
 
 void GolfShootState::on_update(float deltaTimeInSecond)
 {
-	const auto graph = get_graph();
-	const Vector3f& playerPosition = graph->players[0]->getTransform().position;
-	graph->targetCameraPosition = playerPosition + Vector3f{0.0f, 12.0f, -20.0f};
-	graph->targetCameraLookAt = playerPosition;
+	const auto gameplayGraph = get_graph();
+
+	const auto& player = gameplayGraph->players[0];
+	const auto& playerPosition = player->getTransform().position;
+	gameplayGraph->targetCameraLookAt = playerPosition;
+
+	auto targetPosition = GameplayStateMachine::observationCameraPosition;
+	targetPosition.x = playerPosition.x;
+	targetPosition.z = playerPosition.z - 1.0f;
+
+	gameplayGraph->targetCameraPosition = targetPosition;
 }
 
 void GolfShootState::on_render()

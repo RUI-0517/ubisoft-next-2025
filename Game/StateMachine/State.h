@@ -38,6 +38,9 @@ public:
 	[[nodiscard]] const std::shared_ptr<StateMachineGraph>& getGraph() const;
 	[[nodiscard]] float getTimeEllipse() const;
 
+	bool getCanExit() const;
+	void setCanExit(bool value) const;
+
 protected:
 	virtual void on_init();
 

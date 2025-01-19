@@ -27,6 +27,7 @@ struct Solver::Impl
 		m_nodes = nodes;
 		m_nodeCounts = nodes->size();
 
+		if (m_nodeCounts == 0) return {};
 		if (m_nodeCounts == 1) return std::vector<size_t>{0};
 
 		calculate_distance();
