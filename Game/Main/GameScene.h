@@ -22,5 +22,10 @@ public:
 	void Shutdown() override;
 
 private:
+#pragma region Internal
 	void update_camera(float deltaTimeInSecond) const;
+	void init_players() const;
+	void init_holes() const;
+	void init_obstacles() const;
+#pragma endregion
 };

@@ -10,5 +10,8 @@ public:
 	}
 
 protected:
-	[[nodiscard]] std::shared_ptr<GameplayStateMachine> get_graph() const;
+	[[nodiscard]] std::shared_ptr<GameplayStateMachine> get_graph();
+
+private:
+	std::shared_ptr<GameplayStateMachine> m_graph;
 };

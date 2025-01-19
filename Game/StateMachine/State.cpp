@@ -132,7 +132,7 @@ void State::shutdown() const
 	pImpl->shutdown();
 }
 
-void State::addRelation(const std::shared_ptr<State>& nextState, const std::function<bool()>& condition) const
+void State::addTransition(const std::shared_ptr<State>& nextState, const std::function<bool()>& condition) const
 {
 	pImpl->addRelation(nextState, condition);
 }

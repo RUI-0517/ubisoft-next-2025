@@ -21,7 +21,7 @@ struct StateMachineGraph::Impl
 
 		const auto& currentState = m_states[m_currentStateIndex];
 		// debounce key
-		if (currentState->getTimeEllipse() > 0.5f)
+		if (currentState->getTimeEllipse() > 1.0f)
 		{
 			const auto& currentConditions = currentState->getConditions();
 			for (size_t i = 0; i < currentConditions.size(); ++i)

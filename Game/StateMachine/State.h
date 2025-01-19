@@ -29,7 +29,7 @@ public:
 	void shutdown() const;
 
 	// Add relation
-	void addRelation(const std::shared_ptr<State>& nextState, const std::function<bool()>& condition) const;
+	void addTransition(const std::shared_ptr<State>& nextState, const std::function<bool()>& condition) const;
 
 	[[nodiscard]] const std::vector<std::function<bool()>>& getConditions() const;
 	[[nodiscard]] const std::shared_ptr<State>& getState(size_t index) const;

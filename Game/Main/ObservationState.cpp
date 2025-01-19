@@ -3,19 +3,20 @@
 #include "GameplayStateMachine.h"
 #include "App/app.h"
 
-void ObservationState::on_init()
-{
-}
-
-void ObservationState::on_enter()
+void ObservationState::on_update(const float deltaTimeInSecond)
 {
 	const auto gameplayGraph = get_graph();
-	gameplayGraph->targetCameraPosition = {0.0f, 20.0f, 0.0f};
-	gameplayGraph->targetCameraLookAt = {0.0f, 0.0f, 0.0f};
-}
 
-void ObservationState::on_update(float deltaTimeInSecond)
-{
+	const auto& player = gameplayGraph->players[0];
+	const auto& playerPosition = player->getTransform().position;
+	gameplayGraph->targetCameraLookAt = player->getTransform().position;
+
+	auto targetPosition = GameplayStateMachine::observationCameraPosition;
+	targetPosition.x = playerPosition.x;
+	targetPosition.z = playerPosition.z;
+
+	gameplayGraph->targetCameraPosition = targetPosition;
+	gameplayGraph->targetCameraLookAt = player->getTransform().position;
 }
 
 void ObservationState::on_render()

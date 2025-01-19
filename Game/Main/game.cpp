@@ -9,18 +9,15 @@
 #include "Physics.h"
 #include "PhysicsScene.h"
 #include "RenderScene.h"
-#include "GameplayScene.h"
 #include "App/app.h"
 #include <array>
 
 #include "GameScene.h"
-#include "Solver.h"
 
-std::array<std::shared_ptr<Scene>, 4> SCENES;
+std::array<std::shared_ptr<Scene>, 3> SCENES;
 
 // std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
 // std::shared_ptr<RenderScene> RENDER_SCENE;
-// std::shared_ptr<GameplayScene> GAMEPLAY_SCENE;
 // std::shared_ptr<GameScene> GAME_SCENE;
 size_t CURRENT_SCENE_INDEX;
 
@@ -60,7 +57,6 @@ void Init()
 
 	SCENES[0] = std::make_shared<PhysicsScene>();
 	SCENES[1] = std::make_shared<RenderScene>();
-	SCENES[2] = std::make_shared<GameplayScene>();
 	SCENES[3] = std::make_shared<GameScene>();
 
 	SwitchScene(3);

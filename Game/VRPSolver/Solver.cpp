@@ -27,6 +27,8 @@ struct Solver::Impl
 		m_nodes = nodes;
 		m_nodeCounts = nodes->size();
 
+		if (m_nodeCounts == 1) return std::vector<size_t>{0};
+
 		calculate_distance();
 
 		for (size_t i = 0; i < maxIterationTime; i++)
