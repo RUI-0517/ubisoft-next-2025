@@ -6,16 +6,14 @@
 #include "stdafx.h"
 //------------------------------------------------------------------------
 
-#include "Physics.h"
-#include "PhysicsScene.h"
 #include "RenderScene.h"
-#include "App/app.h"
 #include <array>
 
-std::array<std::shared_ptr<Scene>, 2> SCENES;
+#include "GameScene.h"
+#include "PhysicsResolveScene.h"
 
-std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
-std::shared_ptr<RenderScene> RENDER_SCENE;
+std::array<std::shared_ptr<Scene>, 3> SCENES;
+
 size_t CURRENT_SCENE_INDEX;
 
 static void HandleUserInput();
@@ -26,10 +24,11 @@ static void SwitchScene(size_t index);
 //------------------------------------------------------------------------
 void Init()
 {
-	SCENES[0] = std::make_unique<PhysicsScene>();
-	SCENES[1] = std::make_unique<RenderScene>();
+	SCENES[0] = std::make_shared<PhysicsResolveScene>();
+	SCENES[1] = std::make_shared<RenderScene>();
+	SCENES[2] = std::make_shared<GameScene>();
 
-	SwitchScene(1);
+	SwitchScene(2);
 }
 
 //------------------------------------------------------------------------
@@ -64,11 +63,12 @@ void Shutdown()
 
 void HandleUserInput()
 {
-	if (App::IsKeyPressed(VK_SPACE))
-	{
-		++CURRENT_SCENE_INDEX %= SCENES.size();
-		SwitchScene(CURRENT_SCENE_INDEX);
-	}
+	// TODO: DONING GAMEPLAY
+	// if (App::IsKeyPressed(VK_SPACE))
+	// {
+	// 	++CURRENT_SCENE_INDEX %= SCENES.size();
+	// 	SwitchScene(CURRENT_SCENE_INDEX);
+	// }
 }
 
 void SwitchScene(const size_t index)

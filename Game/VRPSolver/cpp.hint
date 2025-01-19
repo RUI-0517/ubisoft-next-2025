@@ -1,0 +1,2 @@
+#define VRPSOLVER_API __declspec(dllexport)
+#define VRPSOLVER_API __declspec(dllimport)

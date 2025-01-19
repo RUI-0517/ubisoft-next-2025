@@ -9,6 +9,8 @@ protected:
 	std::vector<Vector3f> m_vertices;
 
 public:
+	std::string tag = "Undefined";
+
 	virtual ~Geometry() = default;
 
 	[[nodiscard]] virtual Vector3f getSupportPoint(const Vector3f& direction) const;

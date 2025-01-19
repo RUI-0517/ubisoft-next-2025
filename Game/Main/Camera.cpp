@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Camera.h"
-
 #include "App/AppSettings.h"
 
 Camera::Camera(const Vector3f& position, const Vector3f& lookAt): position(position), lookAt(lookAt)

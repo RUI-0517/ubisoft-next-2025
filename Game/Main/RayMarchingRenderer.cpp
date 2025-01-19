@@ -59,6 +59,17 @@ Camera& RayMarchingRenderer::getCamera()
 	return m_camera;
 }
 
+void RayMarchingRenderer::removeRenderObject(const std::shared_ptr<Geometry>& geometry)
+{
+	const auto removeCondition = [&geometry](const std::shared_ptr<RayMarchingObject>& object)
+	{
+		return object->getGeometry() == geometry;
+	};
+	const auto it = std::remove_if(m_objects.begin(), m_objects.end(), removeCondition);
+
+	if (it != m_objects.end()) m_objects.erase(it, m_objects.end());
+}
+
 void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t height)
 {
 	const size_t resolution = width * height;
@@ -75,10 +86,8 @@ void RayMarchingRenderer::initialize_pixels(const size_t width, const size_t hei
 		const float x = static_cast<float>(indexX) * pixelSizeInFloat + pixelSizeInFloat / 2.0f;
 		const float y = static_cast<float>(indexY) * pixelSizeInFloat + pixelSizeInFloat / 2.0f;
 
-		CSimpleSprite* texture = App::CreateSprite(RESOURCE_PATH("Opacity Texture.png"), 100, 1);
+		CSimpleSprite* texture = App::CreateSprite(RESOURCE_PATH("Pixel.png"), 1, 1);
 		texture->SetPosition(x, y);
-		// TODO: Remove as alpha will be handled in raymarching
-		texture->SetFrame(99);
 		m_pixels[index] = std::unique_ptr<CSimpleSprite>(texture);
 	}
 }
@@ -148,7 +157,7 @@ Vector4f RayMarchingRenderer::render_scene(const Vector3f& rayOrigin, const Vect
 			}
 		case GREEN:
 			{
-				color = Vector3f{0.0f, 0.75f, 0.0f};
+				color = Vector3f{0.0f, 0.5f, 0.0f};
 				break;
 			}
 		case BLUE:

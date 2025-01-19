@@ -50,6 +50,8 @@ public:
 		m_objects.emplace_back(std::make_shared<T>(std::forward<Args>(args)...));
 	}
 
+	void removeRenderObject(const std::shared_ptr<Geometry>& geometry);
+
 private:
 #pragma region Internals
 	using SdfPair = std::pair<float, MaterialId>;
