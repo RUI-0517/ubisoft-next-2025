@@ -195,7 +195,6 @@
     <ClCompile Include="..\External\App\SimpleSprite.cpp" />
     <ClCompile Include="..\External\miniaudio\miniaudio.cpp" />
     <ClCompile Include="..\External\stb_image\stb_image.cpp" />
-    <ClCompile Include="Common.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameplayState.cpp" />
@@ -205,11 +204,9 @@
     <ClCompile Include="GolfShootState.cpp" />
     <ClCompile Include="ObservationState.cpp" />
     <ClCompile Include="OtherPlayerState.cpp" />
-    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
     <ClCompile Include="RayMarchingObject.cpp" />
     <ClCompile Include="RayMarchingRenderer.cpp" />
-    <ClCompile Include="Render.cpp" />
     <ClCompile Include="RenderScene.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -235,7 +232,6 @@
     <ClInclude Include="..\External\glut\include\GL\glut.h" />
     <ClInclude Include="..\External\miniaudio\miniaudio.h" />
     <ClInclude Include="..\External\stb_image\stb_image.h" />
-    <ClInclude Include="Common.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameplayState.h" />
     <ClInclude Include="GameplayStateMachine.h" />
@@ -244,11 +240,9 @@
     <ClInclude Include="GolfShootState.h" />
     <ClInclude Include="ObservationState.h" />
     <ClInclude Include="OtherPlayerState.h" />
-    <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />
     <ClInclude Include="RayMarchingObject.h" />
     <ClInclude Include="RayMarchingRenderer.h" />
-    <ClInclude Include="Render.h" />
     <ClInclude Include="RenderScene.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scene.h" />
