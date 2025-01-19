@@ -1,0 +1,2 @@
+#define STATEMACHINE_API __declspec(dllexport)
+#define STATEMACHINE_API __declspec(dllimport)

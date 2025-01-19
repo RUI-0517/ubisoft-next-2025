@@ -13,13 +13,15 @@
 #include "App/app.h"
 #include <array>
 
+#include "GameScene.h"
 #include "Solver.h"
 
-std::array<std::shared_ptr<Scene>, 3> SCENES;
+std::array<std::shared_ptr<Scene>, 4> SCENES;
 
-std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
-std::shared_ptr<RenderScene> RENDER_SCENE;
-std::shared_ptr<GameplayScene> GAMEPLAY_SCENE;
+// std::shared_ptr<PhysicsScene> PHYSICS_SCENE;
+// std::shared_ptr<RenderScene> RENDER_SCENE;
+// std::shared_ptr<GameplayScene> GAMEPLAY_SCENE;
+// std::shared_ptr<GameScene> GAME_SCENE;
 size_t CURRENT_SCENE_INDEX;
 
 static void HandleUserInput();
@@ -30,37 +32,38 @@ static void SwitchScene(size_t index);
 //------------------------------------------------------------------------
 void Init()
 {
-	const Vector3f currentPosition{7.75f, 0.0f, 11.5f};
-	std::vector<Vector3f> nodes;
-	nodes.emplace_back(2.0f, 0.0f, -8.25f);
-	nodes.emplace_back(-7.25f, 0.0f, 6.5f);
-	nodes.emplace_back(-7.0f, 0.0f, -10.25f);
-	nodes.emplace_back(-7.0f, 0.0f, -10.25f);
-	nodes.emplace_back(5.75f, 0.0f, 1.75f);
-
-	const auto nodePtr = std::make_shared<std::vector<Vector3f>>(nodes);
-	const Solver solver;
-
-	for (size_t i = 0; i < 4; ++i)
-	{
-		const auto solution = solver.Solve(currentPosition, nodePtr);
-
-		float distance = 0.0f;
-		distance += currentPosition.distance(nodes[0]);
-
-		for (size_t i = 1; i < solution.size(); i++)
-		{
-			distance += nodes[i].distance(nodes[i - 1]);
-		}
-
-		App::Print(0, 0, std::to_string(distance).c_str());
-	}
+	// const Vector3f currentPosition{7.75f, 0.0f, 11.5f};
+	// std::vector<Vector3f> nodes;
+	// nodes.emplace_back(2.0f, 0.0f, -8.25f);
+	// nodes.emplace_back(-7.25f, 0.0f, 6.5f);
+	// nodes.emplace_back(-7.0f, 0.0f, -10.25f);
+	// nodes.emplace_back(-7.0f, 0.0f, -10.25f);
+	// nodes.emplace_back(5.75f, 0.0f, 1.75f);
+	//
+	// const auto nodePtr = std::make_shared<std::vector<Vector3f>>(nodes);
+	// const Solver solver;
+	//
+	// for (size_t i = 0; i < 4; ++i)
+	// {
+	// 	const auto solution = solver.Solve(currentPosition, nodePtr);
+	//
+	// 	float distance = 0.0f;
+	// 	distance += currentPosition.distance(nodes[0]);
+	//
+	// 	for (size_t i = 1; i < solution.size(); i++)
+	// 	{
+	// 		distance += nodes[i].distance(nodes[i - 1]);
+	// 	}
+	//
+	// 	App::Print(0, 0, std::to_string(distance).c_str());
+	// }
 
 	SCENES[0] = std::make_shared<PhysicsScene>();
 	SCENES[1] = std::make_shared<RenderScene>();
 	SCENES[2] = std::make_shared<GameplayScene>();
+	SCENES[3] = std::make_shared<GameScene>();
 
-	SwitchScene(2);
+	SwitchScene(3);
 }
 
 //------------------------------------------------------------------------

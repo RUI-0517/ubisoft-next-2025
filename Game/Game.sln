@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rendering", "Rendering\Rend
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VRPSolver", "VRPSolver\VRPSolver.vcxproj", "{6649276F-524E-45CB-8BFB-E646A865D1ED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StateMachine", "StateMachine\StateMachine.vcxproj", "{935EA3D7-0098-40A8-9CD9-D90CD868771C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -64,6 +66,14 @@ Global
 		{6649276F-524E-45CB-8BFB-E646A865D1ED}.Release|x64.Build.0 = Release|x64
 		{6649276F-524E-45CB-8BFB-E646A865D1ED}.Release|x86.ActiveCfg = Release|Win32
 		{6649276F-524E-45CB-8BFB-E646A865D1ED}.Release|x86.Build.0 = Release|Win32
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Debug|x64.ActiveCfg = Debug|x64
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Debug|x64.Build.0 = Debug|x64
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Debug|x86.ActiveCfg = Debug|Win32
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Debug|x86.Build.0 = Debug|Win32
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Release|x64.ActiveCfg = Release|x64
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Release|x64.Build.0 = Release|x64
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Release|x86.ActiveCfg = Release|Win32
+		{935EA3D7-0098-40A8-9CD9-D90CD868771C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

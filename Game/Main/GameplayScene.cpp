@@ -57,14 +57,14 @@ void GameplayScene::Render()
 {
 	m_renderer->Render();
 
-	const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
-	const Vector3f b;
-	const Vector3f result = (a + b) / 2.0f;
-
-	const std::shared_ptr<Body>& sphereBody = m_obstacles[0]->getBody();
-	const Vector3f& position = sphereBody->transform.position;
-
-	App::Print(result.x, result.y, std::to_string(position.y).c_str());
+	// const Vector3f a{static_cast<float>(APP_INIT_WINDOW_WIDTH), static_cast<float>(APP_INIT_WINDOW_HEIGHT), 0.0f};
+	// const Vector3f b;
+	// const Vector3f result = (a + b) / 2.0f;
+	//
+	// const std::shared_ptr<Body>& sphereBody = m_obstacles[0]->getBody();
+	// const Vector3f& position = sphereBody->transform.position;
+	//
+	// App::Print(result.x, result.y, std::to_string(position.y).c_str());
 
 	m_onRender[m_userState]();
 }
