@@ -199,8 +199,10 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameplayScene.cpp" />
+    <ClCompile Include="GameplayState.cpp" />
     <ClCompile Include="GameplayStateMachine.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="GolfAimingState.cpp" />
     <ClCompile Include="ObservationState.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsScene.cpp" />
@@ -235,8 +237,10 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameplayScene.h" />
+    <ClInclude Include="GameplayState.h" />
     <ClInclude Include="GameplayStateMachine.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="GolfAimingState.h" />
     <ClInclude Include="ObservationState.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsScene.h" />

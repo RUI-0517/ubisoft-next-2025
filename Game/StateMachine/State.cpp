@@ -157,6 +157,11 @@ const std::shared_ptr<StateMachineGraph>& State::getGraph() const
 	return pImpl->getGraph();
 }
 
+float State::getTimeEllipse() const
+{
+	return pImpl->getTimeEllipse();
+}
+
 void State::on_init()
 {
 }

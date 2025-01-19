@@ -1,10 +1,10 @@
 #pragma once
-#include "State.h"
+#include "GameplayState.h"
 
-class ObservationState final : public State
+class ObservationState final : public GameplayState
 {
 public:
-	explicit ObservationState(const std::shared_ptr<StateMachineGraph>& graph) : State(graph)
+	explicit ObservationState(const std::shared_ptr<StateMachineGraph>& graph) : GameplayState(graph)
 	{
 	}
 

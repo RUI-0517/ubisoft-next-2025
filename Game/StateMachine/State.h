@@ -36,7 +36,7 @@ public:
 
 	void setGraph(const std::shared_ptr<StateMachineGraph>& graph) const;
 	[[nodiscard]] const std::shared_ptr<StateMachineGraph>& getGraph() const;
-	[[nodiscard]] float getTimeEllipse();
+	[[nodiscard]] float getTimeEllipse() const;
 
 protected:
 	virtual void on_init();

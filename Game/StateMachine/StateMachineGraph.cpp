@@ -17,45 +17,50 @@ struct StateMachineGraph::Impl
 
 	void update(const float deltaTimeInSecond)
 	{
+		m_owner->on_update(deltaTimeInSecond);
+
 		const auto& currentState = m_states[m_currentStateIndex];
-		const auto& currentConditions = currentState->getConditions();
-		for (size_t i = 0; i < currentConditions.size(); ++i)
+		// debounce key
+		if (currentState->getTimeEllipse() > 0.5f)
 		{
-			const std::function<bool()>& currentCondition = currentConditions[i];
-			const bool shouldSwitch = currentCondition();
-
-			if (shouldSwitch)
+			const auto& currentConditions = currentState->getConditions();
+			for (size_t i = 0; i < currentConditions.size(); ++i)
 			{
-				const auto& nextState = currentState->getState(i);
-				const auto it = std::find(m_states.begin(), m_states.end(), nextState);
+				const std::function<bool()>& currentCondition = currentConditions[i];
+				const bool shouldSwitch = currentCondition();
 
-				if (it != m_states.end())
+				if (shouldSwitch)
 				{
-					const size_t nextStateIndex = static_cast<size_t>(it - m_states.begin());
-					switchState(nextStateIndex);
-				}
-				else throw std::runtime_error("State not found!");
+					const auto& nextState = currentState->getState(i);
+					const auto it = std::find(m_states.begin(), m_states.end(), nextState);
 
-				break;
+					if (it != m_states.end())
+					{
+						const size_t nextStateIndex = static_cast<size_t>(it - m_states.begin());
+						switchState(nextStateIndex);
+					}
+					else throw std::runtime_error("State not found!");
+
+					break;
+				}
 			}
 		}
 
 		currentState->update(deltaTimeInSecond);
-		m_owner->on_update(deltaTimeInSecond);
 	}
 
 	void render() const
 	{
+		m_owner->on_render();
 		const auto& currentState = m_states[m_currentStateIndex];
 		currentState->render();
-		m_owner->on_render();
 	}
 
 	void shutdown() const
 	{
+		m_owner->on_shutdown();
 		const auto& currentState = m_states[m_currentStateIndex];
 		currentState->shutdown();
-		m_owner->on_shutdown();
 	}
 
 	void addState(const std::shared_ptr<State>& state)
