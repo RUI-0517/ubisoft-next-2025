@@ -14,8 +14,6 @@ class GameScene : public Scene
 	std::unique_ptr<RayMarchingRenderer> m_renderer;
 	std::shared_ptr<GameplayStateMachine> m_stateMachine;
 
-	size_t m_collisionTime;
-
 public:
 	GameScene();
 	void Init() override;
