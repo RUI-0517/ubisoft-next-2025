@@ -2,7 +2,7 @@
 
 ## Game Overview
 
-This game is a cooperative experience where players control two large spheres—one red and one blue. The objective is to clear all the courses, represented by medium-sized yellow spheres. Along the way, you'll encounter obstacles in the form of small green spheres that will slow you down due to physical effects.
+This game is a cooperative experience where the player controls a red sphere and an AI controls a blue sphere. The objective is to clear all the courses, represented by medium-sized yellow spheres. Along the way, you'll encounter obstacles in the form of small green spheres that will slow you down due to physical effects.
 
 Your goal is to minimize the total number of strokes. For example, you can collide with your teammate to help each other reach challenging holes and reduce your total strokes. However, be cautious—hitting obstacles on the ground can affect both your position and your teammate’s! Plan your moves wisely!
 
