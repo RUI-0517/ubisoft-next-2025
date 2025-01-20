@@ -399,3 +399,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+!Binaries/x64/
+Binaries/x64/*
+!Binaries/x64/freeglut.dll
