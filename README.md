@@ -17,3 +17,5 @@ Your goal is to minimize the total number of strokes. For example, you can colli
     - Pressing **Ctrl + Shift + B**, or
     - Clicking the green play button in the IDE to run it directly.
 5.  Alternatively, you can launch the game by running the `.exe` file located in `Builds/x64/Release`.
+
+If you encounter any errors related to `xcopy`, simply rebuild the project. These issues are likely occasional errors caused by MSVC and can often be resolved with a second build attempt.
