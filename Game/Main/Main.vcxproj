@@ -106,7 +106,8 @@
       <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;StateMachine.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y
+xcopy "$(SolutionDir)Main\Resources" "$(OutDir)\Resources" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,7 +134,8 @@
       <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;StateMachine.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y</Command>
+      <Command>xcopy "$(SolutionDir)Binaries\*" "$(OutDir)\" /Y
+xcopy "$(SolutionDir)Main\Resources" "$(OutDir)\Resources" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -156,7 +158,8 @@
       <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;StateMachine.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
+      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I
+xcopy "$(SolutionDir)Main\Resources" "$(OutDir)\Resources" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,7 +186,8 @@
       <AdditionalDependencies>freeglut.lib;Math.lib;Physics.lib;Rendering.lib;VRPSolver.lib;StateMachine.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I</Command>
+      <Command>xcopy "$(SolutionDir)Binaries\x64\*" "$(OutDir)\" /E /Y /I
+xcopy "$(SolutionDir)Main\Resources" "$(OutDir)\Resources" /E /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
