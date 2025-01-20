@@ -403,3 +403,8 @@ FodyWeavers.xsd
 !Binaries/x64/
 Binaries/x64/*
 !Binaries/x64/freeglut.dll
+
+
+!Libraries/x64/
+Libraries/x64/*
+!Libraries/x64/freeglut.lib
