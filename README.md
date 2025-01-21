@@ -6,6 +6,11 @@ This game is a cooperative experience where the player controls a red sphere and
 
 Your goal is to minimize the total number of strokes. For example, you can collide with your teammate to help each other reach challenging holes and reduce your total strokes. However, be cautious—hitting obstacles on the ground can affect both your position and your teammate’s! Plan your moves wisely!
 
+[![Click to watch the video](https://github.com/user-attachments/assets/3f95419f-fed8-475d-bf09-afd83388cd04)](https://www.youtube.com/watch?v=PWDhw_J63Dg)
+<div align="center" style="font-size: small;">
+Click to watch the video
+</div>
+
 ## Build Guide
 
 1.  Navigate to the `Game` directory.
